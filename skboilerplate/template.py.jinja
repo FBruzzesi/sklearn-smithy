@@ -9,7 +9,6 @@ from sklearn.utils.validation import check_is_fitted, check_array
 
 class {{ name }}({{ mixin }}, {%if not linear%}BaseEstimator{%else%}LinearModel{%endif%}):
     """{name} estimator.
-    
     ...
     """
     {% if required %}_required_parameters = {{ required }}{% endif -%}
@@ -90,30 +89,90 @@ class {{ name }}({{ mixin }}, {%if not linear%}BaseEstimator{%else%}LinearModel{
 
         return self
 
-    {% if estimator_type=='transformer' -%}
-    def transform(self, X):
-        """Transform X.
+    {% if estimator_type == 'classifier' and decision_function == True %}
+    def decision_function(self, X):
+        """Confidence scores of X.
 
         Parameters
         ----------
         X : array-like of shape (n_samples, n_features)
-            The data to transform.
+            The data to predict.
 
         Returns
         -------
-        Transformed array.
+        Prediction array.
         """
 
         check_is_fitted(self)
-        X = check_array(X, ...) # TODO: Fill in `check_array` arguments
+        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
 
-        X_ts = ...  # TODO: Implement transform logic
+        y_scores = ... # TODO: Implement decision_function logic
 
-        return X_ts
+        return y_scores
 
+    def predict(self, X):
+        """Predict X.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            The data to predict.
+
+        Returns
+        -------
+        Prediction array.
+        """
+
+        check_is_fitted(self)
+        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+
+        y_pred = (self.decision_function(X).ravel() > 0).astype(int)
+
+        return y_pred
+    {% endif %}
+
+    {% if estimator_type == 'classifier' and predict_proba == True %}
+    def predict_proba(self, X):
+        """Probability estimates of X.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            The data to predict.
+
+        Returns
+        -------
+        Prediction array.
+        """
+
+        check_is_fitted(self)
+        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+
+        y_proba = ... # TODO: Implement predict_proba logic
+
+        return y_proba
+    {% endif %}
+
+    {% if estimator_type=='outlier' %}
+    def score_samples(self, X):
+
+        check_is_fitted(self)
+        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+
+        ...  # TODO: Implement scoring function, `decision_function` and `predict` will follow
+
+        return ...
+
+    def decision_function(self, X):
+        return self.score_samples(X) - self.offset_
+
+    def predict(self, X):
+        preds = (self.decision_function(X) >= 0).astype(int)
+        preds[preds == 0] = -1
+        return preds
     {%- endif %}
 
-    {% if estimator_type in ['regressor', 'classifier'] %}
+    {% if (estimator_type == 'classifier' and decision_function == False) or estimator_type=='regression' %}
     def predict(self, X):
         """Predict X.
 
@@ -135,46 +194,33 @@ class {{ name }}({{ mixin }}, {%if not linear%}BaseEstimator{%else%}LinearModel{
         return y_pred
     {% endif %}
 
-    {% if estimator_type == 'classifier' %}
-    def predict_proba(self, X):
-        """Probability estimates.of X.
+    {% if estimator_type=='transformer' -%}
+    def transform(self, X):
+        """Transform X.
 
         Parameters
         ----------
         X : array-like of shape (n_samples, n_features)
-            The data to predict.
+            The data to transform.
 
         Returns
         -------
-        Prediction array.
+        Transformed array.
         """
 
         check_is_fitted(self)
-        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+        X = check_array(X, ...) # TODO: Fill in `check_array` arguments
 
-        y_proba = ... # TODO: Implement predict_proba logic
+        X_ts = ...  # TODO: Implement transform logic
 
-        return y_proba
+        return X_ts
+    {%- endif %}
 
-    {% endif %}
-
-    {% if estimator_type=='outlier' %}
-    def score_samples(self, X):
-
-        check_is_fitted(self)
-        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
-
-        ...  # TODO: Implement scoring function, `decision_function` and `predict` will follow
-
-        return ...
-
-    def decision_function(self, X):
-        return self.score_samples(X) - self.offset_
-
-    def predict(self, X):
-        preds = (self.decision_function(X) >= 0).astype(int)
-        preds[preds == 0] = -1
-        return preds
-    {% endif %}
-
-    
+    {% if tags %}
+    def _more_tags(self):
+        return {
+            {%for tag in tags -%}
+            "{{tag}}": ...,
+            {% endfor -%}
+            }
+    {%- endif %}
