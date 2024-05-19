@@ -1,33 +1,41 @@
 import numpy as np
 
-{%if not linear%}from sklearn.base import BaseEstimator{%else%}from sklearn.linear_model._base import LinearModel{%endif%}
+from sklearn.base import {{ mixin }}
+{% if not linear %}from sklearn.base import BaseEstimator{% else %}from sklearn.linear_model._base import LinearModel{% endif %}
 from sklearn.utils import check_X_y
-from sklearn.utils.validation import _check_sample_weight, check_is_fitted
+from sklearn.utils.validation import check_is_fitted, check_array
+{% if support_sample_weight %}from sklearn.utils.validation import _check_sample_weight{% endif %}
 
-{%if classifier %}from sklearn.base import ClassifierMixin
-{%endif%}{%if regressor %}from sklearn.base import RegressorMixin
-{%endif%}{%if outlier %}from sklearn.base import OutlierMixin
-{%endif%}{%if transformer %}from sklearn.base import TransformerMixin
-{%endif%}
 
-class {{name}}({%if classifier %}ClassifierMixin, {%endif%}{%if regressor %}RegressorMixin, {%endif%}{%if outlier %}OutlierMixin, {%endif%}{%if transformer %}TransformerMixin, {%endif%}{%if not linear%}BaseEstimator{%else%}LinearModel{%endif%}):
-
-    {% if required %}_required_parameters = {{required}}{% endif -%}
+class {{ name }}({{ mixin }}, {%if not linear%}BaseEstimator{%else%}LinearModel{%endif%}):
+    """{name} estimator.
+    
+    ...
+    """
+    {% if required %}_required_parameters = {{ required }}{% endif -%}
 
     {% if parameters %}
     def __init__(
         self,
+        {% for param in required %}
+        {{- param }},
+        {% endfor -%}
+        {%- if others -%}
         *,
-        {%- for param in parameters %}
-        {{-param}}=...,
+        {% endif -%}
+        {% for param in others %}
+        {{- param }}=...,
         {% endfor -%}
         ):
 
-        {%for param in parameters -%}
+        {%for param in required -%}
+        self.{{param}} = {{param}}
+        {% endfor -%}
+        {%for param in others -%}
         self.{{param}} = {{param}}
         {% endfor -%}
     
-        {%endif%}
+        {% endif %}
 
     def fit(self, X, y{% if transformer %}=None{% endif %}{% if support_sample_weight %}, sample_weight=None{% endif %}):
         """
@@ -58,31 +66,31 @@ class {{name}}({%if classifier %}ClassifierMixin, {%endif%}{%if regressor %}Regr
         """
 
         self.n_features_in_ = X.shape[1]
-        {% if classifier -%}
-        self.classes_ = np.unique(y)
-        {%- endif %}
-        {% if support_sample_weight -%}
-        sample_weight = _check_sample_weight(sample_weight)
-        {%- endif%}
-        {% if transformer -%}
+        {%if transformer -%}
         X = check_array(X, ...) #TODO: Fill in `check_array` arguments
         {%- else -%}
         X, y = check_X_y(X, y, ...) #TODO: Fill in `check_X_y` arguments
-        {%- endif %}
-        
-        ...
-    
-        {%if linear %}
-        self.coef_ = ...   # TODO: Linear model coefficients
-        self.intercept_ = ...  # TODO: Linear model intercept
-        # `predict` method will follow from `coef_` and `intercept_`
         {% endif %}
-        {%if "max_iter" in parameters %}self.max_iter = ...{% endif %}
-        {%if outlier %}self.offset_ = ...{% endif %}
+        {%- if estimator_type=='classifier' -%}
+        self.classes_ = np.unique(y)
+        {% endif -%}
+        {%- if support_sample_weight -%}
+        sample_weight = _check_sample_weight(sample_weight)
+        {%- endif %}
+
+        ...  # TODO: Implement fit logic
+    
+        {%if linear -%}
+        # For linear models, coef_ and intercept_ is all you need. `predict` is taken care of by the mixin
+        self.coef_ = ...
+        self.intercept_ = ...
+        {%- endif %}
+        {% if "max_iter" in parameters -%}self.n_iter_ = ...{%- endif %}
+        {% if outlier -%}self.offset_ = ...{%- endif %}
 
         return self
 
-    {% if transformer %}
+    {% if estimator_type=='transformer' -%}
     def transform(self, X):
         """Transform X.
 
@@ -99,35 +107,58 @@ class {{name}}({%if classifier %}ClassifierMixin, {%endif%}{%if regressor %}Regr
         check_is_fitted(self)
         X = check_array(X, ...) # TODO: Fill in `check_array` arguments
 
-        ...
+        X_ts = ...  # TODO: Implement transform logic
 
-        return ...
+        return X_ts
 
-    {% endif %}
+    {%- endif %}
 
-    {% if regressor %}
-    def transform(self, X):
-        """Transform X.
+    {% if estimator_type in ['regressor', 'classifier'] %}
+    def predict(self, X):
+        """Predict X.
 
         Parameters
         ----------
         X : array-like of shape (n_samples, n_features)
-            The data to transform.
+            The data to predict.
 
         Returns
         -------
-        Transformed array.
+        Prediction array.
         """
 
         check_is_fitted(self)
         X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
 
-        ...
+        y_pred = ... # TODO: Implement predict logic
 
-        return ...
+        return y_pred
     {% endif %}
 
-    {% if outlier %}
+    {% if estimator_type == 'classifier' %}
+    def predict_proba(self, X):
+        """Probability estimates.of X.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            The data to predict.
+
+        Returns
+        -------
+        Prediction array.
+        """
+
+        check_is_fitted(self)
+        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+
+        y_proba = ... # TODO: Implement predict_proba logic
+
+        return y_proba
+
+    {% endif %}
+
+    {% if estimator_type=='outlier' %}
     def score_samples(self, X):
 
         check_is_fitted(self)
