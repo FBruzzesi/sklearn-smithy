@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "scikit-learn-boilerplate"
+version = "0.1.0"
+
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Francesco Bruzzesi"}]
+
+dependencies = [
+    "typer",
+    "rich",
+    "jinja2",
+    "typing-extensions>=4.4.0; python_version < '3.11'",
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+[tool.hatch.build.targets.sdist]
+only-include = ["skboilerplate"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["skboilerplate"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",
+    "D100",  # Checks for undocumented public module definitions.
+    "D104",  # Checks for undocumented public package definitions.
+    "D107",  # Checks for public __init__ method definitions that are missing docstrings.
+    "E731",  # Checks for lambda expressions which are assigned to a variable.
+    "ISC001",
+    "N803",  # Checks for argument names that do not follow the snake_case convention.
+    # "EM101",  # Checks for the use of string literals in exception constructors.
+    # "ISC001",  # Checks for implicitly concatenated strings on a single line.
+    "RET505",  # Checks for else statements with a return statement in the preceding if block.
+    "RET506",
+    # "TRY003",  # Checks for long exception messages that are not defined in the exception class itself.
+    "DTZ"
+    ]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ANN", "D", "N802", "N806", "PD901", "PT006", "PT007", "PLR0913", "S101"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["skboilerplate/"]

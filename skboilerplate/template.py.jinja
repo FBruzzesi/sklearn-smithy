@@ -1,0 +1,149 @@
+import numpy as np
+
+{%if not linear%}from sklearn.base import BaseEstimator{%else%}from sklearn.linear_model._base import LinearModel{%endif%}
+from sklearn.utils import check_X_y
+from sklearn.utils.validation import _check_sample_weight, check_is_fitted
+
+{%if classifier %}from sklearn.base import ClassifierMixin
+{%endif%}{%if regressor %}from sklearn.base import RegressorMixin
+{%endif%}{%if outlier %}from sklearn.base import OutlierMixin
+{%endif%}{%if transformer %}from sklearn.base import TransformerMixin
+{%endif%}
+
+class {{name}}({%if classifier %}ClassifierMixin, {%endif%}{%if regressor %}RegressorMixin, {%endif%}{%if outlier %}OutlierMixin, {%endif%}{%if transformer %}TransformerMixin, {%endif%}{%if not linear%}BaseEstimator{%else%}LinearModel{%endif%}):
+
+    {% if required %}_required_parameters = {{required}}{% endif -%}
+
+    {% if parameters %}
+    def __init__(
+        self,
+        *,
+        {%- for param in parameters %}
+        {{-param}}=...,
+        {% endfor -%}
+        ):
+
+        {%for param in parameters -%}
+        self.{{param}} = {{param}}
+        {% endfor -%}
+    
+        {%endif%}
+
+    def fit(self, X, y{% if transformer %}=None{% endif %}{% if support_sample_weight %}, sample_weight=None{% endif %}):
+        """
+        Fit {{name}} estimator.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix} of shape (n_samples, n_features)
+            Training data.
+
+        {%- if transformer-%}
+        y : None
+            Ignored.
+        {% else %}
+        y : array-like of shape (n_samples,) or (n_samples, n_targets)
+            Target values.
+        {% endif %}
+            
+        {%- if support_sample_weight -%}
+        sample_weight : array-like of shape (n_samples,), default=None
+            Individual weights for each sample.
+        {% endif %}
+
+        Returns
+        -------
+        self : {{name}}
+            Fitted {{name}} estimator.
+        """
+
+        self.n_features_in_ = X.shape[1]
+        {% if classifier -%}
+        self.classes_ = np.unique(y)
+        {%- endif %}
+        {% if support_sample_weight -%}
+        sample_weight = _check_sample_weight(sample_weight)
+        {%- endif%}
+        {% if transformer -%}
+        X = check_array(X, ...) #TODO: Fill in `check_array` arguments
+        {%- else -%}
+        X, y = check_X_y(X, y, ...) #TODO: Fill in `check_X_y` arguments
+        {%- endif %}
+        
+        ...
+    
+        {%if linear %}
+        self.coef_ = ...   # TODO: Linear model coefficients
+        self.intercept_ = ...  # TODO: Linear model intercept
+        # `predict` method will follow from `coef_` and `intercept_`
+        {% endif %}
+        {%if "max_iter" in parameters %}self.max_iter = ...{% endif %}
+        {%if outlier %}self.offset_ = ...{% endif %}
+
+        return self
+
+    {% if transformer %}
+    def transform(self, X):
+        """Transform X.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            The data to transform.
+
+        Returns
+        -------
+        Transformed array.
+        """
+
+        check_is_fitted(self)
+        X = check_array(X, ...) # TODO: Fill in `check_array` arguments
+
+        ...
+
+        return ...
+
+    {% endif %}
+
+    {% if regressor %}
+    def transform(self, X):
+        """Transform X.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            The data to transform.
+
+        Returns
+        -------
+        Transformed array.
+        """
+
+        check_is_fitted(self)
+        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+
+        ...
+
+        return ...
+    {% endif %}
+
+    {% if outlier %}
+    def score_samples(self, X):
+
+        check_is_fitted(self)
+        X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+
+        ...  # TODO: Implement scoring function, `decision_function` and `predict` will follow
+
+        return ...
+
+    def decision_function(self, X):
+        return self.score_samples(X) - self.offset_
+
+    def predict(self, X):
+        preds = (self.decision_function(X) >= 0).astype(int)
+        preds[preds == 0] = -1
+        return preds
+    {% endif %}
+
+    
