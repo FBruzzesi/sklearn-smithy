@@ -6,17 +6,24 @@ CLI to forge scikit-learn compatible estimator templates with ease.
 
 Writing a scikit-learn compatible estimators might be harder than expected.
 
-While everyone knows about the `fit` and `predict`, there are a lot of other methods and attributes that might be expected from your estimator.
-
-This tool aims to help you with that.
-
-Not only that, but scikit-learn expects certain behaviours, methods and attributes from your estimator depending on:
+While everyone knows about the `fit` and `predict`, there are a lot of other behaviours, methods and attributes that scikit-learn might be expecting from your estimator. These depend on:
 
 - The type of estimator you're writing.
 - The signature of the estimator.
 - The signature of the `.fit(...)` method.
 
-This tool will generate the boilerplate code for you, so you can focus on the core logic implementation of your estimator, and not on the nitty-gritty details of the scikit-learn API.
+This tool aims to help you with that by asking you a few questions about your estimator, and then generating the boilerplate code for you, so that you can focus on the core implementation of the estimator, and not on the nitty-gritty details of the scikit-learn API.
+
+Once the core logic is implemented, the estimator should be ready to test against the _somewhat official_ [`parametrize_with_checks`](https://scikit-learn.org/dev/modules/generated/sklearn.utils.estimator_checks.parametrize_with_checks.html#sklearn.utils.estimator_checks.parametrize_with_checks) pytest compatible decorator:
+
+```py
+from sklearn.utils.estimator_checks import parametrize_with_checks
+
+@parametrize_with_checks([YourAwesomeRegressor, MoreAwesomeClassifier, EvenMoreAwesomeTransformer])
+def test_sklearn_compatible_estimator(estimator, check):
+    check(estimator)
+```
+
 
 ## Installation
 
