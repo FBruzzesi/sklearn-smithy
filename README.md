@@ -82,7 +82,7 @@ Finally, the following two questions will be prompt:
 │    --other-params                                           TEXT                                        List of optional parameters (comma-separated).                                                │
 │    --support-sample-weight    --no-support-sample-weight                                                Whether or not `.fit()` does support `sample_weight`. [default: no-support-sample-weight]     │
 │    --help                                                                                               Show this message and exit.                                                                   │
-╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯```
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ## Origin story
