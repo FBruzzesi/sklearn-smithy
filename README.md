@@ -6,7 +6,7 @@ CLI to forge scikit-learn compatible estimator templates with ease.
 
 Writing a scikit-learn compatible estimators might be harder than expected.
 
-While everyone knows about the `fit` and `predict`, there are a lot of other behaviours, methods and attributes that scikit-learn might be expecting from your estimator. These depend on:
+While everyone knows about the `fit` and `predict`, there are other behaviours, methods and attributes that scikit-learn might be expecting from your estimator. These depend on:
 
 - The type of estimator you're writing.
 - The signature of the estimator.
