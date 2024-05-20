@@ -1,6 +1,6 @@
-# scikit-learn-boilerplate
+# Scikit learn smithy
 
-CLI to generate scikit-learn compatible estimators with ease.
+CLI to forge scikit-learn compatible estimators with ease.
 
 ## Why
 

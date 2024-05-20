@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "scikit-learn-boilerplate"
+name = "sklearn-smithy"
 version = "0.1.0"
 
 license = {file = "LICENSE"}
@@ -12,10 +12,10 @@ requires-python = ">=3.10"
 authors = [{name = "Francesco Bruzzesi"}]
 
 dependencies = [
-    "typer",
-    "rich",
-    "jinja2",
-    "ruff",
+    "typer>=0.12.0",
+    "rich>=13.0.0",
+    "jinja2>=3.0.0",
+    "ruff>=0.4.0",
     "typing-extensions>=4.4.0; python_version < '3.11'",
 ]
 
@@ -29,11 +29,14 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.scripts]
+smith = "sksmithy.__main__:app"
+
 [tool.hatch.build.targets.sdist]
-only-include = ["skboilerplate"]
+only-include = ["sksmithy"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["skboilerplate"]
+packages = ["sksmithy"]
 
 [tool.ruff]
 line-length = 120
@@ -51,6 +54,7 @@ ignore = [
     "S607",
     "D100",
     "D104",
+    "D400",
     ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -69,4 +73,4 @@ docstring-code-format = true
 ignore_missing_imports = true
 
 [tool.coverage.run]
-source = ["skboilerplate/"]
+source = ["sksmithy/"]

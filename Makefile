@@ -1,4 +1,4 @@
-sources = skboilerplate tests
+sources = sksmithy tests
 
 clean-folders:
 	rm -rf __pycache__ */__pycache__ */**/__pycache__ \
