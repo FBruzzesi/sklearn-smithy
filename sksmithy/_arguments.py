@@ -26,21 +26,15 @@ required_params_arg = Annotated[
     str,
     Option(
         prompt="📜 Please list the required parameters (comma-separated)",
-        help=(
-            "List of [bold green]required[/bold green] parameters. "
-            "Must be comma-separated valid python variable names."
-        ),
+        help=("List of [bold green]required[/bold green] parameters (comma-separated)."),
         callback=args_callback,
     ),
 ]
 other_params_arg = Annotated[
     str,
     Option(
-        prompt="📑 Please list the other parameters (comma or space separated)",
-        help=(
-            "List of [bold green]optional[/bold green] parameters. "
-            "Must be comma-separated valid python variable names."
-        ),
+        prompt="📑 Please list the other parameters (comma separated)",
+        help=("List of [bold green]optional[/bold green] parameters (comma-separated)."),
         callback=args_callback,
     ),
 ]
@@ -48,7 +42,7 @@ other_params_arg = Annotated[
 support_sample_weight_arg = Annotated[
     bool,
     Option(
-        prompt="📶 Should the estimator `.fit()` method support `sample_weight`?",
-        help="Whether or not the estimator `.fit()` method should support the `sample_weight` argument",
+        prompt="📶 Does the `.fit()` method support `sample_weight`?",
+        help="Whether or not `.fit()` does support [bold green]`sample_weight`[/bold green].",
     ),
 ]

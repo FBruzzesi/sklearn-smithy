@@ -43,7 +43,7 @@ def parse_tags(tags: str) -> list[str]:
             msg = (
                 f"The following tags are not available: {unavailable_tags}."
                 "\nPlease check the documentation at https://scikit-learn.org/dev/developers/develop.html#estimator-tags"
-                " to know which values are avaiable."
+                " to know which values are available."
             )
             raise BadParameter(msg)
         return list_tag

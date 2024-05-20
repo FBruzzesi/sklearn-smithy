@@ -1,6 +1,5 @@
 import subprocess
 from importlib import resources
-from importlib.resources.abc import Traversable
 from pathlib import Path
 from typing import Final
 
@@ -24,7 +23,7 @@ app = typer.Typer(
 )
 
 
-TEMPLATE_PATH: Final[Traversable] = resources.files("sksmithy") / "template.py.jinja"
+TEMPLATE_PATH: Final[Path] = resources.files("sksmithy") / "template.py.jinja"  # type: ignore[assignment]
 
 
 @app.command()
@@ -57,7 +56,7 @@ def forge(
     Finally, the following two questions will be prompt:
 
     * if the estimator should have tags (To know more about tags, check the dedicated
-        [scikit-learn documentation](https://scikit-learn.org/dev/developers/develop.html#estimator-tags)
+        [scikit-learn documentation](https://scikit-learn.org/dev/developers/develop.html#estimator-tags))
 
     * in which file the class should be saved (default is `f'{name.lower()}.py'`)
     """
