@@ -1,10 +1,14 @@
-# Scikit learn smithy
+# Scikit-learn Smithy
 
-CLI to forge scikit-learn compatible estimators with ease.
+CLI to forge scikit-learn compatible estimator templates with ease.
 
 ## Why
 
-Writing a scikit-learn compatible estimator is a bit of a hassle. You need to write a lot of boilerplate code to get started. This tool aims to help you with that.
+Writing a scikit-learn compatible estimators might be harder than expected.
+
+While everyone knows about the `fit` and `predict`, there are a lot of other methods and attributes that might be expected from your estimator.
+
+This tool aims to help you with that.
 
 Not only that, but scikit-learn expects certain behaviours, methods and attributes from your estimator depending on:
 
@@ -12,15 +16,67 @@ Not only that, but scikit-learn expects certain behaviours, methods and attribut
 - The signature of the estimator.
 - The signature of the `.fit(...)` method.
 
-This tool will generate the boilerplate code for you, so you can focus on the implementation logic of your estimator, and not on the nitty-gritty details of the scikit-learn API.
-
-## Example
-
-TODO
+This tool will generate the boilerplate code for you, so you can focus on the core logic implementation of your estimator, and not on the nitty-gritty details of the scikit-learn API.
 
 ## Installation
 
-TODO
+As of today, this is work in progress 🚧 and not published to pypi, but it is possible to install it directly from github
+
+```bash
+python -m pip install git+https://github.com/FBruzzesi/sklearn-smithy.git
+```
+
+This will make the `smith` command available in your terminal.
+
+## Commands
+
+The `smith` entrypoint offers two commands:
+
+```bash
+smith --help
+```
+
+```terminal
+Usage: smith [OPTIONS] COMMAND [ARGS]...                                                                                                                          
+                
+Awesome CLI to generate scikit-learn estimator boilerplate code
+...
+╭─ Commands ──────────────────────────────────────────────────────────────────────────────╮
+│ forge     Asks a list of questions to generate a shiny new estimator ✨                │
+│ version   Display library version.                                                      │
+╰─────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+and as you can already guess, the `forge` command is the one that will generate the boilerplate code for you.
+
+```bash
+smith forge --help
+```
+
+```terminal
+Asks a list of questions to generate a shiny new estimator ✨
+
+Depending on the **estimator type** the additional information could be required:
+
+* if the estimator is linear (classifier or regression)
+* if the estimator has a `predict_proba` method (classifier or outlier detector)
+* is the estimator has a `decision_function` method (classifier only)
+
+Finally, the following two questions will be prompt:
+
+* if the estimator should have tags (To know more about tags, check the dedicated
+    [scikit-learn documentation](https://scikit-learn.org/dev/developers/develop.html#estimator-tags))
+* in which file the class should be saved (default is `f'{name.lower()}.py'`)
+                                                  
+╭─ Options ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ *  --name                                                   TEXT                                        name the estimator. [default: None] [required]                                                │
+│ *  --estimator-type                                         [classifier|outlier|regressor|transformer]  Estimator type. [default: None] [required]                                                    │
+│    --required-params                                        TEXT                                        List of required parameters (comma-separated).                                                │
+│    --other-params                                           TEXT                                        List of optional parameters (comma-separated).                                                │
+│    --support-sample-weight    --no-support-sample-weight                                                Whether or not `.fit()` does support `sample_weight`. [default: no-support-sample-weight]     │
+│    --help                                                                                               Show this message and exit.                                                                   │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯```
+```
 
 ## Origin story
 
