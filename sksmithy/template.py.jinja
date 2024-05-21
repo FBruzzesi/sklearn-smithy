@@ -28,21 +28,17 @@ class {{ name }}({{ mixin }}, {% if not linear %}BaseEstimator{% else %}LinearMo
         {% for param in required %}
         {{- param }},
         {% endfor -%}
-        {%- if others -%}
+        {%- if optional -%}
         *,
         {% endif -%}
-        {% for param in others %}
+        {% for param in optional %}
         {{- param }}=...,
         {% endfor -%}
         ):
 
-        {%for param in required -%}
+        {%for param in parameters -%}
         self.{{param}} = {{param}}
         {% endfor -%}
-        {%for param in others -%}
-        self.{{param}} = {{param}}
-        {% endfor -%}
-    
         {% endif %}
 
     def fit(self, X, y{% if estimator_type == 'transformer' %}=None{% endif %}{% if support_sample_weight %}, sample_weight=None{% endif %}):

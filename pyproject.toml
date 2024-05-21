@@ -29,6 +29,9 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.optional-dependencies]
+streamlit = ["streamlit>=1.34.0"]
+
 [project.scripts]
 smith = "sksmithy.__main__:app"
 

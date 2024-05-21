@@ -9,7 +9,7 @@ from jinja2 import Template
 from sksmithy._arguments import (
     estimator_type_arg,
     name_arg,
-    other_params_arg,
+    optional_params_arg,
     required_params_arg,
     support_sample_weight_arg,
 )
@@ -41,7 +41,7 @@ def forge(
     name: name_arg,
     estimator_type: estimator_type_arg,
     required_params: required_params_arg = "",
-    other_params: other_params_arg = "",
+    optional_params: optional_params_arg = "",
     support_sample_weight: support_sample_weight_arg = False,
 ) -> None:
     """Asks a list of questions to generate a shiny new estimator ✨
@@ -88,8 +88,8 @@ def forge(
     output_file = typer.prompt(OUTPUT_PROMPT, default=f"{name.lower()}.py")
 
     required = required_params.split(",") if required_params else []
-    other = other_params.split(",") if other_params else []
-    params = [*required, *other]
+    optional = optional_params.split(",") if optional_params else []
+    params = [*required, *optional]
 
     values = {
         "name": name,
@@ -98,7 +98,7 @@ def forge(
         "linear": linear,
         "support_sample_weight": support_sample_weight,
         "required": required,
-        "others": other,
+        "optional": optional,
         "parameters": params,
         "decision_function": decision_function,
         "predict_proba": predict_proba,
