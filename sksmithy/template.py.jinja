@@ -45,7 +45,7 @@ class {{ name }}({{ mixin }}, {% if not linear %}BaseEstimator{% else %}LinearMo
     
         {% endif %}
 
-    def fit(self, X, y{% if transformer %}=None{% endif %}{% if support_sample_weight %}, sample_weight=None{% endif %}):
+    def fit(self, X, y{% if estimator_type == 'transformer' %}=None{% endif %}{% if support_sample_weight %}, sample_weight=None{% endif %}):
         """
         Fit {{name}} estimator.
 
@@ -74,7 +74,7 @@ class {{ name }}({{ mixin }}, {% if not linear %}BaseEstimator{% else %}LinearMo
         """
 
         self.n_features_in_ = X.shape[1]
-        {%if transformer -%}
+        {%if estimator_type == 'transformer' -%}
         X = check_array(X, ...) #TODO: Fill in `check_array` arguments
         {%- else -%}
         X, y = check_X_y(X, y, ...) #TODO: Fill in `check_X_y` arguments
@@ -93,8 +93,8 @@ class {{ name }}({{ mixin }}, {% if not linear %}BaseEstimator{% else %}LinearMo
         self.coef_ = ...
         self.intercept_ = ...
         {%- endif %}
-        {% if "max_iter" in parameters -%}self.n_iter_ = ...{%- endif %}
-        {% if outlier -%}self.offset_ = ...{%- endif %}
+        {% if 'max_iter' in parameters -%}self.n_iter_ = ...{%- endif %}
+        {% if estimator_type=='outlier' -%}self.offset_ = ...{%- endif %}
 
         return self
 
@@ -181,7 +181,7 @@ class {{ name }}({{ mixin }}, {% if not linear %}BaseEstimator{% else %}LinearMo
         return preds
     {%- endif %}
 
-    {% if (estimator_type == 'classifier' and decision_function == False) or estimator_type=='regression' %}
+    {% if (estimator_type == 'classifier' and decision_function == False) or estimator_type=='regressor' %}
     def predict(self, X):
         """Predict X.
 
