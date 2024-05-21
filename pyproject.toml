@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sklearn-smithy"
-version = "0.0.1"
+version = "0.0.2"
 
 license = {file = "LICENSE"}
 readme = "README.md"
@@ -28,6 +28,9 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
+
+[project.optional-dependencies]
+streamlit = ["streamlit>=1.34.0"]
 
 [project.scripts]
 smith = "sksmithy.__main__:app"

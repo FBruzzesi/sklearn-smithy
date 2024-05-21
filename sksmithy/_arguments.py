@@ -31,7 +31,7 @@ required_params_arg = Annotated[
         callback=args_callback,
     ),
 ]
-other_params_arg = Annotated[
+optional_params_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_OPTIONAL,
@@ -40,7 +40,7 @@ other_params_arg = Annotated[
     ),
 ]
 
-support_sample_weight_arg = Annotated[
+sample_weight_arg = Annotated[
     bool,
     Option(
         prompt=PROMPT_SAMPLE_WEIGHT,
