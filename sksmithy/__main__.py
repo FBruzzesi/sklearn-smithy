@@ -1,30 +1,24 @@
-import subprocess
-from importlib import resources
 from pathlib import Path
-from typing import Final
 
 import typer
-from jinja2 import Template
 
 from sksmithy._arguments import (
     estimator_type_arg,
     name_arg,
     optional_params_arg,
     required_params_arg,
-    support_sample_weight_arg,
+    sample_weight_arg,
 )
 from sksmithy._callbacks import parse_tags
 from sksmithy._logger import console
 from sksmithy._models import EstimatorType
-from sksmithy._prompts import OUTPUT_PROMPT, PROMPT_DECISION_FUNCTION, PROMPT_LINEAR, PROMPT_PREDICT_PROBA, PROMPT_TAGS
+from sksmithy._prompts import PROMPT_DECISION_FUNCTION, PROMPT_LINEAR, PROMPT_OUTPUT, PROMPT_PREDICT_PROBA, PROMPT_TAGS
+from sksmithy._utils import render_template
 
 app = typer.Typer(
     help="Awesome CLI to generate scikit-learn estimator boilerplate code",
     rich_markup_mode="rich",
 )
-
-
-TEMPLATE_PATH: Final[Path] = resources.files("sksmithy") / "template.py.jinja"  # type: ignore[assignment]
 
 
 @app.command()
@@ -42,7 +36,7 @@ def forge(
     estimator_type: estimator_type_arg,
     required_params: required_params_arg = "",
     optional_params: optional_params_arg = "",
-    support_sample_weight: support_sample_weight_arg = False,
+    sample_weight: sample_weight_arg = False,
 ) -> None:
     """Asks a list of questions to generate a shiny new estimator ✨
 
@@ -85,37 +79,29 @@ def forge(
     tags = typer.prompt(PROMPT_TAGS, default="")
     tags = parse_tags(tags)
 
-    output_file = typer.prompt(OUTPUT_PROMPT, default=f"{name.lower()}.py")
+    output_file = typer.prompt(PROMPT_OUTPUT, default=f"{name.lower()}.py")
 
     required = required_params.split(",") if required_params else []
     optional = optional_params.split(",") if optional_params else []
-    params = [*required, *optional]
 
-    values = {
-        "name": name,
-        "estimator_type": estimator_type.value,
-        "mixin": estimator_type.name,
-        "linear": linear,
-        "support_sample_weight": support_sample_weight,
-        "required": required,
-        "optional": optional,
-        "parameters": params,
-        "decision_function": decision_function,
-        "predict_proba": predict_proba,
-        "tags": tags,
-    }
-
-    with TEMPLATE_PATH.open(mode="r") as stream:
-        template = Template(stream.read()).render(values)
+    forged_template = render_template(
+        name=name,
+        estimator_type=estimator_type,
+        required=required,
+        optional=optional,
+        linear=linear,
+        sample_weight=sample_weight,
+        predict_proba=predict_proba,
+        decision_function=decision_function,
+        tags=tags,
+    )
 
     try:
-        formatted = subprocess.check_output(["ruff", "format", "-"], input=template, encoding="utf-8")
-
         destination_file = Path(output_file)
         destination_file.parent.mkdir(parents=True, exist_ok=True)
 
         with destination_file.open(mode="w") as destination:
-            destination.write(formatted)
+            destination.write(forged_template)
 
         console.print(f"Template forged at {destination_file}", style="good")
 

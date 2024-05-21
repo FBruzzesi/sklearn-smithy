@@ -15,4 +15,4 @@ PROMPT_TAGS: Final[str] = (
     "https://scikit-learn.org/dev/developers/develop.html#estimator-tags"
 )
 
-OUTPUT_PROMPT: Final[str] = "📂 Where would you like to save the class?"
+PROMPT_OUTPUT: Final[str] = "📂 Where would you like to save the class?"

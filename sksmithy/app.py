@@ -1,10 +1,20 @@
 # streamlit run sksmithy/app.py
-
 import re
+import time
 from importlib.metadata import version
 
 from sksmithy._models import EstimatorType
-from sksmithy._prompts import PROMPT_ESTIMATOR, PROMPT_NAME, PROMPT_OPTIONAL, PROMPT_REQUIRED
+from sksmithy._prompts import (
+    PROMPT_DECISION_FUNCTION,
+    PROMPT_ESTIMATOR,
+    PROMPT_LINEAR,
+    PROMPT_NAME,
+    PROMPT_OPTIONAL,
+    PROMPT_PREDICT_PROBA,
+    PROMPT_REQUIRED,
+    PROMPT_SAMPLE_WEIGHT,
+)
+from sksmithy._utils import render_template
 
 if (st_version := version("streamlit")) and tuple(int(re.sub(r"\D", "", str(v))) for v in st_version.split(".")) < (
     1,
@@ -22,7 +32,7 @@ else:  # pragma: no cover
 
 st.set_page_config(
     page_title="Smithy",
-    page_icon="🔨",
+    page_icon="⚒️",
     layout="wide",
     menu_items={
         "Get Help": "https://github.com/FBruzzesi/sklearn-smithy",
@@ -31,12 +41,12 @@ st.set_page_config(
     },
 )
 
-st.title("Scikit-learn Smithy 🔨")
+st.title("Scikit-learn Smithy ⚒️")
 st.markdown("## Forge your own scikit-learn compatible estimator")
 
 with st.sidebar:
     st.markdown("""
-        # Guide
+        # Why ❓
 
         Writing a scikit-learn compatible estimators might be harder than expected.
 
@@ -55,6 +65,12 @@ with st.sidebar:
         [`parametrize_with_checks`](https://scikit-learn.org/dev/modules/generated/sklearn.utils.estimator_checks.parametrize_with_checks.html#sklearn.utils.estimator_checks.parametrize_with_checks)
         pytest compatible decorator.
     """)
+
+estimator_type = None
+sample_weights = False
+linear = False
+predict_proba = False
+decision_function = False
 
 with st.container():
     c11, c12 = st.columns(2)
@@ -93,6 +109,8 @@ with st.container():
             if len(invalid_required) > 0:
                 msg_invalid_required = f"The following parameters are invalid python identifiers: {invalid_required}"
                 st.error(msg_invalid_required)
+        else:
+            required = []
 
     with c22:
         optional_params = st.text_input(label=PROMPT_OPTIONAL, placeholder="mu,sigma")
@@ -104,30 +122,76 @@ with st.container():
             if len(invalid_optional) > 0:
                 msg_invalid_optional = f"The following parameters are invalid python identifiers: {invalid_optional}"
                 st.error(msg_invalid_optional)
+        else:
+            optional = []
 
 
 with st.container():
-    if estimator_type:
-        match estimator_type:
-            case EstimatorType.ClassifierMixin | EstimatorType.RegressorMixin:
-                linear = ...  # PROMPT_LINEAR
-            case _:
-                linear = False
+    c31, c32 = st.columns(2)
 
-        # Check if supports predict_proba
-        match estimator_type:
-            case EstimatorType.ClassifierMixin | EstimatorType.OutlierMixin:
-                predict_proba = ...  # PROMPT_PREDICT_PROBA
-            case _:
-                predict_proba = False
+    with c31:
+        sample_weight = st.toggle(PROMPT_SAMPLE_WEIGHT)
+    with c32:
+        linear = st.toggle(
+            label=PROMPT_LINEAR,
+            disabled=(estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.RegressorMixin}),
+            help="Available only if estimator is `Classifier` or `Regressor`",
+        )
 
-        # Check if supports decision_function
-        match estimator_type:
-            case EstimatorType.ClassifierMixin:
-                decision_function = ...  # PROMPT_DECISION_FUNCTION
-            case _:
-                decision_function = False
+with st.container():
+    c41, c42 = st.columns(2)
+    with c41:
+        predict_proba = st.toggle(
+            label=PROMPT_PREDICT_PROBA,
+            disabled=(estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.OutlierMixin}),
+            help="Available only if estimator is `Classifier` or `Outlier`",
+        )
+    with c42:
+        decision_function = st.toggle(
+            label=PROMPT_DECISION_FUNCTION,
+            disabled=(estimator_type != EstimatorType.ClassifierMixin),
+            help="Available only if estimator is `Classifier`",
+        )
 
-# with st.container():
-#     tags = typer.prompt(PROMPT_TAGS, default="")
-#     tags = parse_tags(tags)
+st.write("#")  # Empty space hack
+
+with st.container():
+    _, c52, _ = st.columns([2, 1, 2])
+
+    with c52:
+        forge_btn = (
+            st.button(
+                label="Time to forge 🛠️",
+                type="primary",
+                disabled=(name is None) or (estimator_type is None),
+            )
+            or False
+        )
+
+with st.container():
+    if forge_btn:
+        st.toast("Request submitted!")
+        progress_text = "Forging in progress ..."
+        progress_bar = st.progress(0, text=progress_text)
+        # Consider using status component instead
+        # https://docs.streamlit.io/develop/api-reference/status/st.status
+
+        for percent_complete in range(100):
+            time.sleep(0.002)
+            progress_bar.progress(percent_complete + 1, text=progress_text)
+
+        forged_template = render_template(
+            name=name,
+            estimator_type=estimator_type,
+            required=required,
+            optional=optional,
+            linear=linear,
+            sample_weight=sample_weight,
+            predict_proba=predict_proba,
+            decision_function=decision_function,
+        )
+
+        st.code(forged_template, language="python", line_numbers=True)
+
+        time.sleep(1.0)
+        progress_bar.empty()
