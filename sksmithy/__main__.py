@@ -16,6 +16,7 @@ from sksmithy._arguments import (
 from sksmithy._callbacks import parse_tags
 from sksmithy._logger import console
 from sksmithy._models import EstimatorType
+from sksmithy._prompts import OUTPUT_PROMPT, PROMPT_DECISION_FUNCTION, PROMPT_LINEAR, PROMPT_PREDICT_PROBA, PROMPT_TAGS
 
 app = typer.Typer(
     help="Awesome CLI to generate scikit-learn estimator boilerplate code",
@@ -63,43 +64,38 @@ def forge(
     # Check if linear
     match estimator_type:
         case EstimatorType.ClassifierMixin | EstimatorType.RegressorMixin:
-            is_linear = typer.confirm("📏 Is the estimator linear?")
+            linear = typer.confirm(PROMPT_LINEAR)
         case _:
-            is_linear = False
+            linear = False
 
     # Check if supports predict_proba
     match estimator_type:
         case EstimatorType.ClassifierMixin | EstimatorType.OutlierMixin:
-            predict_proba = typer.confirm("🎲 Should the estimator have a `predict_proba` method?")
+            predict_proba = typer.confirm(PROMPT_PREDICT_PROBA)
         case _:
             predict_proba = False
 
     # Check if supports decision_function
     match estimator_type:
         case EstimatorType.ClassifierMixin:
-            decision_function = typer.confirm("❓ Should the estimator have a `decision_function` method?")
+            decision_function = typer.confirm(PROMPT_DECISION_FUNCTION)
         case _:
             decision_function = False
 
-    tags = typer.prompt(
-        "🧪 We are almost there... Are there any tag you want to add? (comma or space separated)\n"
-        "To know more about tags, check the documentation at:\n"
-        "https://scikit-learn.org/dev/developers/develop.html#estimator-tags",
-        default="",
-    )
+    tags = typer.prompt(PROMPT_TAGS, default="")
     tags = parse_tags(tags)
 
-    output_file = typer.prompt("📂 Where would you like to save the class?", default=f"{name.lower()}.py")
+    output_file = typer.prompt(OUTPUT_PROMPT, default=f"{name.lower()}.py")
 
-    required = required_params.split(",")
-    other = other_params.split(",")
+    required = required_params.split(",") if required_params else []
+    other = other_params.split(",") if other_params else []
     params = [*required, *other]
 
     values = {
         "name": name,
         "estimator_type": estimator_type.value,
         "mixin": estimator_type.name,
-        "linear": is_linear,
+        "linear": linear,
         "support_sample_weight": support_sample_weight,
         "required": required,
         "others": other,
@@ -110,16 +106,16 @@ def forge(
     }
 
     with TEMPLATE_PATH.open(mode="r") as stream:
-        template = Template(stream.read())
+        template = Template(stream.read()).render(values)
 
     try:
+        formatted = subprocess.check_output(["ruff", "format", "-"], input=template, encoding="utf-8")
+
         destination_file = Path(output_file)
         destination_file.parent.mkdir(parents=True, exist_ok=True)
 
         with destination_file.open(mode="w") as destination:
-            destination.write(template.render(values))
-
-        subprocess.run(["ruff", "format", str(destination_file), "-q"], check=True)
+            destination.write(formatted)
 
         console.print(f"Template forged at {destination_file}", style="good")
 
