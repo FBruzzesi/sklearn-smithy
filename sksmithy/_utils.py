@@ -48,7 +48,7 @@ def render_template(
         "optional": optional,
         "parameters": [*required, *optional],
         "linear": linear,
-        "support_sample_weight": sample_weight,
+        "sample_weight": sample_weight,
         "predict_proba": predict_proba,
         "decision_function": decision_function,
         "tags": tags,

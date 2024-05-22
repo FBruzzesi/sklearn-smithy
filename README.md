@@ -1,6 +1,6 @@
 # Scikit-learn Smithy
 
-CLI to forge scikit-learn compatible estimator templates with ease.
+A CLI to forge scikit-learn compatible estimator templates with ease.
 
 ## Why
 
@@ -24,13 +24,16 @@ def test_sklearn_compatible_estimator(estimator, check):
     check(estimator)
 ```
 
+## Web UI
+
+The tool made it into a [web ui](https://sklearn-smithy.streamlit.app/) powered by streamlit, so that there is no need to install anything locally to try it out.
 
 ## Installation
 
-As of today, this is work in progress 🚧 and not published to pypi, but it is possible to install it directly from github
+Suggested to install it directly from pypi:
 
 ```bash
-python -m pip install git+https://github.com/FBruzzesi/sklearn-smithy.git
+python -m pip install sklearn-smithy
 ```
 
 This will make the `smith` command available in your terminal.

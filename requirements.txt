@@ -1,4 +1,3 @@
-streamlit>=1.34.0
-jinja2>=3.0.0
-ruff>=0.4.0
+# Used by streamlit deployment
 -e .
+streamlit>=1.34.0
