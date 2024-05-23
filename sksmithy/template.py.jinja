@@ -124,6 +124,10 @@ class {{ name }}(
         check_is_fitted(self)
         X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
 
+        if X.shape[1] != self.n_features_in_:
+            msg = f"X has {X.shape[1]} features but the estimator was fitted on {self.n_features_in_} features."
+            raise ValueError(msg)
+
         y_scores = ... # TODO: Implement decision_function logic
 
         return y_scores
@@ -166,6 +170,10 @@ class {{ name }}(
         check_is_fitted(self)
         X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
 
+        if X.shape[1] != self.n_features_in_:
+            msg = f"X has {X.shape[1]} features but the estimator was fitted on {self.n_features_in_} features."
+            raise ValueError(msg)
+
         y_proba = ... # TODO: Implement predict_proba logic
 
         return y_proba
@@ -176,6 +184,10 @@ class {{ name }}(
 
         check_is_fitted(self)
         X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+        
+        if X.shape[1] != self.n_features_in_:
+            msg = f"X has {X.shape[1]} features but the estimator was fitted on {self.n_features_in_} features."
+            raise ValueError(msg)
 
         ...  # TODO: Implement scoring function, `decision_function` and `predict` will follow
 
@@ -206,6 +218,10 @@ class {{ name }}(
 
         check_is_fitted(self)
         X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
+        
+        if X.shape[1] != self.n_features_in_:
+            msg = f"X has {X.shape[1]} features but the estimator was fitted on {self.n_features_in_} features."
+            raise ValueError(msg)
 
         y_pred = ... # TODO: Implement predict logic
 
@@ -228,6 +244,10 @@ class {{ name }}(
 
         check_is_fitted(self)
         X = check_array(X, ...) # TODO: Fill in `check_array` arguments
+        
+        if X.shape[1] != self.n_features_in_:
+            msg = f"X has {X.shape[1]} features but the estimator was fitted on {self.n_features_in_} features."
+            raise ValueError(msg)
 
         X_ts = ...  # TODO: Implement transform logic
 
@@ -242,3 +262,10 @@ class {{ name }}(
             {% endfor -%}
             }
     {%- endif %}
+
+    {% if estimator_type == 'classifier' %}
+    @property
+    def n_classes_(self):
+        """Number of classes."""
+        return len(self.classes_)
+    {% endif %}
