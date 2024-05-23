@@ -55,6 +55,14 @@ def forge(
 
     * in which file the class should be saved (default is `f'{name.lower()}.py'`)
     """
+    required = required_params.split(",") if required_params else []
+    optional = optional_params.split(",") if optional_params else []
+
+    duplicated_params = set(required).intersection(set(optional))
+    if duplicated_params:
+        msg_duplicated_params = f"The following parameters are duplicated: {duplicated_params}"
+        raise typer.BadParameter(msg_duplicated_params)
+
     # Check if linear
     match estimator_type:
         case EstimatorType.ClassifierMixin | EstimatorType.RegressorMixin:
@@ -80,9 +88,6 @@ def forge(
     tags = parse_tags(tags)
 
     output_file = typer.prompt(PROMPT_OUTPUT, default=f"{name.lower()}.py")
-
-    required = required_params.split(",") if required_params else []
-    optional = optional_params.split(",") if optional_params else []
 
     forged_template = render_template(
         name=name,

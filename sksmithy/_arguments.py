@@ -27,7 +27,7 @@ required_params_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_REQUIRED,
-        help=("List of [bold green]required[/bold green] parameters (comma-separated)."),
+        help="List of [bold green]required[/bold green] parameters (comma-separated).",
         callback=args_callback,
     ),
 ]
@@ -35,7 +35,7 @@ optional_params_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_OPTIONAL,
-        help=("List of [bold green]optional[/bold green] parameters (comma-separated)."),
+        help="List of [bold green]optional[/bold green] parameters (comma-separated).",
         callback=args_callback,
     ),
 ]

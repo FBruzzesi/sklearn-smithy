@@ -12,11 +12,11 @@ def name_callback(name: str) -> str:
     kw = iskeyword(name)
 
     if not valid:
-        msg = f"{name} is not a valid class name in python"
+        msg = f"{name} is not a valid class name in python!"
         raise BadParameter(msg)
     if kw:
-        msg = f"{name} is a valid class name, but also a python keyword"
-        console.print(msg, style="bad")
+        msg = f"Careful: {name} is a python keyword!"
+        console.print(msg, style="warning")
 
     return name
 
@@ -30,6 +30,11 @@ def args_callback(params: str) -> str:
         if len(invalid) > 0:
             msg = f"The following parameters are invalid python identifiers: {invalid}"
             raise BadParameter(msg)
+
+        if len(set(param_list)) < len(param_list):
+            msg = "Found repeated parameter"
+            raise BadParameter(msg)
+
     return params
 
 

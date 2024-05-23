@@ -79,6 +79,10 @@ with st.container():
         name = st.text_input(
             label=PROMPT_NAME,
             placeholder="MightyEstimator",
+            help=(
+                "It should be a valid "
+                "[python identifier](https://docs.python.org/3/reference/lexical_analysis.html#identifiers)"
+            ),
         )
 
         if name and not name.isidentifier():
@@ -100,30 +104,71 @@ with st.container():
     c21, c22 = st.columns(2)
 
     with c21:
-        required_params = st.text_input(label=PROMPT_REQUIRED, placeholder="alpha,beta")
+        required_params = st.text_input(
+            label=PROMPT_REQUIRED,
+            placeholder="alpha,beta",
+            help=(
+                "It should be a sequence of comma-separated "
+                "[python identifiers](https://docs.python.org/3/reference/lexical_analysis.html#identifiers)"
+            ),
+        )
 
         if required_params:
             required = required_params.split(",")
             invalid_required = tuple(p for p in required if not p.isidentifier())
 
             if len(invalid_required) > 0:
-                msg_invalid_required = f"The following parameters are invalid python identifiers: {invalid_required}"
+                msg_invalid_required = (
+                    "The following required parameters are invalid "
+                    "[python identifiers](https://docs.python.org/3/reference/lexical_analysis.html#identifiers): "
+                    f"{invalid_required}"
+                )
                 st.error(msg_invalid_required)
+
+            if repeated_required := len(set(required)) < len(required):
+                msg_repeated_required = "Found repeated required parameters!"
+                st.error(msg_repeated_required)
+
         else:
             required = []
+            invalid_required = False
+            repeated_required = False
 
     with c22:
-        optional_params = st.text_input(label=PROMPT_OPTIONAL, placeholder="mu,sigma")
+        optional_params = st.text_input(
+            label=PROMPT_OPTIONAL,
+            placeholder="mu,sigma",
+            help=(
+                "It should be a sequence of comma-separated "
+                "[python identifiers](https://docs.python.org/3/reference/lexical_analysis.html#identifiers)"
+            ),
+        )
 
         if optional_params:
             optional = optional_params.split(",")
             invalid_optional = tuple(p for p in optional if not p.isidentifier())
 
             if len(invalid_optional) > 0:
-                msg_invalid_optional = f"The following parameters are invalid python identifiers: {invalid_optional}"
+                msg_invalid_optional = (
+                    "The following optional parameters are invalid "
+                    "[python identifiers](https://docs.python.org/3/reference/lexical_analysis.html#identifiers): "
+                    f"{invalid_optional}"
+                )
                 st.error(msg_invalid_optional)
+
+            if repeated_optional := len(set(optional)) < len(optional):
+                msg_repeated_optional = "Found repeated optional parameters!"
+                st.error(msg_repeated_optional)
+
         else:
             optional = []
+            invalid_optional = False
+            repeated_optional = False
+
+    duplicated_params = set(required).intersection(set(optional))
+    if duplicated_params:
+        msg_duplicated_params = f"The following parameters are duplicated: {duplicated_params}"
+        st.error(msg_duplicated_params)
 
 
 with st.container():
@@ -163,7 +208,8 @@ with st.container():
             st.button(
                 label="Time to forge 🛠️",
                 type="primary",
-                disabled=(name is None) or (estimator_type is None),
+                disabled=((name is None) or (estimator_type is None))
+                or any([invalid_required, invalid_optional, repeated_required, repeated_optional, duplicated_params]),
             )
             or False
         )
