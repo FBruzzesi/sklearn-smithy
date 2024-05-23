@@ -92,7 +92,7 @@ with st.container():
     with c12:
         estimator = st.selectbox(
             label=PROMPT_ESTIMATOR,
-            options=("classifier", "regressor", "outlier", "transformer"),
+            options=tuple(e.value for e in EstimatorType),
             format_func=lambda x: x.capitalize(),
             index=None,
         )
@@ -175,7 +175,10 @@ with st.container():
     c31, c32 = st.columns(2)
 
     with c31:
-        sample_weight = st.toggle(PROMPT_SAMPLE_WEIGHT)
+        sample_weight = st.toggle(
+            PROMPT_SAMPLE_WEIGHT,
+            help="Glossary: [sample_weight](https://scikit-learn.org/dev/glossary.html#term-sample_weight)",
+        )
     with c32:
         linear = st.toggle(
             label=PROMPT_LINEAR,
@@ -189,13 +192,19 @@ with st.container():
         predict_proba = st.toggle(
             label=PROMPT_PREDICT_PROBA,
             disabled=(estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.OutlierMixin}),
-            help="Available only if estimator is `Classifier` or `Outlier`",
+            help=(
+                "Available only if estimator is `Classifier` or `Outlier`. "
+                "Glossary: [predict_proba](https://scikit-learn.org/dev/glossary.html#term-predict_proba)"
+            ),
         )
     with c42:
         decision_function = st.toggle(
             label=PROMPT_DECISION_FUNCTION,
             disabled=(estimator_type != EstimatorType.ClassifierMixin),
-            help="Available only if estimator is `Classifier`",
+            help=(
+                "Available only if estimator is `Classifier`"
+                "Glossary: [decision_function](https://scikit-learn.org/dev/glossary.html#term-decision_function)"
+            ),
         )
 
 st.write("#")  # Empty space hack
@@ -208,8 +217,17 @@ with st.container():
             st.button(
                 label="Time to forge 🛠️",
                 type="primary",
-                disabled=((name is None) or (estimator_type is None))
-                or any([invalid_required, invalid_optional, repeated_required, repeated_optional, duplicated_params]),
+                disabled=any(
+                    [
+                        name is None,
+                        estimator_type is None,
+                        invalid_required,
+                        invalid_optional,
+                        repeated_required,
+                        repeated_optional,
+                        duplicated_params,
+                    ]
+                ),
             )
             or False
         )
@@ -223,8 +241,10 @@ with st.container():
         # https://docs.streamlit.io/develop/api-reference/status/st.status
 
         for percent_complete in range(100):
-            time.sleep(0.002)
+            time.sleep(0.0025)
             progress_bar.progress(percent_complete + 1, text=progress_text)
+
+        time.sleep(0.1)
 
         forged_template = render_template(
             name=name,
