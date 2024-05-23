@@ -72,10 +72,16 @@ linear = False
 predict_proba = False
 decision_function = False
 
-with st.container():
+if "forged_template" not in st.session_state:
+    st.session_state["forged_template"] = ""
+
+if "forge_counter" not in st.session_state:
+    st.session_state["forge_counter"] = 0
+
+with st.container():  # name and type
     c11, c12 = st.columns(2)
 
-    with c11:
+    with c11:  # name
         name = st.text_input(
             label=PROMPT_NAME,
             placeholder="MightyEstimator",
@@ -89,7 +95,7 @@ with st.container():
             msg_invalid_name = f"`{name}` is not a valid python class name"
             st.error(msg_invalid_name)
 
-    with c12:
+    with c12:  # type
         estimator = st.selectbox(
             label=PROMPT_ESTIMATOR,
             options=tuple(e.value for e in EstimatorType),
@@ -100,10 +106,10 @@ with st.container():
         if estimator:
             estimator_type = EstimatorType(estimator)
 
-with st.container():
+with st.container():  # params
     c21, c22 = st.columns(2)
 
-    with c21:
+    with c21:  # required
         required_params = st.text_input(
             label=PROMPT_REQUIRED,
             placeholder="alpha,beta",
@@ -134,7 +140,7 @@ with st.container():
             invalid_required = False
             repeated_required = False
 
-    with c22:
+    with c22:  # optional
         optional_params = st.text_input(
             label=PROMPT_OPTIONAL,
             placeholder="mu,sigma",
@@ -171,24 +177,25 @@ with st.container():
         st.error(msg_duplicated_params)
 
 
-with st.container():
+with st.container():  # sample_weight and linear
     c31, c32 = st.columns(2)
 
-    with c31:
+    with c31:  # sample_weight
         sample_weight = st.toggle(
             PROMPT_SAMPLE_WEIGHT,
             help="Glossary: [sample_weight](https://scikit-learn.org/dev/glossary.html#term-sample_weight)",
         )
-    with c32:
+    with c32:  # linear
         linear = st.toggle(
             label=PROMPT_LINEAR,
             disabled=(estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.RegressorMixin}),
             help="Available only if estimator is `Classifier` or `Regressor`",
         )
 
-with st.container():
+with st.container():  # predict_proba and decision_function
     c41, c42 = st.columns(2)
-    with c41:
+
+    with c41:  # predict_proba
         predict_proba = st.toggle(
             label=PROMPT_PREDICT_PROBA,
             disabled=(estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.OutlierMixin}),
@@ -197,7 +204,8 @@ with st.container():
                 "Glossary: [predict_proba](https://scikit-learn.org/dev/glossary.html#term-predict_proba)"
             ),
         )
-    with c42:
+
+    with c42:  # decision_function
         decision_function = st.toggle(
             label=PROMPT_DECISION_FUNCTION,
             disabled=(estimator_type != EstimatorType.ClassifierMixin),
@@ -207,33 +215,43 @@ with st.container():
             ),
         )
 
-st.write("#")  # Empty space hack
+st.write("#")  # empty space hack
 
-with st.container():
-    _, c52, _ = st.columns([2, 1, 2])
+with st.container():  # forge button
+    _, c52, _, c54 = st.columns([2, 1, 1, 1])
 
     with c52:
-        forge_btn = (
-            st.button(
-                label="Time to forge 🛠️",
-                type="primary",
-                disabled=any(
-                    [
-                        name is None,
-                        estimator_type is None,
-                        invalid_required,
-                        invalid_optional,
-                        repeated_required,
-                        repeated_optional,
-                        duplicated_params,
-                    ]
-                ),
-            )
-            or False
+        forge_btn = st.button(
+            label="Time to forge 🛠️",
+            type="primary",
+            disabled=any(
+                [
+                    name is None,
+                    estimator_type is None,
+                    invalid_required,
+                    invalid_optional,
+                    repeated_required,
+                    repeated_optional,
+                    duplicated_params,
+                ]
+            ),
         )
+        if forge_btn:
+            st.session_state["forge_counter"] += 1
 
-with st.container():
-    if forge_btn:
+        with c54, st.popover(label="Download", disabled=not st.session_state["forge_counter"]):
+            file_name = st.text_input(label="Select filename", value=f"{name.lower()}.py")
+
+            download_btn = st.download_button(
+                label="Confirm",
+                type="primary",
+                data=st.session_state["forged_template"],
+                file_name=file_name,
+            )
+
+
+with st.container():  # code output
+    if st.session_state["forge_counter"]:
         st.toast("Request submitted!")
         progress_text = "Forging in progress ..."
         progress_bar = st.progress(0, text=progress_text)
@@ -246,7 +264,7 @@ with st.container():
 
         time.sleep(0.1)
 
-        forged_template = render_template(
+        st.session_state["forged_template"] = render_template(
             name=name,
             estimator_type=estimator_type,
             required=required,
@@ -257,7 +275,7 @@ with st.container():
             decision_function=decision_function,
         )
 
-        st.code(forged_template, language="python", line_numbers=True)
+        st.code(st.session_state["forged_template"], language="python", line_numbers=True)
 
         time.sleep(1.0)
         progress_bar.empty()
