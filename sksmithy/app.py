@@ -176,7 +176,6 @@ with st.container():  # params
         msg_duplicated_params = f"The following parameters are duplicated: {duplicated_params}"
         st.error(msg_duplicated_params)
 
-
 with st.container():  # sample_weight and linear
     c31, c32 = st.columns(2)
 
@@ -251,7 +250,7 @@ with st.container():  # forge button
 
 
 with st.container():  # code output
-    if st.session_state["forge_counter"]:
+    if forge_btn:
         st.toast("Request submitted!")
         progress_text = "Forging in progress ..."
         progress_bar = st.progress(0, text=progress_text)
@@ -274,8 +273,8 @@ with st.container():  # code output
             predict_proba=predict_proba,
             decision_function=decision_function,
         )
-
-        st.code(st.session_state["forged_template"], language="python", line_numbers=True)
-
         time.sleep(1.0)
         progress_bar.empty()
+
+    if st.session_state["forge_counter"]:
+        st.code(st.session_state["forged_template"], language="python", line_numbers=True)
