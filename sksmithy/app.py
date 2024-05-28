@@ -258,10 +258,8 @@ with st.container():  # code output
         # https://docs.streamlit.io/develop/api-reference/status/st.status
 
         for percent_complete in range(100):
-            time.sleep(0.0025)
+            time.sleep(0.002)
             progress_bar.progress(percent_complete + 1, text=progress_text)
-
-        time.sleep(0.1)
 
         st.session_state["forged_template"] = render_template(
             name=name,
@@ -273,7 +271,7 @@ with st.container():  # code output
             predict_proba=predict_proba,
             decision_function=decision_function,
         )
-        time.sleep(1.0)
+        time.sleep(0.2)
         progress_bar.empty()
 
     if st.session_state["forge_counter"]:

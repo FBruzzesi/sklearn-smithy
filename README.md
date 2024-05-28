@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/FBruzzesi/sklearn-smithy/main/docs/img/sksmith-logo.svg" width=185 height=185 align="right">
+
 # Scikit-learn Smithy
 
 A CLI to forge scikit-learn compatible estimator templates with ease.
