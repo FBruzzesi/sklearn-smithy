@@ -8,6 +8,7 @@ class EstimatorType(str, Enum):
     OutlierMixin = "outlier"
     RegressorMixin = "regressor"
     TransformerMixin = "transformer"
+    ClusterMixin = "cluster"
 
 
 class TagType(str, Enum):
