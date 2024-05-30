@@ -3,15 +3,17 @@ from keyword import iskeyword
 from sksmithy._models import TagType
 
 
-def name_parser(name: str) -> tuple[str, str]:
+def name_parser(name: str | None) -> tuple[str, str]:
     """Validate that `name` is a valid python class name."""
-    is_valid = name.isidentifier()
-    msg = f"`{name}` is not a valid python class name!" if not is_valid else ""
+    if name:
+        is_valid = name.isidentifier()
+        msg = f"`{name}` is not a valid python class name!" if not is_valid else ""
 
-    is_kw = iskeyword(name)
-    msg = f"`{name}` is a python reserved keyword!" if is_kw else ""
+        is_kw = iskeyword(name)
+        msg = f"`{name}` is a python reserved keyword!" if is_kw else ""
 
-    return name, msg
+        return name, msg
+    return "", "Name cannot be empty!"
 
 
 def params_parser(params: str | None) -> tuple[list[str], str]:
@@ -25,7 +27,7 @@ def params_parser(params: str | None) -> tuple[list[str], str]:
             return [], msg
 
         if len(set(param_list)) < len(param_list):
-            msg = "Found repeated parameter."
+            msg = "Found repeated parameters!"
             return [], msg
 
         return param_list, ""
@@ -39,7 +41,7 @@ def check_duplicates(required: list[str], optional: list[str]) -> str:
     return f"The following parameters are duplicated: {duplicated_params}" if duplicated_params else ""
 
 
-def tags_parser(tags: str) -> list[str]:
+def tags_parser(tags: str) -> tuple[list[str], str]:
     """Parse and validate `tags` by comparing with sklearn list."""
     if tags:
         list_tag = tags.split(",")

@@ -4,6 +4,7 @@ import time
 from importlib.metadata import version
 
 from sksmithy._models import EstimatorType
+from sksmithy._parsers import check_duplicates, name_parser, params_parser
 from sksmithy._prompts import (
     PROMPT_DECISION_FUNCTION,
     PROMPT_ESTIMATOR,
@@ -91,8 +92,9 @@ with st.container():  # name and type
             ),
         )
 
-        if name and not name.isidentifier():
-            msg_invalid_name = f"`{name}` is not a valid python class name"
+        name, msg_invalid_name = name_parser(name)
+
+        if msg_invalid_name:
             st.error(msg_invalid_name)
 
     with c12:  # type
@@ -119,26 +121,9 @@ with st.container():  # params
             ),
         )
 
-        if required_params:
-            required = required_params.split(",")
-            invalid_required = tuple(p for p in required if not p.isidentifier())
-
-            if len(invalid_required) > 0:
-                msg_invalid_required = (
-                    "The following required parameters are invalid "
-                    "[python identifiers](https://docs.python.org/3/reference/lexical_analysis.html#identifiers): "
-                    f"{invalid_required}"
-                )
-                st.error(msg_invalid_required)
-
-            if repeated_required := len(set(required)) < len(required):
-                msg_repeated_required = "Found repeated required parameters!"
-                st.error(msg_repeated_required)
-
-        else:
-            required = []
-            invalid_required = False
-            repeated_required = False
+        required, msg_invalid_required = params_parser(required_params)
+        if msg_invalid_required:
+            st.error(msg_invalid_required)
 
     with c22:  # optional
         optional_params = st.text_input(
@@ -150,30 +135,12 @@ with st.container():  # params
             ),
         )
 
-        if optional_params:
-            optional = optional_params.split(",")
-            invalid_optional = tuple(p for p in optional if not p.isidentifier())
+        optional, msg_invalid_optional = params_parser(optional_params)
+        if msg_invalid_optional:
+            st.error(msg_invalid_optional)
 
-            if len(invalid_optional) > 0:
-                msg_invalid_optional = (
-                    "The following optional parameters are invalid "
-                    "[python identifiers](https://docs.python.org/3/reference/lexical_analysis.html#identifiers): "
-                    f"{invalid_optional}"
-                )
-                st.error(msg_invalid_optional)
-
-            if repeated_optional := len(set(optional)) < len(optional):
-                msg_repeated_optional = "Found repeated optional parameters!"
-                st.error(msg_repeated_optional)
-
-        else:
-            optional = []
-            invalid_optional = False
-            repeated_optional = False
-
-    duplicated_params = set(required).intersection(set(optional))
-    if duplicated_params:
-        msg_duplicated_params = f"The following parameters are duplicated: {duplicated_params}"
+    msg_duplicated_params = check_duplicates(required, optional)
+    if msg_duplicated_params:
         st.error(msg_duplicated_params)
 
 with st.container():  # sample_weight and linear
@@ -225,13 +192,11 @@ with st.container():  # forge button
             type="primary",
             disabled=any(
                 [
-                    name is None,
+                    not name,
+                    msg_invalid_name,
                     estimator_type is None,
-                    invalid_required,
-                    invalid_optional,
-                    repeated_required,
-                    repeated_optional,
-                    duplicated_params,
+                    msg_invalid_required,
+                    msg_duplicated_params,
                 ]
             ),
         )
