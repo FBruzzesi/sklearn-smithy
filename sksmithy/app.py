@@ -67,7 +67,7 @@ with st.sidebar:
         pytest compatible decorator.
     """)
 
-estimator_type = None
+
 sample_weights = False
 linear = False
 predict_proba = False
@@ -107,6 +107,7 @@ with st.container():  # name and type
 
         if estimator:
             estimator_type = EstimatorType(estimator)
+
 
 with st.container():  # params
     c21, c22 = st.columns(2)
@@ -194,7 +195,7 @@ with st.container():  # forge button
                 [
                     not name,
                     msg_invalid_name,
-                    estimator_type is None,
+                    estimator is None,
                     msg_invalid_required,
                     msg_duplicated_params,
                 ]

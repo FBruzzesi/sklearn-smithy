@@ -86,8 +86,8 @@ def forge(
     forged_template = render_template(
         name=name,
         estimator_type=estimator_type,
-        required=required_params,
-        optional=optional_params,
+        required=required_params,  # type: ignore[arg-type]  # Callback actually transforms those into list[str]
+        optional=optional_params,  # type: ignore[arg-type]  # Callback actually transforms those into list[str]
         linear=linear,
         sample_weight=sample_weight,
         predict_proba=predict_proba,
