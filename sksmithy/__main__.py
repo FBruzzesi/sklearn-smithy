@@ -3,16 +3,18 @@ from pathlib import Path
 import typer
 
 from sksmithy._arguments import (
+    decision_function_arg,
     estimator_type_arg,
+    linear_arg,
     name_arg,
     optional_params_arg,
+    output_file_arg,
+    predict_proba_arg,
     required_params_arg,
     sample_weight_arg,
+    tags_arg,
 )
 from sksmithy._logger import console
-from sksmithy._models import EstimatorType
-from sksmithy._parsers import tags_parser
-from sksmithy._prompts import PROMPT_DECISION_FUNCTION, PROMPT_LINEAR, PROMPT_OUTPUT, PROMPT_PREDICT_PROBA, PROMPT_TAGS
 from sksmithy._utils import render_template
 
 app = typer.Typer(
@@ -37,6 +39,11 @@ def forge(
     required_params: required_params_arg = "",
     optional_params: optional_params_arg = "",
     sample_weight: sample_weight_arg = False,
+    linear: linear_arg = False,
+    predict_proba: predict_proba_arg = False,
+    decision_function: decision_function_arg = False,
+    tags: tags_arg = "",
+    output_file: output_file_arg = "",
 ) -> None:
     """Asks a list of questions to generate a shiny new estimator ✨
 
@@ -55,44 +62,17 @@ def forge(
 
     * in which file the class should be saved (default is `f'{name.lower()}.py'`)
     """
-    # Check if linear
-    match estimator_type:
-        case EstimatorType.ClassifierMixin | EstimatorType.RegressorMixin:
-            linear = typer.confirm(PROMPT_LINEAR)
-        case _:
-            linear = False
-
-    # Check if supports predict_proba
-    match estimator_type:
-        case EstimatorType.ClassifierMixin | EstimatorType.OutlierMixin:
-            predict_proba = typer.confirm(PROMPT_PREDICT_PROBA)
-        case _:
-            predict_proba = False
-
-    # Check if supports decision_function
-    match estimator_type:
-        case EstimatorType.ClassifierMixin:
-            decision_function = typer.confirm(PROMPT_DECISION_FUNCTION)
-        case _:
-            decision_function = False
-
-    tags = typer.prompt(PROMPT_TAGS, default="")
-    tags, msg = tags_parser(tags)
-    if msg:
-        raise typer.BadParameter(msg)
-
-    output_file = typer.prompt(PROMPT_OUTPUT, default=f"{name.lower()}.py")
-
+    print(f"{estimator_type=}")
     forged_template = render_template(
         name=name,
         estimator_type=estimator_type,
-        required=required_params,  # type: ignore[arg-type]  # Callback actually transforms those into list[str]
-        optional=optional_params,  # type: ignore[arg-type]  # Callback actually transforms those into list[str]
+        required=required_params,  # type: ignore[arg-type]  # Callback actually transforms it into `list[str]`
+        optional=optional_params,  # type: ignore[arg-type]  # Callback actually transforms it into `list[str]`
         linear=linear,
         sample_weight=sample_weight,
         predict_proba=predict_proba,
         decision_function=decision_function,
-        tags=tags,
+        tags=tags,  # type: ignore[arg-type]  # Callback actually transforms it into `list[str]`
     )
 
     destination_file = Path(output_file)
