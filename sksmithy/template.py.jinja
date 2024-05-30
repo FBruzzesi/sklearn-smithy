@@ -104,6 +104,7 @@ class {{ name }}(
         {%- endif %}
         {% if 'max_iter' in parameters -%}self.n_iter_ = ...{%- endif %}
         {% if estimator_type=='outlier' -%}self.offset_ = ...{%- endif %}
+        {% if estimator_type=='cluster' -%}self.labels_ = ...{%- endif %}
 
         return self
 
@@ -148,8 +149,8 @@ class {{ name }}(
         check_is_fitted(self)
         X = check_array(X, ...)  #TODO: Fill in `check_array` arguments
 
-        y_pred = (self.decision_function(X).ravel() > 0).astype(int)
-
+        decision = self.decision_function(X)
+        y_pred = (decision.ravel() > 0).astype(int) if self.n_classes == 2 else np.argmax(decision, axis=1)
         return y_pred
     {% endif %}
 
@@ -202,7 +203,7 @@ class {{ name }}(
         return preds
     {%- endif %}
 
-    {% if ((estimator_type == 'classifier' and decision_function == False) or estimator_type=='regressor') and linear == False %}
+    {% if decision_function == False and linear == False and (estimator_type in ('classifier', 'regressor', 'cluster')) %}
     def predict(self, X):
         """Predict X.
 
