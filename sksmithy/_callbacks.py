@@ -1,55 +1,63 @@
-from keyword import iskeyword
+from collections.abc import Callable
+from typing import Concatenate, ParamSpec, TypeVar
 
-from typer import BadParameter
+from typer import BadParameter, CallbackParam, Context
 
-from sksmithy._logger import console
-from sksmithy._models import TagType
+from sksmithy._parsers import check_duplicates, name_parser, params_parser, tags_parser
+
+T = TypeVar("T")
+R = TypeVar("R")
+PS = ParamSpec("PS")
 
 
-def name_callback(name: str) -> str:
-    """Validate if `name` is a valid python class name."""
-    valid = name.isidentifier()
-    kw = iskeyword(name)
+def _parse_wrapper(
+    ctx: Context,
+    param: CallbackParam,
+    value: T,
+    parser: Callable[Concatenate[T, PS], tuple[R, str]],
+    *args: PS.args,
+    **kwargs: PS.kwargs,
+) -> tuple[Context, CallbackParam, R]:
+    """Wrap a parser to handle 'caching' logic."""
+    if not ctx.obj:
+        ctx.obj = {}
 
-    if not valid:
-        msg = f"{name} is not a valid class name in python!"
+    if param.name in ctx.obj:
+        return ctx, param, ctx.obj[param.name]
+
+    result, msg = parser(value, *args, **kwargs)
+
+    if msg:
         raise BadParameter(msg)
-    if kw:
-        msg = f"Careful: {name} is a python keyword!"
-        console.print(msg, style="warning")
+
+    ctx.obj[param.name] = result
+    return ctx, param, result
+
+
+def name_callback(ctx: Context, param: CallbackParam, value: str) -> str:
+    """`name` argument callback."""
+    *_, name = _parse_wrapper(ctx, param, value, name_parser)
 
     return name
 
 
-def args_callback(params: str) -> str:
-    """Validate if `params` contains valid python names."""
-    if params:
-        param_list = params.split(",")
-        invalid = tuple(p for p in param_list if not p.isidentifier())
+def params_callback(ctx: Context, param: CallbackParam, value: str | None) -> list[str]:
+    """`required-params` and `optional-params` arguments callback."""
+    ctx, param, parsed_params = _parse_wrapper(ctx, param, value, params_parser)
 
-        if len(invalid) > 0:
-            msg = f"The following parameters are invalid python identifiers: {invalid}"
-            raise BadParameter(msg)
+    if param.name == "optional_params" and (
+        msg := check_duplicates(
+            required=ctx.params["required_params"],
+            optional=parsed_params,
+        )
+    ):
+        del ctx.obj[param.name]
+        raise BadParameter(msg)
 
-        if len(set(param_list)) < len(param_list):
-            msg = "Found repeated parameter"
-            raise BadParameter(msg)
-
-    return params
+    return parsed_params
 
 
-def parse_tags(tags: str) -> list[str]:
-    """Parse and validate `tags`."""
-    if tags:
-        list_tag = tags.split(",")
-        unavailable_tags = tuple(t for t in list_tag if t not in TagType.__members__)
-
-        if len(unavailable_tags):
-            msg = (
-                f"The following tags are not available: {unavailable_tags}."
-                "\nPlease check the documentation at https://scikit-learn.org/dev/developers/develop.html#estimator-tags"
-                " to know which values are available."
-            )
-            raise BadParameter(msg)
-        return list_tag
-    return []
+def tags_callback(ctx: Context, param: CallbackParam, value: str) -> list[str]:
+    """`tags` argument callback."""
+    *_, parsed_value = _parse_wrapper(ctx, param, value, tags_parser)
+    return parsed_value

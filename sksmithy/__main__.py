@@ -9,9 +9,9 @@ from sksmithy._arguments import (
     required_params_arg,
     sample_weight_arg,
 )
-from sksmithy._callbacks import parse_tags
 from sksmithy._logger import console
 from sksmithy._models import EstimatorType
+from sksmithy._parsers import tags_parser
 from sksmithy._prompts import PROMPT_DECISION_FUNCTION, PROMPT_LINEAR, PROMPT_OUTPUT, PROMPT_PREDICT_PROBA, PROMPT_TAGS
 from sksmithy._utils import render_template
 
@@ -55,14 +55,6 @@ def forge(
 
     * in which file the class should be saved (default is `f'{name.lower()}.py'`)
     """
-    required = required_params.split(",") if required_params else []
-    optional = optional_params.split(",") if optional_params else []
-
-    duplicated_params = set(required).intersection(set(optional))
-    if duplicated_params:
-        msg_duplicated_params = f"The following parameters are duplicated: {duplicated_params}"
-        raise typer.BadParameter(msg_duplicated_params)
-
     # Check if linear
     match estimator_type:
         case EstimatorType.ClassifierMixin | EstimatorType.RegressorMixin:
@@ -85,15 +77,17 @@ def forge(
             decision_function = False
 
     tags = typer.prompt(PROMPT_TAGS, default="")
-    tags = parse_tags(tags)
+    tags, msg = tags_parser(tags)
+    if msg:
+        raise typer.BadParameter(msg)
 
     output_file = typer.prompt(PROMPT_OUTPUT, default=f"{name.lower()}.py")
 
     forged_template = render_template(
         name=name,
         estimator_type=estimator_type,
-        required=required,
-        optional=optional,
+        required=required_params,
+        optional=optional_params,
         linear=linear,
         sample_weight=sample_weight,
         predict_proba=predict_proba,
@@ -101,17 +95,13 @@ def forge(
         tags=tags,
     )
 
-    try:
-        destination_file = Path(output_file)
-        destination_file.parent.mkdir(parents=True, exist_ok=True)
+    destination_file = Path(output_file)
+    destination_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with destination_file.open(mode="w") as destination:
-            destination.write(forged_template)
+    with destination_file.open(mode="w") as destination:
+        destination.write(forged_template)
 
-        console.print(f"Template forged at {destination_file}", style="good")
-
-    except Exception as e:  # noqa: BLE001
-        console.print(f"Failed to forge template due to the following exception: {e}", style="bad")
+    console.print(f"Template forged at {destination_file}", style="good")
 
 
 if __name__ == "__main__":
