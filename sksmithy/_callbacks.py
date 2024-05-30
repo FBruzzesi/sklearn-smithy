@@ -5,7 +5,6 @@ from typer import BadParameter, CallbackParam, Context
 
 from sksmithy._models import EstimatorType
 from sksmithy._parsers import check_duplicates, name_parser, params_parser, tags_parser
-from sksmithy._prompts import PROMPT_DECISION_FUNCTION, PROMPT_LINEAR, PROMPT_PREDICT_PROBA
 
 T = TypeVar("T")
 R = TypeVar("R")
@@ -69,7 +68,7 @@ def tags_callback(ctx: Context, param: CallbackParam, value: str) -> list[str]:
     return parsed_value
 
 
-def estimator_callback(ctx: Context, param: CallbackParam, value: EstimatorType) -> EstimatorType:
+def estimator_callback(ctx: Context, param: CallbackParam, estimator: EstimatorType) -> str:
     """`estimator_type` argument callback.
 
     It dynamically modifies the behaviour of the rest of the prompts based on its value.
@@ -78,37 +77,33 @@ def estimator_callback(ctx: Context, param: CallbackParam, value: EstimatorType)
         ctx.obj = {}
 
     if param.name in ctx.obj:
-        return ctx, param, ctx.obj[param.name]
+        return ctx.obj[param.name]
 
     linear, predict_proba, decision_function = (
         op for op in ctx.command.params if op.name in {"linear", "predict_proba", "decision_function"}
     )
 
-    match value:
+    match estimator:
         case EstimatorType.ClassifierMixin | EstimatorType.RegressorMixin:
-            linear.prompt = PROMPT_LINEAR
-            linear.prompt_required = True
+            pass
         case _:
-            linear.prompt = False
-            linear.prompt_required = False
+            linear.prompt = False  # type: ignore[attr-defined]
+            linear.prompt_required = False  # type: ignore[attr-defined]
 
-    match value:
+    match estimator:
         case EstimatorType.ClassifierMixin | EstimatorType.OutlierMixin:
-            predict_proba.prompt = PROMPT_PREDICT_PROBA
-            predict_proba.prompt_required = True
+            pass
         case _:
-            predict_proba.prompt = False
-            predict_proba.prompt_required = False
+            predict_proba.prompt = False  # type: ignore[attr-defined]
+            predict_proba.prompt_required = False  # type: ignore[attr-defined]
 
-    # Check if supports decision_function
-    match value:
+    match estimator:
         case EstimatorType.ClassifierMixin:
-            decision_function.prompt = PROMPT_DECISION_FUNCTION
-            decision_function.prompt_required = True
+            pass
         case _:
-            decision_function.prompt = False
-            decision_function.prompt_required = False
+            decision_function.prompt = False  # type: ignore[attr-defined]
+            decision_function.prompt_required = False  # type: ignore[attr-defined]
 
-    ctx.obj[param.name] = value
+    ctx.obj[param.name] = estimator.value
 
-    return value
+    return estimator.value

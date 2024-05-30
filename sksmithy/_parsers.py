@@ -7,10 +7,15 @@ def name_parser(name: str | None) -> tuple[str, str]:
     """Validate that `name` is a valid python class name."""
     if name:
         is_valid = name.isidentifier()
-        msg = f"`{name}` is not a valid python class name!" if not is_valid else ""
-
         is_kw = iskeyword(name)
-        msg = f"`{name}` is a python reserved keyword!" if is_kw else ""
+
+        msg = (
+            f"`{name}` is not a valid python class name!"
+            if not is_valid
+            else f"`{name}` is a python reserved keyword!"
+            if is_kw
+            else ""
+        )
 
         return name, msg
     return "", "Name cannot be empty!"

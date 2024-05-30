@@ -2,6 +2,7 @@
 import re
 import time
 from importlib.metadata import version
+from typing import Literal
 
 from sksmithy._models import EstimatorType
 from sksmithy._parsers import check_duplicates, name_parser, params_parser
@@ -72,6 +73,7 @@ sample_weights = False
 linear = False
 predict_proba = False
 decision_function = False
+estimator_type: Literal[False] | EstimatorType = False
 
 if "forged_template" not in st.session_state:
     st.session_state["forged_template"] = ""
@@ -83,7 +85,7 @@ with st.container():  # name and type
     c11, c12 = st.columns(2)
 
     with c11:  # name
-        name = st.text_input(
+        name_ = st.text_input(
             label=PROMPT_NAME,
             placeholder="MightyEstimator",
             help=(
@@ -92,9 +94,9 @@ with st.container():  # name and type
             ),
         )
 
-        name, msg_invalid_name = name_parser(name)
+        name, msg_invalid_name = name_parser(name_)
 
-        if msg_invalid_name:
+        if name and msg_invalid_name:
             st.error(msg_invalid_name)
 
     with c12:  # type
@@ -184,7 +186,7 @@ with st.container():  # predict_proba and decision_function
 
 st.write("#")  # empty space hack
 
-with st.container():  # forge button
+with st.container() as forge_row:  # forge button
     _, c52, _, c54 = st.columns([2, 1, 1, 1])
 
     with c52:
@@ -194,8 +196,8 @@ with st.container():  # forge button
             disabled=any(
                 [
                     not name,
+                    not estimator_type,
                     msg_invalid_name,
-                    estimator is None,
                     msg_invalid_required,
                     msg_duplicated_params,
                 ]
@@ -204,15 +206,16 @@ with st.container():  # forge button
         if forge_btn:
             st.session_state["forge_counter"] += 1
 
-        with c54, st.popover(label="Download", disabled=not st.session_state["forge_counter"]):
-            file_name = st.text_input(label="Select filename", value=f"{name.lower()}.py")
+    with c54, st.popover(label="Download", disabled=not st.session_state["forge_counter"]):
+        file_name = st.text_input(label="Select filename", value=f"{name.lower()}.py")
 
-            download_btn = st.download_button(
-                label="Confirm",
-                type="primary",
-                data=st.session_state["forged_template"],
-                file_name=file_name,
-            )
+        data = st.session_state["forged_template"]
+        download_btn = st.download_button(
+            label="Confirm",
+            type="primary",
+            data=data,
+            file_name=file_name,
+        )
 
 
 with st.container():  # code output
@@ -229,7 +232,7 @@ with st.container():  # code output
 
         st.session_state["forged_template"] = render_template(
             name=name,
-            estimator_type=estimator_type,
+            estimator_type=estimator_type,  # type: ignore[arg-type]
             required=required,
             optional=optional,
             linear=linear,

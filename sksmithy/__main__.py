@@ -62,7 +62,6 @@ def forge(
 
     * in which file the class should be saved (default is `f'{name.lower()}.py'`)
     """
-    print(f"{estimator_type=}")
     forged_template = render_template(
         name=name,
         estimator_type=estimator_type,

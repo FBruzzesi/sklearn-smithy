@@ -21,6 +21,7 @@ name_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_NAME,
+        prompt_required=False,
         help="[bold green]Name[/bold green] the estimator.",
         callback=name_callback,
     ),
@@ -30,6 +31,7 @@ estimator_type_arg = Annotated[
     EstimatorType,
     Option(
         prompt=PROMPT_ESTIMATOR,
+        prompt_required=False,
         help="Estimator type.",
         callback=estimator_callback,
     ),
@@ -56,8 +58,9 @@ optional_params_arg = Annotated[
 sample_weight_arg = Annotated[
     bool,
     Option(
-        prompt=PROMPT_SAMPLE_WEIGHT,
         is_flag=True,
+        prompt=PROMPT_SAMPLE_WEIGHT,
+        prompt_required=False,
         help="Whether or not `.fit()` does support [bold green]`sample_weight`[/bold green].",
     ),
 ]
@@ -93,22 +96,16 @@ tags_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_TAGS,
+        prompt_required=False,
         help="List of optional scikit-learn [bold green]tags[/bold green].",
         callback=tags_callback,
     ),
 ]
-
-
-def callback(ctx, param, value):
-    print("here")
-    return value
-
 
 output_file_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_OUTPUT,
         help="[bold green]Destination file[/bold green] where to save the boilerplate code.",
-        callback=callback,
     ),
 ]
