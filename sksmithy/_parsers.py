@@ -48,14 +48,14 @@ def tags_parser(tags: str) -> Result[list[str], str]:
     if tags:
         list_tag = tags.split(",")
         unavailable_tags = tuple(t for t in list_tag if t not in TagType.__members__)
-        msg = (
-            (
+        if len(unavailable_tags):
+            msg = (
                 f"The following tags are not available: {unavailable_tags}."
-                "\nPlease check the documentation at https://scikit-learn.org/dev/developers/develop.html#estimator-tags"
+                "\nPlease check the official documentation at "
+                "https://scikit-learn.org/dev/developers/develop.html#estimator-tags"
                 " to know which values are available."
             )
-            if len(unavailable_tags)
-            else ""
-        )
-        return Err(msg) if msg else Ok(list_tag)
+
+            return Err(msg)
+        return Ok(list_tag)
     return Ok([])
