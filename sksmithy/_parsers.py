@@ -8,20 +8,15 @@ from sksmithy._models import TagType
 def name_parser(name: str | None) -> Result[str, str]:
     """Validate that `name` is a valid python class name."""
     if name:
-        is_valid = name.isidentifier()
-        is_kw = iskeyword(name)
-
-        msg = (
-            f"`{name}` is not a valid python class name!"
-            if not is_valid
-            else f"`{name}` is a python reserved keyword!"
-            if is_kw
-            else ""
-        )
-
-        return Err(msg) if msg else Ok(name)
-
-    return Err("Name cannot be empty!")
+        if not name.isidentifier():
+            msg = f"`{name}` is not a valid python class name!"
+            return Err(msg)
+        if iskeyword(name):
+            msg = f"`{name}` is a python reserved keyword!"
+            return Err(msg)
+        return Ok(name)
+    msg = "Name cannot be empty!"
+    return Err(msg)
 
 
 def params_parser(params: str | None) -> Result[list[str], str]:
