@@ -1,9 +1,11 @@
 from keyword import iskeyword
 
+from result import Err, Ok, Result
+
 from sksmithy._models import TagType
 
 
-def name_parser(name: str | None) -> tuple[str, str]:
+def name_parser(name: str | None) -> Result[str, str]:
     """Validate that `name` is a valid python class name."""
     if name:
         is_valid = name.isidentifier()
@@ -17,11 +19,12 @@ def name_parser(name: str | None) -> tuple[str, str]:
             else ""
         )
 
-        return name, msg
-    return "", "Name cannot be empty!"
+        return Err(msg) if msg else Ok(name)
+
+    return Err("Name cannot be empty!")
 
 
-def params_parser(params: str | None) -> tuple[list[str], str]:
+def params_parser(params: str | None) -> Result[list[str], str]:
     """Parse and validate that `params` contains valid python names."""
     if params:
         param_list = params.split(",")
@@ -29,24 +32,23 @@ def params_parser(params: str | None) -> tuple[list[str], str]:
 
         if len(invalid) > 0:
             msg = f"The following parameters are invalid python identifiers: {invalid}"
-            return [], msg
+            return Err(msg)
 
         if len(set(param_list)) < len(param_list):
             msg = "Found repeated parameters!"
-            return [], msg
+            return Err(msg)
 
-        return param_list, ""
-    return [], ""
+        return Ok(param_list)
+    return Ok([])
 
 
-def check_duplicates(required: list[str], optional: list[str]) -> str:
+def check_duplicates(required: list[str], optional: list[str]) -> str | None:
     """Check that there are not duplicates between required and optional params."""
     duplicated_params = set(required).intersection(set(optional))
+    return f"The following parameters are duplicated: {duplicated_params}" if duplicated_params else None
 
-    return f"The following parameters are duplicated: {duplicated_params}" if duplicated_params else ""
 
-
-def tags_parser(tags: str) -> tuple[list[str], str]:
+def tags_parser(tags: str) -> Result[list[str], str]:
     """Parse and validate `tags` by comparing with sklearn list."""
     if tags:
         list_tag = tags.split(",")
@@ -60,5 +62,5 @@ def tags_parser(tags: str) -> tuple[list[str], str]:
             if len(unavailable_tags)
             else ""
         )
-        return list_tag, msg
-    return [], ""
+        return Err(msg) if msg else Ok(list_tag)
+    return Ok([])
