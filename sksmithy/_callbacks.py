@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from typing import Concatenate, ParamSpec, TypeVar
 
+from result import Err, Ok, Result
 from typer import BadParameter, CallbackParam, Context
 
 from sksmithy._models import EstimatorType
@@ -15,7 +16,7 @@ def _parse_wrapper(
     ctx: Context,
     param: CallbackParam,
     value: T,
-    parser: Callable[Concatenate[T, PS], tuple[R, str]],
+    parser: Callable[Concatenate[T, PS], Result[R, str]],
     *args: PS.args,
     **kwargs: PS.kwargs,
 ) -> tuple[Context, CallbackParam, R]:
@@ -26,19 +27,23 @@ def _parse_wrapper(
     if param.name in ctx.obj:
         return ctx, param, ctx.obj[param.name]
 
-    result, msg = parser(value, *args, **kwargs)
-
-    if msg:
-        raise BadParameter(msg)
-
-    ctx.obj[param.name] = result
-    return ctx, param, result
+    result = parser(value, *args, **kwargs)
+    match result:
+        case Ok(result_value):
+            ctx.obj[param.name] = result_value
+            return ctx, param, result_value
+        case Err(msg):
+            raise BadParameter(msg)
 
 
 def name_callback(ctx: Context, param: CallbackParam, value: str) -> str:
-    """`name` argument callback."""
+    """`name` argument callback.
+
+    After parsing `name`, changes the default value of `output_file` argument to `{name.lower()}.py`.
+    """
     *_, name = _parse_wrapper(ctx, param, value, name_parser)
 
+    # Change default value of output_file argument
     all_options = ctx.command.params
     output_file_option = next(opt for opt in all_options if opt.name == "output_file")
     output_file_option.default = f"{name.lower()}.py"
@@ -81,7 +86,7 @@ def estimator_callback(ctx: Context, param: CallbackParam, estimator: EstimatorT
 
     linear, predict_proba, decision_function = (
         op for op in ctx.command.params if op.name in {"linear", "predict_proba", "decision_function"}
-    )
+    )  # !Note: This unpacking relies on the order of the arguments in the forge command to be in the same order
 
     match estimator:
         case EstimatorType.ClassifierMixin | EstimatorType.RegressorMixin:

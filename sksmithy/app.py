@@ -4,6 +4,8 @@ import time
 from importlib.metadata import version
 from typing import Literal
 
+from result import Err, Ok
+
 from sksmithy._models import EstimatorType
 from sksmithy._parsers import check_duplicates, name_parser, params_parser
 from sksmithy._prompts import (
@@ -75,6 +77,9 @@ predict_proba = False
 decision_function = False
 estimator_type: Literal[False] | EstimatorType = False
 
+required_is_valid = False
+optional_is_valid = False
+
 if "forged_template" not in st.session_state:
     st.session_state["forged_template"] = ""
 
@@ -85,8 +90,9 @@ with st.container():  # name and type
     c11, c12 = st.columns(2)
 
     with c11:  # name
-        name_ = st.text_input(
+        name_input = st.text_input(
             label=PROMPT_NAME,
+            value="MightyEstimator",
             placeholder="MightyEstimator",
             help=(
                 "It should be a valid "
@@ -94,10 +100,12 @@ with st.container():  # name and type
             ),
         )
 
-        name, msg_invalid_name = name_parser(name_)
-
-        if name and msg_invalid_name:
-            st.error(msg_invalid_name)
+        match name_parser(name_input):
+            case Ok(name):
+                pass
+            case Err(msg):  # type: ignore[misc]
+                name = ""
+                st.error(msg)
 
     with c12:  # type
         estimator = st.selectbox(
@@ -124,9 +132,12 @@ with st.container():  # params
             ),
         )
 
-        required, msg_invalid_required = params_parser(required_params)
-        if msg_invalid_required:
-            st.error(msg_invalid_required)
+        match params_parser(required_params):
+            case Ok(required):
+                required_is_valid = True
+            case Err(msg):  # type: ignore[misc]
+                required_is_valid = False
+                st.error(msg)
 
     with c22:  # optional
         optional_params = st.text_input(
@@ -138,12 +149,14 @@ with st.container():  # params
             ),
         )
 
-        optional, msg_invalid_optional = params_parser(optional_params)
-        if msg_invalid_optional:
-            st.error(msg_invalid_optional)
+        match params_parser(optional_params):
+            case Ok(optional):
+                optional_is_valid = True
+            case Err(msg):  # type: ignore[misc]
+                optional_is_valid = False
+                st.error(msg)
 
-    msg_duplicated_params = check_duplicates(required, optional)
-    if msg_duplicated_params:
+    if required_is_valid and optional_is_valid and (msg_duplicated_params := check_duplicates(required, optional)):
         st.error(msg_duplicated_params)
 
 with st.container():  # sample_weight and linear
@@ -197,8 +210,8 @@ with st.container() as forge_row:  # forge button
                 [
                     not name,
                     not estimator_type,
-                    msg_invalid_name,
-                    msg_invalid_required,
+                    not required_is_valid,
+                    not optional_is_valid,
                     msg_duplicated_params,
                 ]
             ),
@@ -207,15 +220,16 @@ with st.container() as forge_row:  # forge button
             st.session_state["forge_counter"] += 1
 
     with c54, st.popover(label="Download", disabled=not st.session_state["forge_counter"]):
-        file_name = st.text_input(label="Select filename", value=f"{name.lower()}.py")
+        if name:
+            file_name = st.text_input(label="Select filename", value=f"{name.lower()}.py")
 
-        data = st.session_state["forged_template"]
-        download_btn = st.download_button(
-            label="Confirm",
-            type="primary",
-            data=data,
-            file_name=file_name,
-        )
+            data = st.session_state["forged_template"]
+            download_btn = st.download_button(
+                label="Confirm",
+                type="primary",
+                data=data,
+                file_name=file_name,
+            )
 
 
 with st.container():  # code output
