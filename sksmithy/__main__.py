@@ -65,13 +65,13 @@ def forge(
     forged_template = render_template(
         name=name,
         estimator_type=estimator_type,
-        required=required_params,  # type: ignore[arg-type]  # Callback actually transforms it into `list[str]`
-        optional=optional_params,  # type: ignore[arg-type]  # Callback actually transforms it into `list[str]`
+        required=required_params,  # type: ignore[arg-type]  # Callback transforms it into `list[str]`
+        optional=optional_params,  # type: ignore[arg-type]  # Callback transforms it into `list[str]`
         linear=linear,
         sample_weight=sample_weight,
         predict_proba=predict_proba,
         decision_function=decision_function,
-        tags=tags,  # type: ignore[arg-type]  # Callback actually transforms it into `list[str]`
+        tags=tags,  # type: ignore[arg-type]  # Callback transforms it into `list[str]`
     )
 
     destination_file = Path(output_file)

@@ -84,9 +84,11 @@ def estimator_callback(ctx: Context, param: CallbackParam, estimator: EstimatorT
     if param.name in ctx.obj:
         return ctx.obj[param.name]
 
+    # !Warning: This unpacking relies on the order of the arguments in the forge command to be in the same order.
+    # Is there a better/more robust way of dealing with it?
     linear, predict_proba, decision_function = (
         op for op in ctx.command.params if op.name in {"linear", "predict_proba", "decision_function"}
-    )  # !Note: This unpacking relies on the order of the arguments in the forge command to be in the same order
+    )
 
     match estimator:
         case EstimatorType.ClassifierMixin | EstimatorType.RegressorMixin:
