@@ -2,7 +2,6 @@
 import re
 import time
 from importlib.metadata import version
-from typing import Literal
 
 from result import Err, Ok
 
@@ -25,11 +24,11 @@ if (st_version := version("streamlit")) and tuple(int(re.sub(r"\D", "", str(v)))
     34,
     0,
 ):  # pragma: no cover
-    msg = (
+    st_import_err_msg = (
         f"streamlit>=1.34.0 is required for this module. Found version {st_version}.\nInstall it with "
-        '`python -m pip install "streamlit>=1.34.0"` or `python -m pip install "sklearn-smithy[streamlit]"`',
+        '`python -m pip install "streamlit>=1.34.0"` or `python -m pip install "sklearn-smithy[streamlit]"`'
     )
-    raise ImportError(msg)
+    raise ImportError(st_import_err_msg)
 
 else:  # pragma: no cover
     import streamlit as st
@@ -75,7 +74,7 @@ sample_weights = False
 linear = False
 predict_proba = False
 decision_function = False
-estimator_type: Literal[False] | EstimatorType = False
+estimator_type: EstimatorType | None = None
 
 required_is_valid = False
 optional_is_valid = False
@@ -103,9 +102,9 @@ with st.container():  # name and type
         match name_parser(name_input):
             case Ok(name):
                 pass
-            case Err(msg):  # type: ignore[misc]
+            case Err(name_error_msg):
                 name = ""
-                st.error(msg)
+                st.error(name_error_msg)
 
     with c12:  # type
         estimator = st.selectbox(
@@ -135,9 +134,9 @@ with st.container():  # params
         match params_parser(required_params):
             case Ok(required):
                 required_is_valid = True
-            case Err(msg):  # type: ignore[misc]
+            case Err(required_err_msg):
                 required_is_valid = False
-                st.error(msg)
+                st.error(required_err_msg)
 
     with c22:  # optional
         optional_params = st.text_input(
@@ -152,9 +151,9 @@ with st.container():  # params
         match params_parser(optional_params):
             case Ok(optional):
                 optional_is_valid = True
-            case Err(msg):  # type: ignore[misc]
+            case Err(optional_err_msg):
                 optional_is_valid = False
-                st.error(msg)
+                st.error(optional_err_msg)
 
     if required_is_valid and optional_is_valid and (msg_duplicated_params := check_duplicates(required, optional)):
         st.error(msg_duplicated_params)
@@ -246,7 +245,7 @@ with st.container():  # code output
 
         st.session_state["forged_template"] = render_template(
             name=name,
-            estimator_type=estimator_type,  # type: ignore[arg-type]
+            estimator_type=estimator_type,  # type: ignore[arg-type]  # At this point estimator_type is never None.
             required=required,
             optional=optional,
             linear=linear,
