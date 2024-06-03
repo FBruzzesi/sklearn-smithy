@@ -20,6 +20,7 @@ from sksmithy._utils import render_template
 app = typer.Typer(
     help="Awesome CLI to generate scikit-learn estimator boilerplate code",
     rich_markup_mode="rich",
+    rich_help_panel="Customization and Utils",
 )
 
 
@@ -45,21 +46,18 @@ def forge(
     tags: tags_arg = "",
     output_file: output_file_arg = "",
 ) -> None:
-    """Asks a list of questions to generate a shiny new estimator ✨
+    """Generate a new shiny scikit-learn compatible estimator ✨
 
-    Depending on the **estimator type** the additional information could be required:
+    Depending on the estimator type the following additional information could be required:
 
     * if the estimator is linear (classifier or regression)
-
     * if the estimator has a `predict_proba` method (classifier or outlier detector)
-
     * is the estimator has a `decision_function` method (classifier only)
 
     Finally, the following two questions will be prompt:
 
-    * if the estimator should have tags (To know more about tags, check the dedicated
-        [scikit-learn documentation](https://scikit-learn.org/dev/developers/develop.html#estimator-tags))
-
+    * if the estimator should have tags (To know more about tags, check the dedicated scikit-learn documentation
+        at https://scikit-learn.org/dev/developers/develop.html#estimator-tags
     * in which file the class should be saved (default is `f'{name.lower()}.py'`)
     """
     forged_template = render_template(

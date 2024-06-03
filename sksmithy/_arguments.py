@@ -22,7 +22,7 @@ name_arg = Annotated[
     Option(
         prompt=PROMPT_NAME,
         prompt_required=False,
-        help="[bold green]Name[/bold green] the estimator.",
+        help="[bold green]Name[/bold green] of the estimator",
         callback=name_callback,
     ),
 ]
@@ -32,7 +32,7 @@ estimator_type_arg = Annotated[
     Option(
         prompt=PROMPT_ESTIMATOR,
         prompt_required=False,
-        help="Estimator type.",
+        help="[bold green]Estimator type[/bold green]",
         callback=estimator_callback,
     ),
 ]
@@ -41,7 +41,7 @@ required_params_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_REQUIRED,
-        help="List of [bold green]required[/bold green] parameters (comma-separated).",
+        help="List of [italic yellow](comma-separated)[/italic yellow] [bold green]required[/bold green] parameters",
         callback=params_callback,
     ),
 ]
@@ -50,7 +50,7 @@ optional_params_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_OPTIONAL,
-        help="List of [bold green]optional[/bold green] parameters (comma-separated).",
+        help="List of  [italic yellow](comma-separated)[/italic yellow] [bold green]optional[/bold green] parameters",
         callback=params_callback,
     ),
 ]
@@ -61,7 +61,7 @@ sample_weight_arg = Annotated[
         is_flag=True,
         prompt=PROMPT_SAMPLE_WEIGHT,
         prompt_required=False,
-        help="Whether or not `.fit()` does support [bold green]`sample_weight`[/bold green].",
+        help="Whether or not `.fit()` supports [bold green]`sample_weight`[/bold green]",
     ),
 ]
 
@@ -70,7 +70,7 @@ linear_arg = Annotated[
     Option(
         is_flag=True,
         prompt=PROMPT_LINEAR,
-        help="Whether or not the estimator is [bold green]linear[/bold green].",
+        help="Whether or not the estimator is [bold green]linear[/bold green]",
     ),
 ]
 
@@ -79,7 +79,7 @@ predict_proba_arg = Annotated[
     Option(
         is_flag=True,
         prompt=PROMPT_PREDICT_PROBA,
-        help="Whether or not the estimator implements [bold green]`predict_proba`[/bold green] method.",
+        help="Whether or not the estimator implements [bold green]`predict_proba`[/bold green] method",
     ),
 ]
 
@@ -88,7 +88,7 @@ decision_function_arg = Annotated[
     Option(
         is_flag=True,
         prompt=PROMPT_DECISION_FUNCTION,
-        help="Whether or not the estimator implements [bold green]`decision_function`[/bold green] method.",
+        help="Whether or not the estimator implements [bold green]`decision_function`[/bold green] method",
     ),
 ]
 
@@ -97,7 +97,7 @@ tags_arg = Annotated[
     Option(
         prompt=PROMPT_TAGS,
         prompt_required=False,
-        help="List of optional scikit-learn [bold green]tags[/bold green].",
+        help="List of optional extra scikit-learn [bold green]tags[/bold green]",
         callback=tags_callback,
     ),
 ]
@@ -106,6 +106,6 @@ output_file_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_OUTPUT,
-        help="[bold green]Destination file[/bold green] where to save the boilerplate code.",
+        help="[bold green]Destination file[/bold green] where to save the boilerplate code",
     ),
 ]
