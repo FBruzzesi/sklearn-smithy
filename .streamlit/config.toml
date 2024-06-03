@@ -1,2 +1,8 @@
 [client]
 showSidebarNavigation = false
+
+[logger]
+level = "warning"
+
+[server]
+runOnSave = true

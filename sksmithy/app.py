@@ -1,4 +1,3 @@
-# streamlit run sksmithy/app.py
 import re
 import time
 from importlib.metadata import version
@@ -40,7 +39,12 @@ st.set_page_config(
     menu_items={
         "Get Help": "https://github.com/FBruzzesi/sklearn-smithy",
         "Report a bug": "https://github.com/FBruzzesi/sklearn-smithy/issues/new",
-        # "About": "# This is a header. This is an *extremely* cool app!"
+        "About": """
+            Forge your own scikit-learn estimator!
+
+            For more information, please visit the [sklearn-smithy](https://github.com/FBruzzesi/sklearn-smithy)
+            repository
+            """,
     },
 )
 
@@ -49,26 +53,29 @@ st.markdown("## Forge your own scikit-learn compatible estimator")
 
 with st.sidebar:
     st.markdown("""
-        # Why ❓
+        # Description
 
         Writing a scikit-learn compatible estimators might be harder than expected.
 
         While everyone knows about the `fit` and `predict`, there are other behaviours, methods and attributes that
-        scikit-learn might be expecting from your estimator. These depend on:
+        scikit-learn might be expecting from your estimator depending on:
 
         - The type of estimator you're writing.
         - The signature of the estimator.
         - The signature of the `.fit(...)` method.
 
-        This tool aims to help you with that by asking you a few questions about your estimator, and then generating the
-        boilerplate code for you, so that you can focus on the core implementation of the estimator,
-        and not on the nitty-gritty details of the scikit-learn API.
+        Scikit-learn Smithy to the rescue: this tool aims to help you crafting your own estimator by asking a few
+        questions about it, and then generating the boilerplate code.
+
+        In this way you will be able to fully focus on the core implementation logic, and not on nitty-gritty details
+        of the scikit-learn API.
+
+        ## Sanity check
 
         Once the core logic is implemented, the estimator should be ready to test against the _somewhat official_
         [`parametrize_with_checks`](https://scikit-learn.org/dev/modules/generated/sklearn.utils.estimator_checks.parametrize_with_checks.html#sklearn.utils.estimator_checks.parametrize_with_checks)
         pytest compatible decorator.
     """)
-
 
 sample_weights = False
 linear = False
@@ -164,7 +171,7 @@ with st.container():  # sample_weight and linear
     with c31:  # sample_weight
         sample_weight = st.toggle(
             PROMPT_SAMPLE_WEIGHT,
-            help="Glossary: [sample_weight](https://scikit-learn.org/dev/glossary.html#term-sample_weight)",
+            help="[sample_weight](https://scikit-learn.org/dev/glossary.html#term-sample_weight)",
         )
     with c32:  # linear
         linear = st.toggle(
@@ -181,8 +188,8 @@ with st.container():  # predict_proba and decision_function
             label=PROMPT_PREDICT_PROBA,
             disabled=(estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.OutlierMixin}),
             help=(
+                "[predict_proba](https://scikit-learn.org/dev/glossary.html#term-predict_proba): "
                 "Available only if estimator is `Classifier` or `Outlier`. "
-                "Glossary: [predict_proba](https://scikit-learn.org/dev/glossary.html#term-predict_proba)"
             ),
         )
 
@@ -191,8 +198,8 @@ with st.container():  # predict_proba and decision_function
             label=PROMPT_DECISION_FUNCTION,
             disabled=(estimator_type != EstimatorType.ClassifierMixin),
             help=(
+                "[decision_function](https://scikit-learn.org/dev/glossary.html#term-decision_function): "
                 "Available only if estimator is `Classifier`"
-                "Glossary: [decision_function](https://scikit-learn.org/dev/glossary.html#term-decision_function)"
             ),
         )
 
