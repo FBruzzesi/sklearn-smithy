@@ -1,19 +1,9 @@
-import pytest
-
 from sksmithy._models import EstimatorType
 from sksmithy._utils import render_template
 
 
-@pytest.mark.parametrize("estimator_type", list(EstimatorType))
-@pytest.mark.parametrize("required", [["alpha", "beta"], []])
-@pytest.mark.parametrize("optional", [["mu", "sigma"], []])
-@pytest.mark.parametrize("sample_weight", [True, False])
-@pytest.mark.parametrize("linear", [True, False])
-@pytest.mark.parametrize("predict_proba", [True, False])
-@pytest.mark.parametrize("decision_function", [True, False])
-@pytest.mark.parametrize("tags", [["allow_nan", "binary_only"], [], None])
-def test_render_template(
-    estimator_type: EstimatorType,
+def test_render_classifier(
+    name: str,
     required: list[str],
     optional: list[str],
     sample_weight: bool,
@@ -22,86 +12,208 @@ def test_render_template(
     decision_function: bool,
     tags: list[str] | None,
 ) -> None:
-    if linear and estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.RegressorMixin}:
-        pytest.skip()
-    if predict_proba and estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.OutlierMixin}:
-        pytest.skip()
-    if decision_function and estimator_type not in {
-        EstimatorType.ClassifierMixin,
-    }:
-        pytest.skip()
+    estimator_type = EstimatorType.ClassifierMixin
 
     result = render_template(
-        name="MightyEstimator",
+        name=name,
         estimator_type=estimator_type,
         required=required,
         optional=optional,
-        linear=linear,
         sample_weight=sample_weight,
+        linear=linear,
         predict_proba=predict_proba,
         decision_function=decision_function,
         tags=tags,
     )
-    assert "class MightyEstimator" in result
+    # All
     assert "self.n_features_in_ = X.shape[1]" in result
+    assert all(f"self.{p} = {p}" in result for p in [*required, *optional])
 
-    match estimator_type:
-        case EstimatorType.ClassifierMixin:
-            assert "self.classes_ = " in result
-            assert "def n_classes_(self)" in result
+    assert ("self.n_iter_" in result) == ("max_iter" in [*required, *optional])
+    assert "X, y = check_X_y(X, y, ...)" in result
 
-            if linear:
-                assert "ClassifierMixin, BaseEstimator" not in result
-                assert "LinearClassifierMixin, BaseEstimator" in result
-                assert "def predict(self, X)" not in result
-                assert "self.coef_ = ..." in result
-                assert "self.intercept_ = ..." in result
+    # Classifier specific
+    assert "self.classes_ = " in result
+    assert "def n_classes_(self)" in result
+    assert "def transform(self, X)" not in result
 
-            else:
-                assert "ClassifierMixin, BaseEstimator" in result
-                assert "LinearClassifierMixin, BaseEstimator" not in result
-                assert "def predict(self, X)" in result
-                assert "self.coef_ = ..." not in result
-                assert "self.intercept_ = ..." not in result
+    # Sample weight
+    assert ("sample_weight = _check_sample_weight(sample_weight)" in result) == sample_weight
+    assert ("def fit(self, X, y)" in result) == (not sample_weight)
+    assert ("def fit(self, X, y, sample_weight=None)" in result) == (sample_weight)
 
-            if predict_proba:
-                assert "def predict_proba(self, X)" in result
-            else:
-                assert "def predict_proba(self, X)" not in result
+    # Linear
+    assert ("class MightyEstimator(LinearClassifierMixin, BaseEstimator)" in result) == linear
+    assert ("self.coef_ = ..." in result) == linear
+    assert ("self.intercept_ = ..." in result) == linear
 
-            if decision_function:
-                assert "def decision_function(self, X)" in result
-            else:
-                assert "def decision_function(self, X)" not in result
+    assert ("class MightyEstimator(ClassifierMixin, BaseEstimator)" not in result) == linear
+    assert ("def predict(self, X)" not in result) == linear
 
-        case EstimatorType.RegressorMixin:
-            if linear:
-                assert "RegressorMixin, LinearModel" in result
-                assert "RegressorMixin, BaseEstimator" not in result
-                assert "def predict(self, X)" not in result
-                assert "self.coef_ = ..." in result
-                assert "self.intercept_ = ..." in result
+    # Predict proba
+    assert ("def predict_proba(self, X)" in result) == predict_proba
 
-            else:
-                assert "RegressorMixin, LinearModel" not in result
-                assert "RegressorMixin, BaseEstimator" in result
-                assert "def predict(self, X)" in result
-                assert "self.coef_ = ..." not in result
-                assert "self.intercept_ = ..." not in result
+    # Decision function
+    assert ("def decision_function(self, X)" in result) == (decision_function and not linear)
 
-        case EstimatorType.OutlierMixin:
-            ...
-        case EstimatorType.TransformerMixin:
-            ...
-        case EstimatorType.ClusterMixin:
-            ...
+    # Tags
+    assert ("def _more_tags(self)" in result) == bool(tags)
 
-    if sample_weight:
-        assert "sample_weight = _check_sample_weight(sample_weight)" in result
-        assert (
-            "def fit(self, X, y, sample_weight=None)" in result
-            or "def fit(self, X, y=None, sample_weight=None)" in result
-        )
 
-    if tags:
-        assert "def _more_tags(self)" in result
+def test_render_regressor(
+    name: str,
+    required: list[str],
+    optional: list[str],
+    sample_weight: bool,
+    linear: bool,
+) -> None:
+    estimator_type = EstimatorType.RegressorMixin
+
+    result = render_template(
+        name=name,
+        estimator_type=estimator_type,
+        required=required,
+        optional=optional,
+        sample_weight=sample_weight,
+        linear=linear,
+        predict_proba=False,
+        decision_function=False,
+        tags=None,
+    )
+    # All
+    assert "self.n_features_in_ = X.shape[1]" in result
+    assert all(f"self.{p} = {p}" in result for p in [*required, *optional])
+    assert ("self.n_iter_" in result) == ("max_iter" in [*required, *optional])
+    assert "X, y = check_X_y(X, y, ...)" in result
+
+    # Regressor specific
+    assert "def transform(self, X)" not in result
+
+    # Sample weight
+    assert ("sample_weight = _check_sample_weight(sample_weight)" in result) == sample_weight
+    assert ("def fit(self, X, y)" in result) == (not sample_weight)
+    assert ("def fit(self, X, y, sample_weight=None)" in result) == sample_weight
+
+    # Linear
+    assert ("class MightyEstimator(RegressorMixin, LinearModel)" in result) == linear
+    assert ("self.coef_ = ..." in result) == linear
+    assert ("self.intercept_ = ..." in result) == linear
+
+    assert ("class MightyEstimator(RegressorMixin, BaseEstimator)" not in result) == linear
+    assert ("def predict(self, X)" not in result) == linear
+
+
+def test_render_outlier(
+    name: str,
+    required: list[str],
+    optional: list[str],
+    sample_weight: bool,
+    predict_proba: bool,
+) -> None:
+    estimator_type = EstimatorType.OutlierMixin
+
+    result = render_template(
+        name=name,
+        estimator_type=estimator_type,
+        required=required,
+        optional=optional,
+        sample_weight=sample_weight,
+        linear=False,
+        predict_proba=predict_proba,
+        decision_function=False,
+        tags=None,
+    )
+    # All
+    assert "self.n_features_in_ = X.shape[1]" in result
+    assert all(f"self.{p} = {p}" in result for p in [*required, *optional])
+    assert ("self.n_iter_" in result) == ("max_iter" in [*required, *optional])
+    assert "X, y = check_X_y(X, y, ...)" in result
+
+    # Outlier specific
+    assert "class MightyEstimator(OutlierMixin, BaseEstimator)" in result
+    assert "self.offset_" in result
+    assert "def score_samples(self, X)" in result
+    assert "def decision_function(self, X)" in result
+    assert "def predict(self, X)" in result
+    assert "def transform(self, X)" not in result
+
+    # Sample weight
+    assert ("sample_weight = _check_sample_weight(sample_weight)" in result) == sample_weight
+    assert ("def fit(self, X, y)" in result) == (not sample_weight)
+    assert ("def fit(self, X, y, sample_weight=None)" in result) == sample_weight
+
+    # Predict proba
+    assert ("def predict_proba(self, X)" in result) == predict_proba
+
+
+def test_render_transformer(
+    name: str,
+    required: list[str],
+    optional: list[str],
+    sample_weight: bool,
+) -> None:
+    estimator_type = EstimatorType.TransformerMixin
+
+    result = render_template(
+        name=name,
+        estimator_type=estimator_type,
+        required=required,
+        optional=optional,
+        sample_weight=sample_weight,
+        linear=False,
+        predict_proba=False,
+        decision_function=False,
+        tags=None,
+    )
+    # All
+    assert "self.n_features_in_ = X.shape[1]" in result
+    assert all(f"self.{p} = {p}" in result for p in [*required, *optional])
+    assert ("self.n_iter_" in result) == ("max_iter" in [*required, *optional])
+    assert "X, y = check_X_y(X, y, ...)" not in result
+    assert "X = check_array(X, ...)" in result
+
+    # Transformer specific
+    assert "class MightyEstimator(TransformerMixin, BaseEstimator)" in result
+    assert "def transform(self, X)" in result
+    assert "def predict(self, X)" not in result
+
+    # Sample weight
+    assert ("sample_weight = _check_sample_weight(sample_weight)" in result) == sample_weight
+    assert ("def fit(self, X, y=None)" in result) == (not sample_weight)
+    assert ("def fit(self, X, y=None, sample_weight=None)" in result) == (sample_weight)
+
+
+def test_render_cluster(
+    name: str,
+    required: list[str],
+    optional: list[str],
+    sample_weight: bool,
+) -> None:
+    estimator_type = EstimatorType.ClusterMixin
+
+    result = render_template(
+        name=name,
+        estimator_type=estimator_type,
+        required=required,
+        optional=optional,
+        sample_weight=sample_weight,
+        linear=False,
+        predict_proba=False,
+        decision_function=False,
+        tags=None,
+    )
+    # All
+    assert "self.n_features_in_ = X.shape[1]" in result
+    assert all(f"self.{p} = {p}" in result for p in [*required, *optional])
+    assert ("self.n_iter_ = ..." in result) == ("max_iter" in [*required, *optional])
+    assert "X, y = check_X_y(X, y, ...)" in result
+
+    # Cluster specific
+    assert "class MightyEstimator(ClusterMixin, BaseEstimator)" in result
+    assert "self.labels_ = ..." in result
+    assert "def predict(self, X)" in result
+
+    # Sample weight
+    assert ("sample_weight = _check_sample_weight(sample_weight)" in result) == sample_weight
+    assert ("def fit(self, X, y)" in result) == (not sample_weight)
+    assert ("def fit(self, X, y, sample_weight=None)" in result) == (sample_weight)
