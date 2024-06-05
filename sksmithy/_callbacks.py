@@ -20,7 +20,39 @@ def _parse_wrapper(
     *args: PS.args,
     **kwargs: PS.kwargs,
 ) -> tuple[Context, CallbackParam, R]:
-    """Wrap a parser to handle 'caching' logic."""
+    """Wrap a parser to handle 'caching' logic.
+
+    `parser` should return a Result[R, str]
+
+    Parameters
+    ----------
+    ctx
+        Typer context.
+    param
+        Callback parameter information.
+    value
+        Input for the parser callable.
+    parser
+        Parser function, it should return Result[R, str]
+    *args
+        Extra args for `parser`.
+    **kwargs
+        Extra kwargs for `parser`.
+
+    Returns
+    -------
+    ctx : Context
+        Typer context updated with extra information.
+    param : CallbackParam
+        Unchanged callback parameters.
+    result_value : R
+        Parsed value.
+
+    Raises
+    ------
+    BadParameter
+        If parser returns Err(msg)
+    """
     if not ctx.obj:
         ctx.obj = {}
 
@@ -52,7 +84,7 @@ def name_callback(ctx: Context, param: CallbackParam, value: str) -> str:
 
 
 def params_callback(ctx: Context, param: CallbackParam, value: str) -> list[str]:
-    """`required-params` and `optional-params` arguments callback."""
+    """`required_params` and `optional_params` arguments callback."""
     ctx, param, parsed_params = _parse_wrapper(ctx, param, value, params_parser)
 
     if param.name == "optional_params" and (
@@ -76,7 +108,11 @@ def tags_callback(ctx: Context, param: CallbackParam, value: str) -> list[str]:
 def estimator_callback(ctx: Context, param: CallbackParam, estimator: EstimatorType) -> str:
     """`estimator_type` argument callback.
 
-    It dynamically modifies the behaviour of the rest of the prompts based on its value.
+    It dynamically modifies the behaviour of the rest of the prompts based on its value:
+
+    - If not classifier or regressor, turns off linear prompt.
+    - If not classifier or outlier, turns off predict_proba prompt.
+    - If not classifier, turns off decision_function prompt.
     """
     if not ctx.obj:
         ctx.obj = {}

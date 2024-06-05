@@ -75,6 +75,11 @@ with st.sidebar:
         Once the core logic is implemented, the estimator should be ready to test against the _somewhat official_
         [`parametrize_with_checks`](https://scikit-learn.org/dev/modules/generated/sklearn.utils.estimator_checks.parametrize_with_checks.html#sklearn.utils.estimator_checks.parametrize_with_checks)
         pytest compatible decorator.
+
+        ## Official guide
+
+        Scikit-learn documentation on how to
+        [develop estimators](https://scikit-learn.org/dev/developers/develop.html#developing-scikit-learn-estimators).
     """)
 
 sample_weights = False
@@ -104,6 +109,7 @@ with st.container():  # name and type
                 "It should be a valid "
                 "[python identifier](https://docs.python.org/3/reference/lexical_analysis.html#identifiers)"
             ),
+            key="name",
         )
 
         match name_parser(name_input):
@@ -119,6 +125,7 @@ with st.container():  # name and type
             options=tuple(e.value for e in EstimatorType),
             format_func=lambda x: x.capitalize(),
             index=None,
+            key="estimator",
         )
 
         if estimator:
@@ -136,6 +143,7 @@ with st.container():  # params
                 "It should be a sequence of comma-separated "
                 "[python identifiers](https://docs.python.org/3/reference/lexical_analysis.html#identifiers)"
             ),
+            key="required",
         )
 
         match params_parser(required_params):
@@ -153,6 +161,7 @@ with st.container():  # params
                 "It should be a sequence of comma-separated "
                 "[python identifiers](https://docs.python.org/3/reference/lexical_analysis.html#identifiers)"
             ),
+            key="optional",
         )
 
         match params_parser(optional_params):
@@ -172,12 +181,14 @@ with st.container():  # sample_weight and linear
         sample_weight = st.toggle(
             PROMPT_SAMPLE_WEIGHT,
             help="[sample_weight](https://scikit-learn.org/dev/glossary.html#term-sample_weight)",
+            key="sample_weight",
         )
     with c32:  # linear
         linear = st.toggle(
             label=PROMPT_LINEAR,
             disabled=(estimator_type not in {EstimatorType.ClassifierMixin, EstimatorType.RegressorMixin}),
             help="Available only if estimator is `Classifier` or `Regressor`",
+            key="linear",
         )
 
 with st.container():  # predict_proba and decision_function
@@ -191,6 +202,7 @@ with st.container():  # predict_proba and decision_function
                 "[predict_proba](https://scikit-learn.org/dev/glossary.html#term-predict_proba): "
                 "Available only if estimator is `Classifier` or `Outlier`. "
             ),
+            key="predict_proba",
         )
 
     with c42:  # decision_function
@@ -201,6 +213,7 @@ with st.container():  # predict_proba and decision_function
                 "[decision_function](https://scikit-learn.org/dev/glossary.html#term-decision_function): "
                 "Available only if estimator is `Classifier`"
             ),
+            key="decision_function",
         )
 
 st.write("#")  # empty space hack
@@ -221,13 +234,14 @@ with st.container() as forge_row:  # forge button
                     msg_duplicated_params,
                 ]
             ),
+            key="forge_btn",
         )
         if forge_btn:
             st.session_state["forge_counter"] += 1
 
     with c54, st.popover(label="Download", disabled=not st.session_state["forge_counter"]):
         if name:
-            file_name = st.text_input(label="Select filename", value=f"{name.lower()}.py")
+            file_name = st.text_input(label="Select filename", value=f"{name.lower()}.py", key="file_name")
 
             data = st.session_state["forged_template"]
             download_btn = st.download_button(
@@ -235,9 +249,8 @@ with st.container() as forge_row:  # forge button
                 type="primary",
                 data=data,
                 file_name=file_name,
+                key="download_btn",
             )
-
-
 with st.container():  # code output
     if forge_btn:
         st.toast("Request submitted!")

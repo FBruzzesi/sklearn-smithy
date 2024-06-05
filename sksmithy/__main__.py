@@ -18,7 +18,7 @@ from sksmithy._logger import console
 from sksmithy._utils import render_template
 
 app = typer.Typer(
-    help="Awesome CLI to generate scikit-learn estimator boilerplate code",
+    help="CLI to generate scikit-learn estimator boilerplate code.",
     rich_markup_mode="rich",
     rich_help_panel="Customization and Utils",
 )
@@ -51,13 +51,13 @@ def forge(
     Depending on the estimator type the following additional information could be required:
 
     * if the estimator is linear (classifier or regression)
-    * if the estimator has a `predict_proba` method (classifier or outlier detector)
-    * is the estimator has a `decision_function` method (classifier only)
+    * if the estimator implements `.predict_proba()` method (classifier or outlier detector)
+    * if the estimator implements `.decision_function()` method (classifier only)
 
     Finally, the following two questions will be prompt:
 
     * if the estimator should have tags (To know more about tags, check the dedicated scikit-learn documentation
-        at https://scikit-learn.org/dev/developers/develop.html#estimator-tags
+        at https://scikit-learn.org/dev/developers/develop.html#estimator-tags)
     * in which file the class should be saved (default is `f'{name.lower()}.py'`)
     """
     forged_template = render_template(

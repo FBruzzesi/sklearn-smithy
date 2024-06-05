@@ -56,10 +56,12 @@ smith --help
 ```
 
 ```terminal
-Usage: smith [OPTIONS] COMMAND [ARGS]...                                                                                                                          
-                
-Awesome CLI to generate scikit-learn estimator boilerplate code
+Usage: smith [OPTIONS] COMMAND [ARGS]...
+
+CLI to generate scikit-learn estimator boilerplate code
+
 ...
+
 ╭─ Commands ─────────────────────────────────────────────────────────────────────────────╮
 │ forge     Generate a new shiny scikit-learn compatible estimator ✨                    │
 │ version   Display library version.                                                     │
@@ -78,15 +80,16 @@ Generate a new shiny scikit-learn compatible estimator ✨
 Depending on the estimator type the following additional information could be required:
 
 * if the estimator is linear (classifier or regression)
-* if the estimator has a `predict_proba` method (classifier or outlier detector)
-* is the estimator has a `decision_function` method (classifier only)
+* if the estimator implements `.predict_proba()` method (classifier or outlier detector)
+* if the estimator implements `.decision_function()` method (classifier only)
 
 Finally, the following two questions will be prompt:
 
 * if the estimator should have tags (To know more about tags, check the dedicated scikit-learn documentation
-    at https://scikit-learn.org/dev/developers/develop.html#estimator-tags
-* in which file the class should be saved (default is `f'{name.lower()}.py'`)                                                                                                                                                    
-                                                                                                                                                                                                                                                                     
+    at https://scikit-learn.org/dev/developers/develop.html#estimator-tags)
+* in which file the class should be saved (default is `f'{name.lower()}.py'`)
+
+
 ╭─ Options ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ *  --name                                           TEXT                                                Name of the estimator [default: None] [required]                                              │
 │ *  --estimator-type                                 [classifier|outlier|regressor|transformer|cluster]  Estimator type [default: None] [required]                                                     │

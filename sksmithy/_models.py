@@ -2,7 +2,11 @@ from enum import Enum
 
 
 class EstimatorType(str, Enum):
-    """List of possible estimator types."""
+    """List of possible estimator types.
+
+    The reason of naming the enum with the mixin class is to simplify and have a convenient way of using the enum to
+    render the jinja template with the class to import.
+    """
 
     ClassifierMixin = "classifier"
     OutlierMixin = "outlier"
@@ -14,7 +18,8 @@ class EstimatorType(str, Enum):
 class TagType(str, Enum):
     """List of extra tags.
 
-    Description of each tag is available at https://scikit-learn.org/dev/developers/develop.html#estimator-tags.
+    Description of each tag is available in the dedicated section of the scikit-learn documentation:
+    [estimator tags](https://scikit-learn.org/dev/developers/develop.html#estimator-tags).
     """
 
     allow_nan = "allow_nan"
