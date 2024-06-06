@@ -4,17 +4,13 @@ import pytest
 from typer.testing import CliRunner
 
 from sksmithy import __version__
+from sksmithy._models import EstimatorType
 from sksmithy._prompts import (
     PROMPT_DECISION_FUNCTION,
     PROMPT_ESTIMATOR,
     PROMPT_LINEAR,
     PROMPT_NAME,
-    PROMPT_OPTIONAL,
-    PROMPT_OUTPUT,
     PROMPT_PREDICT_PROBA,
-    PROMPT_REQUIRED,
-    PROMPT_SAMPLE_WEIGHT,
-    PROMPT_TAGS,
 )
 from sksmithy.cli import app
 
@@ -28,171 +24,60 @@ def test_version() -> None:
 
 
 @pytest.mark.parametrize("linear", ["y", "N"])
-def test_forge_classifier(tmp_path: Path, name: str, linear: str) -> None:
+def test_forge_default(tmp_path: Path, name: str, estimator: EstimatorType, linear: str) -> None:
     """Tests that prompts are correct for classifier estimator."""
 
-    output_file = tmp_path / (f"{name.lower()}.py")
-    input_output_file = f"{output_file!s}\n"
-
     _input = "".join(
         [
             f"{name}\n",  # name
-            "classifier\n",  # estimator_type
-            "\n",  # required params
-            "\n",  # optional params
-            "\n",  # sample_weight
-            f"{linear}\n",  # linear
-            "\n",  # predict_proba
-            "\n" if (linear == "y") else "",  # decision_function: prompted only if linear is False
-            "\n",  # tags
-            input_output_file,  # output file
+            f"{estimator.value}\n",  # estimator_type
+            f"{linear}\n" if estimator in {EstimatorType.ClassifierMixin, EstimatorType.RegressorMixin} else "",
+            "\n" if estimator in {EstimatorType.ClassifierMixin, EstimatorType.OutlierMixin} else "",  # predict_proba
+            "\n"
+            if (linear == "N" and estimator == EstimatorType.ClassifierMixin)
+            else "",  # decision_function: prompted only if linear is False
         ]
     )
 
-    result = runner.invoke(app, ["forge"], input=_input)
+    output_file = tmp_path / (f"{name.lower()}.py")
+
+    # fmt: off
+    result = runner.invoke(
+        app=app,
+        # By specifying arguments here it is easier to control for the others above.
+        # However, this means that prompts are not appearing in the console.
+        args=[
+            "forge",
+            "--required-params", "",
+            "--optional-params", "",
+            "--no-sample-weight",
+            "--tags", "",
+            "--output-file", str(output_file)
+        ],
+        input=_input,
+    )
+    # fmt: on
 
     assert result.exit_code == 0
 
     # General prompts
     assert PROMPT_NAME in result.stdout
     assert PROMPT_ESTIMATOR in result.stdout
-    assert PROMPT_REQUIRED in result.stdout
-    assert PROMPT_OPTIONAL in result.stdout
-    assert PROMPT_SAMPLE_WEIGHT in result.stdout
-    assert PROMPT_TAGS in result.stdout
-    assert f"{PROMPT_OUTPUT} [{name.lower()}.py]" in result.stdout
+    # assert PROMPT_REQUIRED in result.stdout
+    # assert PROMPT_OPTIONAL in result.stdout
+    # assert PROMPT_SAMPLE_WEIGHT in result.stdout
+    # assert PROMPT_TAGS in result.stdout
+    # assert f"{PROMPT_OUTPUT} [{name.lower()}.py]" in result.stdout
     assert output_file.exists
 
-    # Classifier specific prompts
-    assert PROMPT_LINEAR in result.stdout
-    assert PROMPT_PREDICT_PROBA in result.stdout
-    assert (PROMPT_DECISION_FUNCTION in result.stdout) == (linear == "N")
-
-
-def test_forge_regressor(tmp_path: Path, name: str) -> None:
-    """Tests that prompts are correct for regressor estimator."""
-
-    output_file = tmp_path / (f"{name.lower()}.py")
-    input_output_file = f"{output_file!s}\n"
-
-    _input = "".join(
-        [
-            f"{name}\n",  # name
-            "regressor\n",  # estimator_type
-            "\n",  # required params
-            "\n",  # optional params
-            "\n",  # sample_weight
-            "\n",  # linear
-            "",  # predict_proba
-            "",  # decision_function
-            "\n",  # tags
-            input_output_file,  # output file
-        ]
+    # Estimator type specific prompts
+    assert (PROMPT_LINEAR in result.stdout) == (
+        estimator in {EstimatorType.ClassifierMixin, EstimatorType.RegressorMixin}
     )
-
-    result = runner.invoke(app, ["forge"], input=_input)
-
-    assert result.exit_code == 0
-
-    # General prompts
-    assert PROMPT_NAME in result.stdout
-    assert PROMPT_ESTIMATOR in result.stdout
-    assert PROMPT_REQUIRED in result.stdout
-    assert PROMPT_OPTIONAL in result.stdout
-    assert PROMPT_SAMPLE_WEIGHT in result.stdout
-    assert PROMPT_TAGS in result.stdout
-    assert f"{PROMPT_OUTPUT} [{name.lower()}.py]" in result.stdout
-    assert output_file.exists
-
-    # Regressor specific prompts
-    assert PROMPT_LINEAR in result.stdout
-    assert PROMPT_PREDICT_PROBA not in result.stdout
-    assert PROMPT_DECISION_FUNCTION not in result.stdout
-
-
-def test_forge_outlier(tmp_path: Path, name: str) -> None:
-    """Tests that prompts are correct for outlier estimator."""
-
-    output_file = tmp_path / (f"{name.lower()}.py")
-    input_output_file = f"{output_file!s}\n"
-
-    _input = "".join(
-        [
-            f"{name}\n",  # name
-            "outlier\n",  # estimator_type
-            "\n",  # required params
-            "\n",  # optional params
-            "\n",  # sample_weight
-            "",  # linear
-            "\n",  # predict_proba
-            "",  # decision_function
-            "\n",  # tags
-            input_output_file,  # output file
-        ]
+    assert (PROMPT_PREDICT_PROBA in result.stdout) == (
+        estimator in {EstimatorType.ClassifierMixin, EstimatorType.OutlierMixin}
     )
-
-    result = runner.invoke(app, ["forge"], input=_input)
-
-    assert result.exit_code == 0
-
-    # General prompts
-    assert PROMPT_NAME in result.stdout
-    assert PROMPT_ESTIMATOR in result.stdout
-    assert PROMPT_REQUIRED in result.stdout
-    assert PROMPT_OPTIONAL in result.stdout
-    assert PROMPT_SAMPLE_WEIGHT in result.stdout
-    assert PROMPT_TAGS in result.stdout
-    assert f"{PROMPT_OUTPUT} [{name.lower()}.py]" in result.stdout
-    assert output_file.exists
-
-    # Outlier specific prompts
-    assert PROMPT_LINEAR not in result.stdout
-    assert PROMPT_PREDICT_PROBA in result.stdout
-    assert PROMPT_DECISION_FUNCTION not in result.stdout
-
-
-@pytest.mark.parametrize("estimator_type", ["transformer", "cluster"])
-def test_forge_others(tmp_path: Path, name: str, estimator_type) -> None:
-    """Tests that prompts are correct for transformer and cluster estimators.
-
-    Both these cases have the same developing tree in the prompts calls.
-    """
-    output_file = tmp_path / (f"{name.lower()}.py")
-    input_output_file = f"{output_file!s}\n"
-
-    _input = "".join(
-        [
-            f"{name}\n",  # name
-            f"{estimator_type}\n",  # estimator_type
-            "\n",  # required params
-            "\n",  # optional params
-            "\n",  # sample_weight
-            "",  # linear
-            "",  # predict_proba
-            "",  # decision_function
-            "\n",  # tags
-            input_output_file,  # output file
-        ]
-    )
-
-    result = runner.invoke(app, ["forge"], input=_input)
-
-    assert result.exit_code == 0
-
-    # General prompts
-    assert PROMPT_NAME in result.stdout
-    assert PROMPT_ESTIMATOR in result.stdout
-    assert PROMPT_REQUIRED in result.stdout
-    assert PROMPT_OPTIONAL in result.stdout
-    assert PROMPT_SAMPLE_WEIGHT in result.stdout
-    assert PROMPT_TAGS in result.stdout
-    assert f"{PROMPT_OUTPUT} [{name.lower()}.py]" in result.stdout
-    assert output_file.exists
-
-    # Regressor specific results
-    assert PROMPT_LINEAR not in result.stdout
-    assert PROMPT_PREDICT_PROBA not in result.stdout
-    assert PROMPT_DECISION_FUNCTION not in result.stdout
+    assert (PROMPT_DECISION_FUNCTION in result.stdout) == (linear == "N" and estimator == EstimatorType.ClassifierMixin)
 
 
 @pytest.mark.parametrize(
@@ -276,8 +161,8 @@ def test_forge_duplicated_params(tmp_path: Path, name: str) -> None:
             f"{name}\n",  # name
             "transformer\n",  # estimator_type
             "a,b\n",  # required params
-            "a\n",  # optional params, 1st attempt
-            "c,d\n",  # optional params, 2nd attempt
+            "a\n",  # optional params, invalid attempt
+            "c,d\n",  # optional params, valid attempt
             "\n",  # sample_weight
             "",  # linear
             "",  # predict_proba
@@ -290,5 +175,4 @@ def test_forge_duplicated_params(tmp_path: Path, name: str) -> None:
     result = runner.invoke(app, ["forge"], input=_input)
 
     assert result.exit_code == 0
-
     assert "Error: The following parameters are duplicated between required and optional: {'a'}" in result.stdout
