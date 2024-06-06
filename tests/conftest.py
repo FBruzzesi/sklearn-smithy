@@ -1,8 +1,15 @@
 import pytest
 
+from sksmithy._models import EstimatorType
+
 
 @pytest.fixture(params=["MightyEstimator"])
 def name(request) -> str:
+    return request.param
+
+
+@pytest.fixture(params=list(EstimatorType))
+def estimator(request) -> str:
     return request.param
 
 
