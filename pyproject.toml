@@ -33,7 +33,7 @@ classifiers = [
 streamlit = ["streamlit>=1.34.0"]
 
 [project.scripts]
-smith = "sksmithy.__main__:app"
+smith = "sksmithy.__main__:cli"
 
 [tool.hatch.build.targets.sdist]
 only-include = ["sksmithy"]
@@ -61,7 +61,7 @@ ignore = [
     ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["ANN", "D", "N802", "N806", "PD901", "PT006", "PT007", "PLR0913", "S101"]
+"tests/*" = ["D103","S101"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"

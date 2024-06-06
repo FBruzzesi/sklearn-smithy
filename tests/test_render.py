@@ -4,7 +4,6 @@ from sksmithy._utils import render_template
 
 def test_params(name: str, required: list[str], optional: list[str]) -> None:
     """Tests params (both required and optional) render as expected."""
-
     result = render_template(
         name=name,
         estimator_type=EstimatorType.ClassifierMixin,
@@ -28,7 +27,6 @@ def test_params(name: str, required: list[str], optional: list[str]) -> None:
 
 def test_tags(name: str, tags: list[str] | None) -> None:
     """Tests tags render as expected."""
-
     result = render_template(
         name=name,
         estimator_type=EstimatorType.ClassifierMixin,
@@ -50,7 +48,6 @@ def test_tags(name: str, tags: list[str] | None) -> None:
 
 def test_common_estimator(name: str, estimator: EstimatorType, sample_weight: bool) -> None:
     """Tests common features are present for all estimators. Includes testing for sample_weight"""
-
     result = render_template(
         name=name,
         estimator_type=estimator,

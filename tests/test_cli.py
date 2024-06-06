@@ -31,7 +31,6 @@ def test_version() -> None:
 @pytest.mark.parametrize("linear", ["y", "N"])
 def test_forge_estimator(tmp_path: Path, name: str, estimator: EstimatorType, linear: str) -> None:
     """Tests that prompts are correct for classifier estimator."""
-
     output_file = tmp_path / (f"{name.lower()}.py")
     assert not output_file.exists()
 
@@ -120,7 +119,6 @@ def test_forge_invalid_args(
     tags_err_msg: str,
 ) -> None:
     """Tests that error messages are raised with invalid names."""
-
     output_file = tmp_path / (f"{name.lower()}.py")
     assert not output_file.exists()
 
