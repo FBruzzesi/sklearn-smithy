@@ -114,7 +114,7 @@ def estimator_callback(ctx: Context, param: CallbackParam, estimator: EstimatorT
     - If not classifier or outlier, turns off predict_proba prompt.
     - If not classifier, turns off decision_function prompt.
     """
-    if not ctx.obj:
+    if not ctx.obj:  # pragma: no cover
         ctx.obj = {}
 
     if param.name in ctx.obj:
@@ -123,7 +123,7 @@ def estimator_callback(ctx: Context, param: CallbackParam, estimator: EstimatorT
     # !Warning: This unpacking relies on the order of the arguments in the forge command to be in the same order.
     # Is there a better/more robust way of dealing with it?
     linear, predict_proba, decision_function = (
-        op for op in ctx.command.params if op.name in {"linear", "predict_proba", "decision_function"}
+        opt for opt in ctx.command.params if opt.name in {"linear", "predict_proba", "decision_function"}
     )
 
     match estimator:
@@ -150,3 +150,29 @@ def estimator_callback(ctx: Context, param: CallbackParam, estimator: EstimatorT
     ctx.obj[param.name] = estimator.value
 
     return estimator.value
+
+
+def linear_callback(ctx: Context, param: CallbackParam, linear: bool) -> bool:
+    """`linear` argument callback.
+
+    It dynamically modifies the behaviour of the rest of the prompts based on its value: if the estimator is linear,
+    then `decision_function` method is already implemented for a classifier.
+    """
+    if not ctx.obj:  # pragma: no cover
+        ctx.obj = {}
+
+    if param.name in ctx.obj:  # pragma: no cover
+        return ctx.obj[param.name]
+
+    decision_function = next(opt for opt in ctx.command.params if opt.name == "decision_function")
+
+    match linear:
+        case True:
+            decision_function.prompt = False  # type: ignore[attr-defined]
+            decision_function.prompt_required = False  # type: ignore[attr-defined]
+        case False:
+            pass
+
+    ctx.obj[param.name] = linear
+
+    return linear

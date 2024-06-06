@@ -31,9 +31,9 @@ def render_template(
 
     !!! warning
 
-        This function **does not** validate that the given arguments are necessarely compatible with each other.
+        This function **does not** validate that arguments are necessarely compatible with each other.
         For instance, it could be possible to pass `estimator_type = EstimatorType.RegressorMixin` and
-        `predict_proba = True` which makes no sense as combination.
+        `predict_proba = True` which makes no sense as combination, but it would not raise an error.
 
     Parameters
     ----------

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from typer import Option
 
-from sksmithy._callbacks import estimator_callback, name_callback, params_callback, tags_callback
+from sksmithy._callbacks import estimator_callback, linear_callback, name_callback, params_callback, tags_callback
 from sksmithy._models import EstimatorType
 from sksmithy._prompts import (
     PROMPT_DECISION_FUNCTION,
@@ -21,7 +21,6 @@ name_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_NAME,
-        prompt_required=False,
         help="[bold green]Name[/bold green] of the estimator",
         callback=name_callback,
     ),
@@ -31,7 +30,6 @@ estimator_type_arg = Annotated[
     EstimatorType,
     Option(
         prompt=PROMPT_ESTIMATOR,
-        prompt_required=False,
         help="[bold green]Estimator type[/bold green]",
         callback=estimator_callback,
     ),
@@ -60,7 +58,6 @@ sample_weight_arg = Annotated[
     Option(
         is_flag=True,
         prompt=PROMPT_SAMPLE_WEIGHT,
-        prompt_required=False,
         help="Whether or not `.fit()` supports [bold green]`sample_weight`[/bold green]",
     ),
 ]
@@ -71,6 +68,7 @@ linear_arg = Annotated[
         is_flag=True,
         prompt=PROMPT_LINEAR,
         help="Whether or not the estimator is [bold green]linear[/bold green]",
+        callback=linear_callback,
     ),
 ]
 
@@ -96,7 +94,6 @@ tags_arg = Annotated[
     str,
     Option(
         prompt=PROMPT_TAGS,
-        prompt_required=False,
         help="List of optional extra scikit-learn [bold green]tags[/bold green]",
         callback=tags_callback,
     ),

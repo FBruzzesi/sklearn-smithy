@@ -79,6 +79,7 @@ python_version = "3.10"
 [tool.coverage.run]
 source = ["sksmithy/"]
 omit = [
+    "sksmithy/__main__.py",
     "sksmithy/_arguments.py",
     "sksmithy/_logger.py",
     "sksmithy/_prompts.py",

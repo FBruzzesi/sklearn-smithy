@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 import pytest
 from result import Err, Ok, is_err, is_ok
 
@@ -14,7 +16,7 @@ from sksmithy._parsers import check_duplicates, name_parser, params_parser, tags
         ("", is_err),
     ],
 )
-def test_name_parser(name: str, checker: callable) -> None:
+def test_name_parser(name: str, checker: Callable) -> None:
     result = name_parser(name)
     assert checker(result)
 
@@ -28,7 +30,7 @@ def test_name_parser(name: str, checker: callable) -> None:
         ("a,a,b", is_err, "Found repeated parameters!"),
     ],
 )
-def test_params_parser(params: str, checker: callable, expected: str) -> None:
+def test_params_parser(params: str, checker: Callable, expected: str) -> None:
     result = params_parser(params)
     assert checker(result)
 
@@ -61,7 +63,7 @@ def test_check_duplicates(required: list[str], optional: list[str], expected: st
         ("some_madeup_tag", is_err, "The following tags are not available: ('some_madeup_tag',)"),
     ],
 )
-def test_tags_parser(tags: str, checker: callable, expected: str) -> None:
+def test_tags_parser(tags: str, checker: Callable, expected: str) -> None:
     result = tags_parser(tags)
     assert checker(result)
     match result:

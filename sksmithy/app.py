@@ -208,7 +208,7 @@ with st.container():  # predict_proba and decision_function
     with c42:  # decision_function
         decision_function = st.toggle(
             label=PROMPT_DECISION_FUNCTION,
-            disabled=(estimator_type != EstimatorType.ClassifierMixin),
+            disabled=(estimator_type != EstimatorType.ClassifierMixin) or linear,
             help=(
                 "[decision_function](https://scikit-learn.org/dev/glossary.html#term-decision_function): "
                 "Available only if estimator is `Classifier`"
