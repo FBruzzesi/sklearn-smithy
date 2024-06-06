@@ -13,9 +13,15 @@ lint:
 	ruff check $(sources) --fix
 	ruff clean
 
+# Requires pytest-xdist (pip install pytest-xdist)
 test:
 	pytest tests -n auto
 
+# Requires pytest-cov (pip install pytest-cov)
+test-cov:
+	pytest tests --cov=sksmithy -n auto
+
+# Requires coverage (pip install coverage)
 coverage:
 	rm -rf .coverage
 	(rm docs/img/coverage.svg) || (echo "No coverage.svg file found")

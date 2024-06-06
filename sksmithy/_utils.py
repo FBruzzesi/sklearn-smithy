@@ -29,6 +29,12 @@ def render_template(
     - Render the jinja template wit hthe input values.
     - Format the string using ruff formatter.
 
+    !!! warning
+
+        This function **does not** validate that the given arguments are necessarely compatible with each other.
+        For instance, it could be possible to pass `estimator_type = EstimatorType.RegressorMixin` and
+        `predict_proba = True` which makes no sense as combination.
+
     Parameters
     ----------
     name
