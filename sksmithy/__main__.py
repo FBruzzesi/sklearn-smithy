@@ -1,4 +1,4 @@
-from sksmithy.cli import app
+from sksmithy.cli import cli
 
 if __name__ == "__main__":
-    app()
+    cli()

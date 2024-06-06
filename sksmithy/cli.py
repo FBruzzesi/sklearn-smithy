@@ -17,14 +17,14 @@ from sksmithy._arguments import (
 from sksmithy._logger import console
 from sksmithy._utils import render_template
 
-app = typer.Typer(
+cli = typer.Typer(
     help="CLI to generate scikit-learn estimator boilerplate code.",
     rich_markup_mode="rich",
     rich_help_panel="Customization and Utils",
 )
 
 
-@app.command()
+@cli.command()
 def version() -> None:
     """Display library version."""
     from importlib import metadata
@@ -33,7 +33,7 @@ def version() -> None:
     console.print(f"sklearn-smithy={__version__}", style="good")
 
 
-@app.command()
+@cli.command()
 def forge(
     name: name_arg,
     estimator_type: estimator_type_arg,
@@ -79,7 +79,3 @@ def forge(
         destination.write(forged_template)
 
     console.print(f"Template forged at {destination_file}", style="good")
-
-
-if __name__ == "__main__":  # pragma: no cover
-    app()

@@ -17,13 +17,13 @@ from sksmithy._prompts import (
     PROMPT_SAMPLE_WEIGHT,
     PROMPT_TAGS,
 )
-from sksmithy.cli import app
+from sksmithy.cli import cli
 
 runner = CliRunner()
 
 
 def test_version() -> None:
-    result = runner.invoke(app, ["version"])
+    result = runner.invoke(cli, ["version"])
     assert result.exit_code == 0
     assert f"sklearn-smithy={__version__}" in result.stdout
 
@@ -33,6 +33,8 @@ def test_forge_estimator(tmp_path: Path, name: str, estimator: EstimatorType, li
     """Tests that prompts are correct for classifier estimator."""
 
     output_file = tmp_path / (f"{name.lower()}.py")
+    assert not output_file.exists()
+
     _input = "".join(
         [
             f"{name}\n",  # name
@@ -51,12 +53,13 @@ def test_forge_estimator(tmp_path: Path, name: str, estimator: EstimatorType, li
     )
 
     result = runner.invoke(
-        app=app,
+        app=cli,
         args=["forge"],
         input=_input,
     )
 
     assert result.exit_code == 0
+    assert output_file.exists()
 
     # General prompts
     assert all(
@@ -71,8 +74,6 @@ def test_forge_estimator(tmp_path: Path, name: str, estimator: EstimatorType, li
             f"{PROMPT_OUTPUT} [{name.lower()}.py]",
         )
     )
-
-    assert output_file.exists
 
     # Estimator type specific prompts
     assert (PROMPT_LINEAR in result.stdout) == (
@@ -121,6 +122,7 @@ def test_forge_invalid_args(
     """Tests that error messages are raised with invalid names."""
 
     output_file = tmp_path / (f"{name.lower()}.py")
+    assert not output_file.exists()
 
     _input = "".join(
         [
@@ -139,14 +141,16 @@ def test_forge_invalid_args(
     )
 
     result = runner.invoke(
-        app=app,
+        app=cli,
         args=["forge"],
         input=_input,
     )
 
-    result = runner.invoke(app, ["forge"], input=_input)
+    result = runner.invoke(cli, ["forge"], input=_input)
 
     assert result.exit_code == 0
+    assert output_file.exists()
+
     assert all(
         err_msg in result.stdout for err_msg in (name_err_msg, required_err_msg, dupliclated_err_msg, tags_err_msg)
     )
