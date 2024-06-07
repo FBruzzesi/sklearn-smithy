@@ -64,15 +64,14 @@ def test_params(
 ) -> None:
     """Test required and optional params interaction."""
     app.run()
+    app.text_input(key="name").input(name).run()
+    app.selectbox(key="estimator").select(estimator.value).run()
+    
     app.text_input(key="required").input(required_).run()
     app.text_input(key="optional").input(optional_).run()
 
-    app.text_input(key="name").input(name).run()
-    app.selectbox(key="estimator").select(estimator.value).run()
-
     if err_msg:
         assert app.error[0].value == err_msg
-
         # Forge button gets disabled if any error happen
         assert app.button(key="forge_btn").disabled
     else:
