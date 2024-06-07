@@ -13,11 +13,12 @@ Scikit-learn smithy is a tool that helps you to forge scikit-learn compatible es
 How can you use it?
 
 ✅ Directly from the web: we have a [web UI](https://sklearn-smithy.streamlit.app/) powered by [streamlit](https://streamlit.io/).
+
 ✅ As a CLI (command line interface) in your terminal (requires [installation](#installation)) powered by [typer](https://typer.tiangolo.com/):
 
-    ```terminal
-    smith forge
-    ```
+```terminal
+smith forge
+```
 
 🚧 As a TUI (terminal user interface): Working in progress!
 
