@@ -5,7 +5,7 @@ from typing import Final
 
 from jinja2 import Template
 
-from sksmithy._models import EstimatorType
+from ._models import EstimatorType
 
 TEMPLATE_PATH: Final[Path] = Path(str(resources.files("sksmithy") / "template.py.jinja"))
 
@@ -26,7 +26,7 @@ def render_template(
 
     This is achieved in a two steps process:
 
-    - Render the jinja template wit hthe input values.
+    - Render the jinja template using the input values.
     - Format the string using ruff formatter.
 
     !!! warning

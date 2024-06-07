@@ -4,8 +4,8 @@ from typing import Concatenate, ParamSpec, TypeVar
 from result import Err, Ok, Result
 from typer import BadParameter, CallbackParam, Context
 
-from sksmithy._models import EstimatorType
-from sksmithy._parsers import check_duplicates, name_parser, params_parser, tags_parser
+from ._models import EstimatorType
+from ._parsers import check_duplicates, name_parser, params_parser, tags_parser
 
 T = TypeVar("T")
 R = TypeVar("R")
