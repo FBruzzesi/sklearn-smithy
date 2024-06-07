@@ -9,7 +9,7 @@ PROMPT_LINEAR: Final[str] = "📏 Is the estimator linear?"
 PROMPT_PREDICT_PROBA: Final[str] = "🎲 Should the estimator implement a `predict_proba` method?"
 PROMPT_DECISION_FUNCTION: Final[str] = "❓ Should the estimator implement a `decision_function` method?"
 PROMPT_TAGS: Final[str] = (
-    "🧪 We are almost there... Is there any tag you want to add? (comma or space separated)\n"
+    "🧪 We are almost there... Is there any tag you want to add? (comma-separated)\n"
     "To know more about tags, check the documentation at:\n"
     "https://scikit-learn.org/dev/developers/develop.html#estimator-tags"
 )
