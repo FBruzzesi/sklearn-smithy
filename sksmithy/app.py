@@ -90,6 +90,7 @@ estimator_type: EstimatorType | None = None
 
 required_is_valid = False
 optional_is_valid = False
+msg_duplicated_params: str | None = None
 
 if "forged_template" not in st.session_state:
     st.session_state["forged_template"] = ""

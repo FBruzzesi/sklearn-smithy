@@ -1,4 +1,5 @@
 import pytest
+from streamlit.testing.v1 import AppTest
 
 from sksmithy._models import EstimatorType
 
@@ -46,3 +47,8 @@ def decision_function(request: pytest.FixtureRequest) -> bool:
 @pytest.fixture(params=[["allow_nan", "binary_only"], [], None])
 def tags(request: pytest.FixtureRequest) -> list[str] | None:
     return request.param
+
+
+@pytest.fixture()
+def app() -> AppTest:
+    return AppTest.from_file("sksmithy/app.py", default_timeout=10)
