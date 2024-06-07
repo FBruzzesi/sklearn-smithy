@@ -5,7 +5,7 @@ from typing import Final
 
 from jinja2 import Template
 
-from ._models import EstimatorType
+from sksmithy._models import EstimatorType
 
 TEMPLATE_PATH: Final[Path] = Path(str(resources.files("sksmithy") / "template.py.jinja"))
 

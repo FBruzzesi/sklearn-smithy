@@ -2,7 +2,7 @@ from pathlib import Path
 
 import typer
 
-from ._arguments import (
+from sksmithy._arguments import (
     decision_function_arg,
     estimator_type_arg,
     linear_arg,
@@ -14,8 +14,8 @@ from ._arguments import (
     sample_weight_arg,
     tags_arg,
 )
-from ._logger import console
-from ._utils import render_template
+from sksmithy._logger import console
+from sksmithy._utils import render_template
 
 cli = typer.Typer(
     help="CLI to generate scikit-learn estimator boilerplate code.",

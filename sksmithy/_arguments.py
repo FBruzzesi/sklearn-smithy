@@ -2,9 +2,9 @@ from typing import Annotated
 
 from typer import Option
 
-from ._callbacks import estimator_callback, linear_callback, name_callback, params_callback, tags_callback
-from ._models import EstimatorType
-from ._prompts import (
+from sksmithy._callbacks import estimator_callback, linear_callback, name_callback, params_callback, tags_callback
+from sksmithy._models import EstimatorType
+from sksmithy._prompts import (
     PROMPT_DECISION_FUNCTION,
     PROMPT_ESTIMATOR,
     PROMPT_LINEAR,

@@ -2,7 +2,7 @@ from keyword import iskeyword
 
 from result import Err, Ok, Result
 
-from ._models import TagType
+from sksmithy._models import TagType
 
 
 def name_parser(name: str | None) -> Result[str, str]:

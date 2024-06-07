@@ -92,6 +92,8 @@ def test_forge(app: AppTest, name: str, estimator: EstimatorType) -> None:
     app.text_input(key="name").input(name).run()
     app.selectbox(key="estimator").select(estimator.value).run()
     assert not app.button(key="forge_btn").disabled
+    assert not app.code
 
     app.button(key="forge_btn").click().run()
     assert app.session_state["forge_counter"] == 1
+    assert app.code is not None

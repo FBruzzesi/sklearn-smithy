@@ -4,9 +4,9 @@ from importlib.metadata import version
 
 from result import Err, Ok
 
-from ._models import EstimatorType
-from ._parsers import check_duplicates, name_parser, params_parser
-from ._prompts import (
+from sksmithy._models import EstimatorType
+from sksmithy._parsers import check_duplicates, name_parser, params_parser
+from sksmithy._prompts import (
     PROMPT_DECISION_FUNCTION,
     PROMPT_ESTIMATOR,
     PROMPT_LINEAR,
@@ -16,7 +16,7 @@ from ._prompts import (
     PROMPT_REQUIRED,
     PROMPT_SAMPLE_WEIGHT,
 )
-from ._utils import render_template
+from sksmithy._utils import render_template
 
 if (st_version := version("streamlit")) and tuple(int(re.sub(r"\D", "", str(v))) for v in st_version.split(".")) < (
     1,

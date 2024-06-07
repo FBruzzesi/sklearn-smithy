@@ -39,7 +39,7 @@ jobs:
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Install dependencies and run tests
         run: |
-          uv pip install -e ".[streamlit]" --system
+          uv pip install -r requirements.txt --system
           uv pip install pytest pytest-cov pytest-xdist --system
           make test-cov
       - name: Install and run mypy
