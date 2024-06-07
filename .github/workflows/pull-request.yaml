@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies and run tests
         run: |
           uv pip install -e ."[streamlit]" --system
-          uv pip install pytest pytest-cov --system
+          uv pip install pytest pytest-cov pytest-xdist --system
           make test-cov
       - name: Install and run mypy
         run: |
