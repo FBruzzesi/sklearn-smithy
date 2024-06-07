@@ -70,6 +70,7 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.details
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.highlight:
@@ -83,3 +84,10 @@ nav:
   - Why ❓: why.md
   - User Guide 📚: user-guide.md
   - Contributing 👏: contribute.md
+
+extra_css:
+  - css/termynal.css
+  - css/custom.css
+extra_javascript:
+  - js/termynal.js
+  - js/custom.js

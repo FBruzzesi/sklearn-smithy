@@ -1,4 +1,4 @@
-# Why ❓
+# Why❓
 
 Writing scikit-learn compatible estimators might be harder than expected.
 
