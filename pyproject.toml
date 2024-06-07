@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sklearn-smithy"
-version = "0.0.7"
+version = "0.0.8"
 
 license = {file = "LICENSE"}
 readme = "README.md"
