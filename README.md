@@ -4,16 +4,22 @@
 
 Scikit-learn smithy is a tool that helps you to forge scikit-learn compatible estimator with ease.
 
+---
+
+[Documentation](https://fbruzzesi.github.io/sklearn-smithy) | [Repository](https://github.com/fbruzzesi/sklearn-smithy) | [Issue Tracker](https://github.com/fbruzzesi/sklearn-smithy/issues)
+
+---
+
 How can you use it?
 
-- ✅ Directly from the web: we have a [web UI](https://sklearn-smithy.streamlit.app/) powered by [streamlit](https://streamlit.io/).
-- ✅ As a CLI (command line interface) in your terminal (requires [installation](#installation)):
+✅ Directly from the web: we have a [web UI](https://sklearn-smithy.streamlit.app/) powered by [streamlit](https://streamlit.io/).
+✅ As a CLI (command line interface) in your terminal (requires [installation](#installation)) powered by [typer](https://typer.tiangolo.com/):
 
     ```terminal
     smith forge
     ```
 
-- 🚧 As a TUI (terminal user interface): Working in progress!
+🚧 As a TUI (terminal user interface): Working in progress!
 
 All these tools will prompt a series of questions regarding the estimator you want to create, and then it will generate the boilerplate code for you.
 
@@ -59,7 +65,7 @@ and it should be compatible with scikit-learn Pipeline, GridSearchCV, etc.
 Scikit-learn documentation on how to
 [develop estimators](https://scikit-learn.org/dev/developers/develop.html#developing-scikit-learn-estimators).
 
-## Installation ✨
+## Installation
 
 sklearn-smithy is available on [pypi](https://pypi.org/project/sklearn-smithy), so you can install it directly from there:
 
@@ -77,64 +83,9 @@ smith version
 
 > sklearn-smithy=...
 
-## Available CLI commands
+## User guide 📚
 
-The `smith` entrypoint offers two commands:
-
-```bash
-smith --help
-```
-
-```terminal
-Usage: smith [OPTIONS] COMMAND [ARGS]...
-
-CLI to generate scikit-learn estimator boilerplate code
-
-...
-
-╭─ Commands ─────────────────────────────────────────────────────────────────────────────╮
-│ forge     Generate a new shiny scikit-learn compatible estimator ✨                    │
-│ version   Display library version.                                                     │
-╰────────────────────────────────────────────────────────────────────────────────────────╯
-```
-
-and as you can already guess, the `forge` command is the one that will generate the boilerplate code for you.
-
-```bash
-smith forge --help
-```
-
-```terminal
-Generate a new shiny scikit-learn compatible estimator ✨
-
-Depending on the estimator type the following additional information could be required:
-
-* if the estimator is linear (classifier or regression)
-* if the estimator implements `.predict_proba()` method (classifier or outlier detector)
-* if the estimator implements `.decision_function()` method (classifier only)
-
-Finally, the following two questions will be prompt:
-
-* if the estimator should have tags (To know more about tags, check the dedicated scikit-learn documentation
-    at https://scikit-learn.org/dev/developers/develop.html#estimator-tags)
-* in which file the class should be saved (default is `f'{name.lower()}.py'`)
-
-
-╭─ Options ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ *  --name                                           TEXT                                                Name of the estimator [default: None] [required]                                              │
-│ *  --estimator-type                                 [classifier|outlier|regressor|transformer|cluster]  Estimator type [default: None] [required]                                                     │
-│    --required-params                                TEXT                                                List of (comma-separated) required parameters                                                 │
-│    --optional-params                                TEXT                                                List of  (comma-separated) optional parameters                                                │
-│    --sample-weight        --no-sample-weight                                                            Whether or not `.fit()` supports `sample_weight` [default: no-sample-weight]                  │
-│    --linear               --no-linear                                                                   Whether or not the estimator is linear [default: no-linear]                                   │
-│    --predict-proba        --no-predict-proba                                                            Whether or not the estimator implements `predict_proba` method [default: no-predict-proba]    │
-│    --decision-function    --no-decision-function                                                        Whether or not the estimator implements `decision_function` method                            │
-│                                                                                                         [default: no-decision-function]                                                               │
-│    --tags                                           TEXT                                                List of optional extra scikit-learn tags                                                      │
-│    --output-file                                    TEXT                                                Destination file where to save the boilerplate code                                           │
-│    --help                                                                                               Show this message and exit.                                                                   │
-╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-```
+Please refer to the dedicated [user guide](https://fbruzzesi.github.io/sklearn-smithy/user-guide/) documentation section.
 
 ## Origin story
 
