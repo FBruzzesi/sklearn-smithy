@@ -66,7 +66,7 @@ def test_params(
     app.run()
     app.text_input(key="name").input(name).run()
     app.selectbox(key="estimator").select(estimator.value).run()
-    
+
     app.text_input(key="required").input(required_).run()
     app.text_input(key="optional").input(optional_).run()
 
