@@ -55,7 +55,7 @@ with st.sidebar:
     st.markdown("""
         # Description
 
-        Writing a scikit-learn compatible estimators might be harder than expected.
+        Writing scikit-learn compatible estimators might be harder than expected.
 
         While everyone knows about the `fit` and `predict`, there are other behaviours, methods and attributes that
         scikit-learn might be expecting from your estimator depending on:

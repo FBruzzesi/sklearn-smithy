@@ -26,7 +26,7 @@ def render_template(
 
     This is achieved in a two steps process:
 
-    - Render the jinja template wit hthe input values.
+    - Render the jinja template using the input values.
     - Format the string using ruff formatter.
 
     !!! warning

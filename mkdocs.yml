@@ -1,0 +1,95 @@
+# Project information
+site_name: Sklearn Smithy
+site_url: https://fbruzzesi.github.io/sklearn-smithy/
+site_author: Francesco Bruzzesi
+site_description: Toolkit to forge scikit-learn compatible estimators
+
+# Repository information
+repo_name: FBruzzesi/sklearn-smithy
+repo_url: https://github.com/fbruzzesi/sklearn-smithy
+edit_uri: edit/main/docs/
+
+# Configuration
+use_directory_urls: true
+theme:
+  name: material
+  font: false
+  palette:
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: teal
+    accent: deep-orange
+    toggle:
+      icon: material/brightness-7
+      name: Switch to light mode
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: teal
+    accent: deep-orange
+    toggle:
+      icon: material/brightness-4
+      name: Switch to dark mode
+  features:
+    - search.suggest
+    - search.highlight
+    - search.share
+    - toc.follow
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+
+  logo: img/sksmith-logo.png
+  favicon: img/sksmith-logo.png
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+
+# Customization
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/fbruzzesi
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/francesco-bruzzesi/
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/sklearn-smithy/
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - codehilite
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+
+nav:
+  - Home 🏠: index.md
+  - Installation ✨: installation.md
+  - Why ❓: why.md
+  - User Guide 📚: user-guide.md
+  - Contributing 👏: contribute.md
+
+extra_css:
+  - css/termynal.css
+  - css/custom.css
+extra_javascript:
+  - js/termynal.js
+  - js/custom.js

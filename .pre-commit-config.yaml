@@ -1,0 +1,36 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: requirements-txt-fixer
+    -   id: check-json
+    -   id: check-yaml
+    -   id: check-ast
+    -   id: check-added-large-files
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.4.7
+  hooks:
+    - id: ruff-format
+      args: [sksmithy, tests]
+    - id: ruff
+      args: [--fix, sksmithy, tests]
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.0
+    hooks:
+    - id: mypy
+      args: [sksmithy, tests]
+-   repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
+    rev: v1.0.6
+    hooks:
+    -   id: python-bandit-vulnerability-check
+        args: [--skip, "B101",--severity-level, medium, --recursive, sksmithy]
+-   repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+    -   id: python-no-eval
+-   repo: https://github.com/crate-ci/typos
+    rev: v1.21.0
+    hooks:
+    -   id: typos
