@@ -108,7 +108,7 @@ class {{ name }}(
 
         return self
 
-    {% if estimator_type == 'classifier' and decision_function == True %}
+    {% if estimator_type == 'classifier' and decision_function == True and linear == False %}
     def decision_function(self, X):
         """Confidence scores of X.
 
@@ -154,7 +154,7 @@ class {{ name }}(
         return y_pred
     {% endif %}
 
-    {% if estimator_type == 'classifier' and predict_proba == True %}
+    {% if estimator_type in ('classifier', 'outlier') and predict_proba == True %}
     def predict_proba(self, X):
         """Probability estimates of X.
 

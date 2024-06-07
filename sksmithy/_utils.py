@@ -24,17 +24,37 @@ def render_template(
     """
     Render a template using the provided parameters.
 
+    This is achieved in a two steps process:
+
+    - Render the jinja template wit hthe input values.
+    - Format the string using ruff formatter.
+
+    !!! warning
+
+        This function **does not** validate that arguments are necessarely compatible with each other.
+        For instance, it could be possible to pass `estimator_type = EstimatorType.RegressorMixin` and
+        `predict_proba = True` which makes no sense as combination, but it would not raise an error.
+
     Parameters
     ----------
-    name: The name of the template.
-    estimator_type : The type of the estimator.
-    required : A list of required parameters.
-    optional : A list of optional parameters.
-    linear : Whether the estimator is linear or not
-    sample_weight : Whether the estimator supports sample weights in `.fit()` or not
-    predict_proba : Whether the estimator will have a `.predict_proba()` method or not.
-    decision_function : Whether the estimator will have `.decision_function()` method or not.
-    tags : A list of scikit-learn extra tags.
+    name
+        The name of the template.
+    estimator_type
+        The type of the estimator.
+    required
+        The list of required parameters.
+    optional
+        The list of optional parameters.
+    linear
+        Whether or not the estimator is linear.
+    sample_weight
+        Whether or not the estimator supports sample weights in `.fit()`.
+    predict_proba
+        Whether or not the estimator should implement `.predict_proba()` method.
+    decision_function
+        Whether or not the estimator should implement `.decision_function()` method.
+    tags
+        The list of scikit-learn extra tags.
 
     Returns
     -------

@@ -6,7 +6,16 @@ from sksmithy._models import TagType
 
 
 def name_parser(name: str | None) -> Result[str, str]:
-    """Validate that `name` is a valid python class name."""
+    """Validate that `name` is a valid python class name.
+
+    The parser returns `Err(...)` if:
+
+    - `name` is not a valid python identifier
+    - `name` is a python reserved keyword
+    - `name` is empty
+
+    Otherwise it returns `Ok(name)`.
+    """
     if name:
         if not name.isidentifier():
             msg = f"`{name}` is not a valid python class name!"
@@ -20,7 +29,15 @@ def name_parser(name: str | None) -> Result[str, str]:
 
 
 def params_parser(params: str | None) -> Result[list[str], str]:
-    """Parse and validate that `params` contains valid python names."""
+    """Parse and validate that `params` contains valid python names.
+
+    The parser first splits params on commas to get a list of strings. Then it returns `Err(...)` if:
+
+    - any element in the list is not a valid python identifier
+    - any element is repeated more than once
+
+    Otherwise it returns `Ok(params.split(","))`.
+    """
     param_list: list[str] = params.split(",") if params else []
     invalid = tuple(p for p in param_list if not p.isidentifier())
 
@@ -46,7 +63,13 @@ def check_duplicates(required: list[str], optional: list[str]) -> str | None:
 
 
 def tags_parser(tags: str) -> Result[list[str], str]:
-    """Parse and validate `tags` by comparing with sklearn list."""
+    """Parse and validate `tags` by comparing with sklearn list.
+
+    The parser first splits tags on commas to get a list of strings. Then it returns `Err(...)` if any of the tag is not
+    in the scikit-learn supported list.
+
+    Otherwise it returns `Ok(tags.split(","))`
+    """
     list_tag: list[str] = tags.split(",") if tags else []
 
     unavailable_tags = tuple(t for t in list_tag if t not in TagType.__members__)
