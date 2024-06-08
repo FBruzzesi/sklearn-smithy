@@ -1,4 +1,4 @@
-{%- if estimator_type=='classifier' %}
+{%- if estimator_type in ('classifier', 'feature-selector') %}
 import numpy as np
 {% endif -%}
 {%- if estimator_type == 'classifier' and linear %}
@@ -7,6 +7,9 @@ from sklearn.linear_model._base import LinearClassifierMixin
 {% elif estimator_type == 'regressor' and linear%}
 from sklearn.base import {{ mixin }}
 from sklearn.linear_model._base import LinearModel
+{% elif estimator_type == 'feature-selector'%}
+from sklearn.base import BaseEstimator
+from sklearn.feature_selection import SelectorMixin
 {% else %}
 from sklearn.base import BaseEstimator, {{ mixin }}
 {% endif -%}
@@ -56,7 +59,7 @@ class {{ name }}(
         {% endfor -%}
         {% endif %}
 
-    def fit(self, X, y{% if estimator_type == 'transformer' %}=None{% endif %}{% if sample_weight %}, sample_weight=None{% endif %}):
+    def fit(self, X, y{% if estimator_type in ('transformer', 'feature-selector') %}=None{% endif %}{% if sample_weight %}, sample_weight=None{% endif %}):
         """
         Fit {{name}} estimator.
 
@@ -82,7 +85,7 @@ class {{ name }}(
         self : {{name}}
             Fitted {{name}} estimator.
         """
-        {%- if estimator_type == 'transformer' %}
+        {%- if estimator_type in ('transformer', 'feature-selector') %}
         X = check_array(X, ...) #TODO: Fill in `check_array` arguments
         {% else %}
         X, y = check_X_y(X, y, ...) #TODO: Fill in `check_X_y` arguments
@@ -105,6 +108,13 @@ class {{ name }}(
         {% if 'max_iter' in parameters -%}self.n_iter_ = ...{%- endif %}
         {% if estimator_type=='outlier' -%}self.offset_ = ...{%- endif %}
         {% if estimator_type=='cluster' -%}self.labels_ = ...{%- endif %}
+        {% if estimator_type=='feature-selector'%}
+        self.selected_features_ = ...  # TODO: Indexes of selected features
+        self.support_ = np.isin(
+            np.arange(0, self.n_features_in_),  # all_features
+            self.selected_features_
+        )
+        {%- endif %}
 
         return self
 
@@ -253,6 +263,20 @@ class {{ name }}(
         X_ts = ...  # TODO: Implement transform logic
 
         return X_ts
+    {%- endif %}
+
+    {% if estimator_type=='feature-selector' -%}
+    def _get_support_mask(self, X):
+        """Get the boolean mask indicating which features are selected.
+
+        Returns
+        -------
+        support : boolean array of shape [# input features]
+            An element is True iff its corresponding feature is selected for retention.
+        """
+
+        check_is_fitted(self)
+        return self.support_
     {%- endif %}
 
     {% if tags %}

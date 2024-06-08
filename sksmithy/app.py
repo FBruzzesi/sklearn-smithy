@@ -124,7 +124,7 @@ with st.container():  # name and type
         estimator = st.selectbox(
             label=PROMPT_ESTIMATOR,
             options=tuple(e.value for e in EstimatorType),
-            format_func=lambda x: x.capitalize(),
+            format_func=lambda v: " ".join(x.capitalize() for x in v.split("-")),
             index=None,
             key="estimator",
         )
