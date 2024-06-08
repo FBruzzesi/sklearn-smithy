@@ -65,7 +65,7 @@ def test_common_estimator(name: str, estimator: EstimatorType, sample_weight: bo
     assert ("sample_weight = _check_sample_weight(sample_weight)" in result) == sample_weight
 
     match estimator:
-        case EstimatorType.TransformerMixin:
+        case EstimatorType.TransformerMixin | EstimatorType.SelectorMixin:
             assert "X = check_array(X, ...)" in result
             assert ("def fit(self, X, y=None, sample_weight=None)" in result) == (sample_weight)
             assert ("def fit(self, X, y=None)" in result) == (not sample_weight)
@@ -188,6 +188,28 @@ def test_transformer(name: str) -> None:
     # Transformer specific
     assert "class MightyEstimator(TransformerMixin, BaseEstimator)" in result
     assert "def transform(self, X)" in result
+    assert "def predict(self, X)" not in result
+
+
+def test_feature_selector(name: str) -> None:
+    """Tests transformer specific rendering."""
+    estimator_type = EstimatorType.SelectorMixin
+
+    result = render_template(
+        name=name,
+        estimator_type=estimator_type,
+        required=[],
+        optional=[],
+        sample_weight=False,
+        linear=False,
+        predict_proba=False,
+        decision_function=False,
+        tags=None,
+    )
+    # Transformer specific
+    assert "class MightyEstimator(SelectorMixin, BaseEstimator)" in result
+    assert "def _get_support_mask(self, X)" in result
+    assert "self.support_" in result
     assert "def predict(self, X)" not in result
 
 

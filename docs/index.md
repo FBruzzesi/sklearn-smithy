@@ -13,9 +13,20 @@ How can you use it?
     smith forge
     ```
 
-- [ ] As a TUI (terminal user interface): [Working in progress](https://github.com/FBruzzesi/sklearn-smithy/issues/1)!
+- [ ] As a TUI (terminal user interface): [Work in progress](https://github.com/FBruzzesi/sklearn-smithy/issues/1)!
 
 All these tools will prompt a series of questions regarding the estimator you want to create, and then it will generate the boilerplate code for you.
+
+## Supported estimators
+
+The following types of scikit-learn estimator are supported:
+
+- Classifier
+- Regressor
+- Transformer
+  - Feature Selector
+- Outlier Detector
+- Clusterer
 
 ## Origin story
 

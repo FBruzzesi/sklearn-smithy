@@ -13,6 +13,7 @@ class EstimatorType(str, Enum):
     RegressorMixin = "regressor"
     TransformerMixin = "transformer"
     ClusterMixin = "cluster"
+    SelectorMixin = "feature-selector"
 
 
 class TagType(str, Enum):
