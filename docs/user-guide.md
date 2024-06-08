@@ -35,7 +35,7 @@ $ <font color="#4E9A06">smith</font> forge
 # 📏 Is the estimator linear? [y/N]:$ N
 # 🎲 Should the estimator implement a `predict_proba` method? [y/N]:$ N
 # ❓ Should the estimator implement a `decision_function` method? [y/N]:$ y
-# 🧪 We are almost there... Is there any tag you want to add? (comma-separated) []:$
+# 🧪 We are almost there... Is there any tag you want to add? (comma-separated) []:$ binary_only
 # 📂 Where would you like to save the class? [mightyclassifier.py]:$ path/to/file.py
 <span style="color: green; font-weight: bold;">Template forged at path/to/file.py </span>
 ```
