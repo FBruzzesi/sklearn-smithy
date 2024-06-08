@@ -1,0 +1,89 @@
+Screen {
+    align: center middle;
+}
+
+Header {
+    color: $secondary;
+    text-style: bold;
+}
+
+Horizontal {
+    min-height: 10vh;
+    height: auto;
+}
+
+Name, Estimator, Required, Optional {
+    width: 50%;
+    padding: 0 2 0 1;
+    height: auto;
+}
+
+SampleWeight, Linear {
+    width: 50%;
+    padding: 1 0 0 1;
+    height: auto;
+}
+
+PredictProba, DecisionFunction  {
+    width: 50%;
+    padding: 0 0 0 1;
+    height: auto;
+}
+
+Prompt {
+    padding: 0 0 0 2;
+    height: auto;
+}
+
+Switch {
+    height: auto;
+    width: auto;
+}
+
+Input.-valid {
+    border: tall $success 60%;
+}
+Input.-valid:focus {
+    border: tall $success;
+}
+
+.container {
+    height: auto;
+    width: auto;
+}
+
+
+.label {
+    height: 3;
+    content-align: right middle;
+    width: auto;
+}
+
+
+
+
+# Sidebar {
+#     width: 80;
+#     background: $panel;
+#     transition: offset 200ms in_out_cubic;
+#     layer: overlay;
+
+# }
+
+# Sidebar:focus-within {
+#     offset: 0 0 !important;
+# }
+
+# Sidebar.-hidden {
+#     offset-x: -100%;
+# }
+
+# Sidebar Title {
+#     background: $boost;
+#     color: $secondary;
+#     padding: 2 0 1 0;
+#     border-right: vkey $background;
+#     dock: top;
+#     text-align: center;
+#     text-style: bold;
+# }
