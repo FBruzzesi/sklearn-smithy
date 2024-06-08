@@ -20,7 +20,7 @@ How can you use it?
 smith forge
 ```
 
-🚧 As a TUI (terminal user interface): Working in progress!
+🚧 As a TUI (terminal user interface): Work in progress!
 
 All these tools will prompt a series of questions regarding the estimator you want to create, and then it will generate the boilerplate code for you.
 
@@ -65,6 +65,17 @@ and it should be compatible with scikit-learn Pipeline, GridSearchCV, etc.
 
 Scikit-learn documentation on how to
 [develop estimators](https://scikit-learn.org/dev/developers/develop.html#developing-scikit-learn-estimators).
+
+## Supported estimators
+
+The following types of scikit-learn estimator are supported:
+
+- Classifier
+- Regressor
+- Transformer
+  - Feature Selector
+- Outlier Detector
+- Clusterer
 
 ## Installation
 

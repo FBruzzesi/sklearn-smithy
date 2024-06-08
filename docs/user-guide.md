@@ -28,14 +28,14 @@ Let's see an example of how to use `smith forge` command:
 ```console
 $ <font color="#4E9A06">smith</font> forge
 # 🐍 How would you like to name the estimator?:$ MightyClassifier
-# 🎯 Which kind of estimator is it? (classifier, outlier, regressor, transformer, cluster):$ classifier
+# 🎯 Which kind of estimator is it? (classifier, outlier, regressor, transformer, cluster, feature-selector):$ classifier
 # 📜 Please list the required parameters (comma-separated) []:$ alpha,beta
 # 📑 Please list the optional parameters (comma-separated) []:$ mu,sigma
 # 📶 Does the `.fit()` method support `sample_weight`? [y/N]:$ y
 # 📏 Is the estimator linear? [y/N]:$ N
 # 🎲 Should the estimator implement a `predict_proba` method? [y/N]:$ N
 # ❓ Should the estimator implement a `decision_function` method? [y/N]:$ y
-# 🧪 We are almost there... Is there any tag you want to add? (comma-separated) []:$ binary_only
+# 🧪 We are almost there... Is there any tag you want to add? (comma-separated) []:$ binary_only,non_deterministic
 # 📂 Where would you like to save the class? [mightyclassifier.py]:$ path/to/file.py
 <span style="color: green; font-weight: bold;">Template forged at path/to/file.py </span>
 ```
