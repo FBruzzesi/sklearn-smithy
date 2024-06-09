@@ -7,9 +7,10 @@ from sksmithy._models import EstimatorType
 from sksmithy.tui import ForgeTUI
 
 
-async def test_smoke(tui: ForgeTUI) -> None:
+async def test_smoke() -> None:
     """Basic smoke test."""
-    async with tui.run_test() as pilot:
+    app = ForgeTUI()
+    async with app.run_test(size=None) as pilot:
         await pilot.pause()
         assert pilot is not None
 
@@ -24,18 +25,19 @@ async def test_smoke(tui: ForgeTUI) -> None:
         ("class", "`class` is a python reserved keyword!"),
     ],
 )
-async def test_name(tui: ForgeTUI, name_: str, err_msg: str) -> None:
+async def test_name(name_: str, err_msg: str) -> None:
     """Test `name` text_input component."""
-    async with tui.run_test(size=None) as pilot:
+    app = ForgeTUI()
+    async with app.run_test(size=None) as pilot:
         await pilot.pause()
-        name_comp = tui.query_one("#name", Input)
+        name_comp = pilot.app.query_one("#name", Input)
         name_comp.value = name_
 
         await pilot.pause(0.01)
 
         assert (not name_comp.is_valid) == bool(err_msg)
 
-        notifications = list(tui._notifications)  # noqa: SLF001
+        notifications = list(pilot.app._notifications)  # noqa: SLF001
         assert len(notifications) == int(bool(err_msg))
 
         if notifications:
@@ -44,30 +46,31 @@ async def test_name(tui: ForgeTUI, name_: str, err_msg: str) -> None:
         await pilot.exit(0)
 
 
-async def test_estimator_interaction(tui: ForgeTUI, estimator: EstimatorType) -> None:
+async def test_estimator_interaction(estimator: EstimatorType) -> None:
     """Test that all toggle components interact correctly with the selected estimator."""
-    async with tui.run_test(size=None) as pilot:
+    app = ForgeTUI()
+    async with app.run_test(size=None) as pilot:
         await pilot.pause()
-        tui.query_one("#estimator", Select).value = estimator.value
+        pilot.app.query_one("#estimator", Select).value = estimator.value
         await pilot.pause()
 
-        assert (not tui.query_one("#linear", Switch).disabled) == (
+        assert (not pilot.app.query_one("#linear", Switch).disabled) == (
             estimator in {EstimatorType.ClassifierMixin, EstimatorType.RegressorMixin}
         )
-        assert (not tui.query_one("#predict_proba", Switch).disabled) == (
+        assert (not pilot.app.query_one("#predict_proba", Switch).disabled) == (
             estimator in {EstimatorType.ClassifierMixin, EstimatorType.OutlierMixin}
         )
 
-        assert (not tui.query_one("#decision_function", Switch).disabled) == (
+        assert (not pilot.app.query_one("#decision_function", Switch).disabled) == (
             estimator == EstimatorType.ClassifierMixin
         )
 
         if estimator == EstimatorType.ClassifierMixin:
-            linear = tui.query_one("#linear", Switch)
+            linear = pilot.app.query_one("#linear", Switch)
             linear.value = True
 
             await pilot.pause()
-            assert tui.query_one("#decision_function", Switch).disabled
+            assert pilot.app.query_one("#decision_function", Switch).disabled
 
         await pilot.exit(0)
 
@@ -83,11 +86,12 @@ async def test_estimator_interaction(tui: ForgeTUI, estimator: EstimatorType) ->
         ("a,b", "a", "The following parameters are duplicated between required and optional: {'a'}"),
     ],
 )
-async def test_params(tui: ForgeTUI, required_: str, optional_: str, err_msg: str) -> None:
+async def test_params(required_: str, optional_: str, err_msg: str) -> None:
     """Test required and optional params interaction."""
-    async with tui.run_test(size=None) as pilot:
-        required_comp = tui.query_one("#required", Input)
-        optional_comp = tui.query_one("#optional", Input)
+    app = ForgeTUI()
+    async with app.run_test(size=None) as pilot:
+        required_comp = pilot.app.query_one("#required", Input)
+        optional_comp = pilot.app.query_one("#optional", Input)
 
         required_comp.value = required_
         optional_comp.value = optional_
@@ -96,7 +100,7 @@ async def test_params(tui: ForgeTUI, required_: str, optional_: str, err_msg: st
         await optional_comp.action_submit()
         await pilot.pause(0.01)
 
-        notifications = list(tui._notifications)  # noqa: SLF001
+        notifications = list(pilot.app._notifications)  # noqa: SLF001
         assert int(bool(notifications)) == int(bool(err_msg))
 
         if notifications:
@@ -115,9 +119,10 @@ async def test_params(tui: ForgeTUI, required_: str, optional_: str, err_msg: st
         ("a,b", "a", "The following parameters are duplicated between required and optional: {'a'}"),
     ],
 )
-async def test_forge_raise(tui: ForgeTUI, required_: str, optional_: str, err_msg: str) -> None:
+async def test_forge_raise(required_: str, optional_: str, err_msg: str) -> None:
     """Test forge button and all of its interactions."""
-    async with tui.run_test(size=None) as pilot:
+    app = ForgeTUI()
+    async with app.run_test(size=None) as pilot:
         await pilot.pause()
 
         pilot.app.query_one("#required", Input).value = required_
@@ -138,9 +143,10 @@ async def test_forge_raise(tui: ForgeTUI, required_: str, optional_: str, err_ms
         await pilot.exit(0)
 
 
-async def test_forge(tmp_path: Path, tui: ForgeTUI, name: str, estimator: EstimatorType) -> None:
+async def test_forge(tmp_path: Path, name: str, estimator: EstimatorType) -> None:
     """Test forge button and all of its interactions."""
-    async with tui.run_test(headless=True, size=None) as pilot:
+    app = ForgeTUI()
+    async with app.run_test(size=None) as pilot:
         await pilot.pause()
 
         name_comp = pilot.app.query_one("#name", Input)
