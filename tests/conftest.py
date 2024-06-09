@@ -20,6 +20,26 @@ def required(request: pytest.FixtureRequest) -> list[str]:
     return request.param
 
 
+@pytest.fixture(
+    params=[
+        ("a,a", "Found repeated parameters!"),
+        ("a-a", "The following parameters are invalid python identifiers: ('a-a',)"),
+    ]
+)
+def invalid_required(request: pytest.FixtureRequest) -> tuple[str, str]:
+    return request.param
+
+
+@pytest.fixture(
+    params=[
+        ("b,b", "Found repeated parameters!"),
+        ("b b", "The following parameters are invalid python identifiers: ('b b',)"),
+    ]
+)
+def invalid_optional(request: pytest.FixtureRequest) -> tuple[str, str]:
+    return request.param
+
+
 @pytest.fixture(params=[["mu", "sigma"], []])
 def optional(request: pytest.FixtureRequest) -> list[str]:
     return request.param

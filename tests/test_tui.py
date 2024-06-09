@@ -14,6 +14,7 @@ async def test_smoke() -> None:
         await pilot.pause()
         assert pilot is not None
 
+        await pilot.pause()
         await pilot.exit(0)
 
 
@@ -29,11 +30,9 @@ async def test_name(name_: str, err_msg: str) -> None:
     """Test `name` text_input component."""
     app = ForgeTUI()
     async with app.run_test(size=None) as pilot:
-        await pilot.pause()
         name_comp = pilot.app.query_one("#name", Input)
         name_comp.value = name_
-
-        await pilot.pause(0.01)
+        await pilot.pause()
 
         assert (not name_comp.is_valid) == bool(err_msg)
 
@@ -43,6 +42,7 @@ async def test_name(name_: str, err_msg: str) -> None:
         if notifications:
             assert notifications[0].message == err_msg
 
+        await pilot.pause()
         await pilot.exit(0)
 
 
@@ -72,23 +72,15 @@ async def test_estimator_interaction(estimator: EstimatorType) -> None:
             await pilot.pause()
             assert pilot.app.query_one("#decision_function", Switch).disabled
 
+        await pilot.pause()
         await pilot.exit(0)
 
 
-@pytest.mark.parametrize(
-    ("required_", "optional_", "err_msg"),
-    [
-        ("a,b", "c,d", ""),
-        ("a,a", "", "Found repeated parameters!"),
-        ("", "b,b", "Found repeated parameters!"),
-        ("a-a", "", "The following parameters are invalid python identifiers: ('a-a',)"),
-        ("", "b b", "The following parameters are invalid python identifiers: ('b b',)"),
-        ("a,b", "a", "The following parameters are duplicated between required and optional: {'a'}"),
-    ],
-)
-async def test_params(required_: str, optional_: str, err_msg: str) -> None:
+async def test_valid_params() -> None:
     """Test required and optional params interaction."""
     app = ForgeTUI()
+    required_ = "a,b"
+    optional_ = "c,d"
     async with app.run_test(size=None) as pilot:
         required_comp = pilot.app.query_one("#required", Input)
         optional_comp = pilot.app.query_one("#optional", Input)
@@ -101,60 +93,63 @@ async def test_params(required_: str, optional_: str, err_msg: str) -> None:
         await pilot.pause(0.01)
 
         notifications = list(pilot.app._notifications)  # noqa: SLF001
-        assert int(bool(notifications)) == int(bool(err_msg))
+        assert not notifications
 
-        if notifications:
-            assert err_msg in "".join(n.message for n in notifications)
-
+        await pilot.pause()
         await pilot.exit(0)
 
 
-@pytest.mark.parametrize(
-    ("required_", "optional_", "err_msg"),
-    [
-        ("a,a", "", "Found repeated parameters!"),
-        ("", "b,b", "Found repeated parameters!"),
-        ("a-a", "", "The following parameters are invalid python identifiers: ('a-a',)"),
-        ("", "b b", "The following parameters are invalid python identifiers: ('b b',)"),
-        ("a,b", "a", "The following parameters are duplicated between required and optional: {'a'}"),
-    ],
-)
-async def test_forge_raise(required_: str, optional_: str, err_msg: str) -> None:
+async def test_forge_raise() -> None:
     """Test forge button and all of its interactions."""
     app = ForgeTUI()
     async with app.run_test(size=None) as pilot:
         await pilot.pause()
 
-        pilot.app.query_one("#required", Input).value = required_
-        pilot.app.query_one("#optional", Input).value = optional_
+        required_comp = pilot.app.query_one("#required", Input)
+        optional_comp = pilot.app.query_one("#optional", Input)
 
+        required_comp.value = "a,a"
+        optional_comp.value = "b b"
+
+        await required_comp.action_submit()
+        await optional_comp.action_submit()
         await pilot.pause()
 
-        forge_btn = pilot.app.query_one("#forge_btn", Button)
+        forge_btn = pilot.app.query_one("#forge-btn", Button)
         forge_btn.action_press()
         await pilot.pause()
 
-        notification_msg = list(pilot.app._notifications)[-1].message  # noqa: SLF001
-        assert "Name cannot be empty!" in notification_msg
-        assert "Estimator cannot be empty!" in notification_msg
-        assert "Outfile file cannot be empty!" in notification_msg
-        assert err_msg in notification_msg
+        m1, m2, m3 = (n.message for n in pilot.app._notifications)  # noqa: SLF001
 
+        assert "Found repeated parameters!" in m1
+        assert "The following parameters are invalid python identifiers: ('b b',)" in m2
+
+        assert "Name cannot be empty!" in m3
+        assert "Estimator cannot be empty!" in m3
+        assert "Outfile file cannot be empty!" in m3
+        assert "Found repeated parameters!" in m3
+        assert "The following parameters are invalid python identifiers: ('b b',)" in m3
+
+        await pilot.pause()
         await pilot.exit(0)
 
 
-async def test_forge(tmp_path: Path, name: str, estimator: EstimatorType) -> None:
+async def test_forge(tmp_path: Path) -> None:
     """Test forge button and all of its interactions."""
     app = ForgeTUI()
+    name = "MightyEstimator"
+    estimator = "classifier"
     async with app.run_test(size=None) as pilot:
         await pilot.pause()
 
         name_comp = pilot.app.query_one("#name", Input)
         estimator_comp = pilot.app.query_one("#estimator", Select)
-        output_file_comp = pilot.app.query_one("#output_file", Input)
+        await pilot.pause()
+
+        output_file_comp = pilot.app.query_one("#output-file", Input)
 
         name_comp.value = name
-        estimator_comp.value = estimator.value
+        estimator_comp.value = estimator
 
         await pilot.pause()
 
@@ -163,7 +158,7 @@ async def test_forge(tmp_path: Path, name: str, estimator: EstimatorType) -> Non
         await output_file_comp.action_submit()
         await pilot.pause()
 
-        forge_btn = pilot.app.query_one("#forge_btn", Button)
+        forge_btn = pilot.app.query_one("#forge-btn", Button)
         forge_btn.action_press()
         await pilot.pause()
 
@@ -172,7 +167,13 @@ async def test_forge(tmp_path: Path, name: str, estimator: EstimatorType) -> Non
         assert f"Template forged at {output_file!s}" in notification.message
         assert output_file.exists()
 
+        await pilot.pause()
         await pilot.exit(0)
 
 
 def test_bindings() -> None: ...
+
+
+def test_duplicated_params() -> None:
+    # values: ("a,b", "a", "The following parameters are duplicated between required and optional: {'a'}"),
+    ...

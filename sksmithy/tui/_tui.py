@@ -76,7 +76,7 @@ class ForgeTUI(App):
 
     def action_forge(self: Self) -> None:
         """Press forge button."""
-        forge_btn = self.query_one("#forge_btn", Button)
+        forge_btn = self.query_one("#forge-btn", Button)
         forge_btn.press()
 
 
