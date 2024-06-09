@@ -2,15 +2,15 @@ import sys
 from importlib import resources
 from typing import ClassVar
 
-from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, ScrollableContainer
 from textual.reactive import reactive
-from textual.widgets import Button, Footer, Header, Input, Rule
+from textual.widgets import Footer, Header, Rule
 
 from sksmithy.tui._components import (
     DecisionFunction,
     Estimator,
+    ForgeButton,
     Linear,
     Name,
     Optional,
@@ -61,7 +61,7 @@ class TUI(App):
             Horizontal(SampleWeight(), Linear()),
             Horizontal(PredictProba(), DecisionFunction()),
             Rule(),
-            Button(),
+            ForgeButton(),
         )
         # yield Sidebar(classes="-hidden")
         yield Footer()
@@ -79,38 +79,6 @@ class TUI(App):
     #         if sidebar.query("*:focus"):
     #             self.screen.set_focus(None)
     #         sidebar.add_class("-hidden")
-
-    # @on(Input.Changed, "#name")
-    # def show_invalid_name(self: Self, event: Input.Changed) -> None:
-    #     if not event.validation_result.is_valid:
-    #         self.name_ = None
-    #         self.notify(
-    #             message=event.validation_result.failure_descriptions[0],
-    #             title="Invalid Name",
-    #             severity="error",
-    #             timeout=5,
-    #         )
-    #     else:
-    #         self.name_ = event.value
-
-    @on(Input.Changed, "#required,#optional")
-    def show_invalid_required(self: Self, event: Input.Changed) -> None:
-        if not event.validation_result.is_valid:
-            if event.input.id == "required":
-                self.required_ = None
-            else:
-                self.optional_ = None
-
-            self.notify(
-                message="\n".join(event.validation_result.failure_descriptions),
-                title="Invalid Parameter",
-                severity="error",
-                timeout=5,
-            )
-        elif event.input.id == "required":
-            self.required_ = event.value.split(",")
-        else:
-            self.optional_ = event.value.split(",")
 
 
 if __name__ == "__main__":

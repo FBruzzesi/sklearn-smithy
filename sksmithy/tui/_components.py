@@ -1,11 +1,13 @@
 import sys
 
+from result import Err, Ok
 from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal
-from textual.widgets import Input, Select, Static, Switch
+from textual.widgets import Button, Input, Select, Static, Switch
 
 from sksmithy._models import EstimatorType
+from sksmithy._parsers import check_duplicates, name_parser, params_parser
 from sksmithy._prompts import (
     PROMPT_DECISION_FUNCTION,
     PROMPT_ESTIMATOR,
@@ -16,6 +18,7 @@ from sksmithy._prompts import (
     PROMPT_REQUIRED,
     PROMPT_SAMPLE_WEIGHT,
 )
+from sksmithy._utils import render_template
 from sksmithy.tui._validators import NameValidator, ParamsValidator
 
 if sys.version_info >= (3, 11):  # pragma: no cover
@@ -44,6 +47,8 @@ class Name(Container):
                 severity="error",
                 timeout=5,
             )
+        else:
+            ...
             # TODO: Update filename component
 
 
@@ -79,8 +84,8 @@ class Required(Container):
         yield Prompt(PROMPT_REQUIRED, classes="label")
         yield Input(placeholder="alpha,beta", id="required", validators=[ParamsValidator()])
 
-    @on(Input.Changed, "#required")
-    def on_input_change(self: Self, event: Input.Changed) -> None:
+    @on(Input.Submitted, "#required")
+    def on_input_change(self: Self, event: Input.Submitted) -> None:
         if not event.validation_result.is_valid:
             self.notify(
                 message="\n".join(event.validation_result.failure_descriptions),
@@ -89,7 +94,18 @@ class Required(Container):
                 timeout=5,
             )
 
-        # TODO: Add check for duplicates with optional
+        # optional: Input = self.app.query_one("#optional").value or ""
+        # if optional and event.value (duplicates_result := check_duplicates(
+        #     event.value.split(","),
+        #     optional.split(",")
+        # )):
+
+        #     self.notify(
+        #         message=duplicates_result,
+        #         title="Duplicate Parameter",
+        #         severity="error",
+        #         timeout=5,
+        #     )
 
 
 class Optional(Container):
@@ -99,8 +115,8 @@ class Optional(Container):
         yield Prompt(PROMPT_OPTIONAL, classes="label")
         yield Input(placeholder="mu,sigma", id="optional", validators=[ParamsValidator()])
 
-    @on(Input.Changed, "#optional")
-    def on_input_change(self: Self, event: Input.Changed) -> None:
+    @on(Input.Submitted, "#optional")
+    def on_optional_change(self: Self, event: Input.Submitted) -> None:
         if not event.validation_result.is_valid:
             self.notify(
                 message="\n".join(event.validation_result.failure_descriptions),
@@ -108,7 +124,19 @@ class Optional(Container):
                 severity="error",
                 timeout=5,
             )
-        # TODO: Add check for duplicates with required
+
+        # required: Input = self.app.query_one("#required").value or ""
+        # if required and event.value and (duplicates_result := check_duplicates(
+        #     required.split(","),
+        #     event.value.split(","),
+        # )):
+
+        #     self.notify(
+        #         message=duplicates_result,
+        #         title="Duplicate Parameter",
+        #         severity="error",
+        #         timeout=5,
+        #     )
 
 
 class SampleWeight(Container):
@@ -133,7 +161,7 @@ class Linear(Container):
         )
 
     @on(Switch.Changed, "#linear")
-    def on_switch_changed(self, event: Switch.Changed) -> None:
+    def on_switch_changed(self: Self, event: Switch.Changed) -> None:
         decision_function: Switch = self.app.query_one("#decision_function")
         decision_function.disabled = event.value
         decision_function.value = decision_function.value and (not decision_function.disabled)
@@ -159,6 +187,89 @@ class DecisionFunction(Container):
             Switch(id="decision_function"),
             classes="container",
         )
+
+
+class ForgeButton(Container):
+    def compose(self: Self) -> ComposeResult:
+        yield Button.success(
+            label="Forge ⚒️",
+            id="forge_btn",
+        )
+
+    @on(Button.Pressed, "#forge_btn")
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        errors = []
+
+        name_input: str = self.app.query_one("#name").value
+        estimator: str | None = self.app.query_one("#estimator").value
+        required_params: str = self.app.query_one("#required").value
+        optional_params: str = self.app.query_one("#optional").value
+
+        sample_weight: bool = self.app.query_one("#linear").value
+        linear: bool = self.app.query_one("#linear").value
+        predict_proba: bool = self.app.query_one("#predict_proba").value
+        decision_function: bool = self.app.query_one("#decision_function").value
+
+        match name_parser(name_input):
+            case Ok(name):
+                pass
+            case Err(name_error_msg):
+                errors.append(name_error_msg)
+
+        match estimator:
+            case str(v):
+                estimator_type = EstimatorType(v)
+            case Select.BLANK:
+                errors.append("Estimator cannot be None")
+
+        match params_parser(required_params):
+            case Ok(required):
+                required_is_valid = True
+            case Err(required_err_msg):
+                required_is_valid = False
+                errors.append(required_err_msg)
+
+        match params_parser(optional_params):
+            case Ok(optional):
+                optional_is_valid = True
+
+            case Err(optional_err_msg):
+                optional_is_valid = False
+                errors.append(optional_err_msg)
+
+        if required_is_valid and optional_is_valid and (msg_duplicated_params := check_duplicates(required, optional)):
+            errors.append(msg_duplicated_params)
+
+        if errors:
+            self.notify(
+                message="\n".join(errors),
+                title="Invalid inputs",
+                severity="error",
+                timeout=5,
+            )
+
+        else:
+            forged_template = render_template(
+                name=name,
+                estimator_type=estimator_type,
+                required=required,
+                optional=optional,
+                linear=linear,
+                sample_weight=sample_weight,
+                predict_proba=predict_proba,
+                decision_function=decision_function,
+                tags=None,
+            )
+
+            # destination_file = Path(output_file)
+            # destination_file.parent.mkdir(parents=True, exist_ok=True)
+
+            # with destination_file.open(mode="w") as destination:
+            #     destination.write(forged_template)
+
+            # TODO: Validate inputs
+            # TODO: Render
+            self.app.exit()
 
 
 # class Version(Static):

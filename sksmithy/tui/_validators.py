@@ -37,11 +37,3 @@ class ParamsValidator(_BaseValidator):
     @staticmethod
     def parser(value: str) -> Result[list[str], str]:
         return params_parser(value)
-
-
-# class DuplicateParamValidator(Validator):
-#     def validate(self, value: str)  -> ValidationResult:
-#         required = self.required_
-#         optional = self.optional_
-#         result = check_duplicates(required, optional)
-#         return self.failure(result) if result else self.success()

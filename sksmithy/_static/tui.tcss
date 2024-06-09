@@ -38,7 +38,10 @@ Prompt {
 Switch {
     height: auto;
     width: auto;
-    transition: offset 200ms;
+}
+
+Switch:disabled {
+    background: darkslategrey;
 }
 
 Input.-valid {
@@ -51,6 +54,7 @@ Input.-valid:focus {
 .container {
     height: auto;
     width: auto;
+    min-height: 10vh;
 }
 
 

@@ -9,10 +9,10 @@ class EstimatorType(str, Enum):
     """
 
     ClassifierMixin = "classifier"
-    OutlierMixin = "outlier"
     RegressorMixin = "regressor"
-    TransformerMixin = "transformer"
+    OutlierMixin = "outlier"
     ClusterMixin = "cluster"
+    TransformerMixin = "transformer"
     SelectorMixin = "feature-selector"
 
 
