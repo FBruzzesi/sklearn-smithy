@@ -1,4 +1,5 @@
 import sys
+from importlib import resources
 from typing import ClassVar
 
 from textual import on
@@ -41,7 +42,7 @@ In this way you will be able to fully focus on the core implementation logic, an
 class TUI(App):
     """A Textual app to manage stopwatches."""
 
-    CSS_PATH: ClassVar[str] = "../_static/tui.tcss"
+    CSS_PATH: ClassVar[str] = str(resources.files("sksmithy") / "_static" / "tui.tcss")
     TITLE: ClassVar[str] = "Smithy Forge"
 
     BINDINGS: ClassVar[list[tuple[str, str, str]]] = [
@@ -79,18 +80,18 @@ class TUI(App):
     #             self.screen.set_focus(None)
     #         sidebar.add_class("-hidden")
 
-    @on(Input.Changed, "#name")
-    def show_invalid_name(self: Self, event: Input.Changed) -> None:
-        if not event.validation_result.is_valid:
-            self.name_ = None
-            self.notify(
-                message=event.validation_result.failure_descriptions[0],
-                title="Invalid Name",
-                severity="error",
-                timeout=5,
-            )
-        else:
-            self.name_ = event.value
+    # @on(Input.Changed, "#name")
+    # def show_invalid_name(self: Self, event: Input.Changed) -> None:
+    #     if not event.validation_result.is_valid:
+    #         self.name_ = None
+    #         self.notify(
+    #             message=event.validation_result.failure_descriptions[0],
+    #             title="Invalid Name",
+    #             severity="error",
+    #             timeout=5,
+    #         )
+    #     else:
+    #         self.name_ = event.value
 
     @on(Input.Changed, "#required,#optional")
     def show_invalid_required(self: Self, event: Input.Changed) -> None:

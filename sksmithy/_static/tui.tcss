@@ -38,6 +38,7 @@ Prompt {
 Switch {
     height: auto;
     width: auto;
+    transition: offset 200ms;
 }
 
 Input.-valid {
