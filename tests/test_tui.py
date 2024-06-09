@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from textual.widgets import Button, Input, Select, Switch
 
@@ -95,28 +97,65 @@ async def test_params(tui: ForgeTUI, required_: str, optional_: str, err_msg: st
             assert err_msg in "".join(n.message for n in notifications)
 
 
-async def test_forge(tui: ForgeTUI, name: str, estimator: EstimatorType) -> None:
+@pytest.mark.parametrize(
+    ("required_", "optional_", "err_msg"),
+    [
+        ("a,a", "", "Found repeated parameters!"),
+        ("", "b,b", "Found repeated parameters!"),
+        ("a-a", "", "The following parameters are invalid python identifiers: ('a-a',)"),
+        ("", "b b", "The following parameters are invalid python identifiers: ('b b',)"),
+        ("a,b", "a", "The following parameters are duplicated between required and optional: {'a'}"),
+    ],
+)
+async def test_forge_raise(tui: ForgeTUI, required_: str, optional_: str, err_msg: str) -> None:
+    """Test forge button and all of its interactions."""
+    async with tui.run_test(size=None) as pilot:
+        await pilot.pause()
+
+        required_comp = tui.query_one("#required", Input)
+        optional_comp = tui.query_one("#optional", Input)
+
+        required_comp.value = required_
+        optional_comp.value = optional_
+
+        await required_comp.action_submit()
+        await optional_comp.action_submit()
+
+        forge_btn = tui.query_one("#forge_btn", Button)
+        forge_btn.action_press()
+        await pilot.pause()
+
+        notification_msg = next(iter(tui._notifications)).message  # noqa: SLF001
+        assert "Name cannot be empty!" in notification_msg
+        assert "Estimator cannot be empty!" in notification_msg
+        assert "Outfile file cannot be empty!" in notification_msg
+        assert err_msg in notification_msg
+
+
+async def test_forge(tmp_path: Path, tui: ForgeTUI, name: str, estimator: EstimatorType) -> None:
     """Test forge button and all of its interactions."""
     async with tui.run_test() as pilot:
         await pilot.pause()
+
+        name_comp = tui.query_one("#name", Input)
+        estimator_comp = tui.query_one("#estimator", Select)
+        output_file_comp = tui.query_one("#output_file", Input)
+
+        name_comp.value = name
+        estimator_comp.value = estimator.value
+
+        await pilot.pause()
+
+        output_file = tmp_path / (f"{name.lower()}.py")
+        output_file_comp.value = str(output_file)
+        await output_file_comp.action_submit()
+        await pilot.pause()
+
         forge_btn = tui.query_one("#forge_btn", Button)
         forge_btn.action_press()
         await pilot.pause()
 
         notification = next(iter(tui._notifications))  # noqa: SLF001
-        assert "Name cannot be empty!" in notification.message
-        assert "Estimator cannot be empty!" in notification.message
-        assert "Outfile file cannot be empty!" in notification.message
 
-        name_comp = tui.query_one("#name", Input)
-        estimator_comp = tui.query_one("#estimator", Select)
-
-        name_comp.value = name
-        estimator_comp.value = estimator.value
-
-        forge_btn.action_press()
-
-        await pilot.pause()
-
-        notification = next(iter(tui._notifications))  # noqa: SLF001
-        assert f"Template forged at {name.lower()}.py" in notification.message
+        assert f"Template forged at {output_file!s}" in notification.message
+        assert output_file.exists()

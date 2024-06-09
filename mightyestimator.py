@@ -1,18 +1,17 @@
 import numpy as np
 
-from sklearn.base import BaseEstimator
-from sklearn.feature_selection import SelectorMixin
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils import check_X_y
 from sklearn.utils.validation import check_is_fitted, check_array
 
 
-class MightyEstimator(SelectorMixin, BaseEstimator):
+class MightyEstimator(ClassifierMixin, BaseEstimator):
     """MightyEstimator estimator.
 
     ...
     """
 
-    def fit(self, X, y=None):
+    def fit(self, X, y):
         """
         Fit MightyEstimator estimator.
 
@@ -28,28 +27,40 @@ class MightyEstimator(SelectorMixin, BaseEstimator):
         self : MightyEstimator
             Fitted MightyEstimator estimator.
         """
-        X = check_array(X, ...)  # TODO: Fill in `check_array` arguments
+        X, y = check_X_y(X, y, ...)  # TODO: Fill in `check_X_y` arguments
 
         self.n_features_in_ = X.shape[1]
+        self.classes_ = np.unique(y)
 
         ...  # TODO: Implement fit logic
 
-        self.selected_features_ = ...  # TODO: Indexes of selected features
-        self.support_ = np.isin(
-            np.arange(0, self.n_features_in_),  # all_features
-            self.selected_features_,
-        )
-
         return self
 
-    def _get_support_mask(self, X):
-        """Get the boolean mask indicating which features are selected.
+    def predict(self, X):
+        """Predict X.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            The data to predict.
 
         Returns
         -------
-        support : boolean array of shape [# input features]
-            An element is True iff its corresponding feature is selected for retention.
+        Prediction array.
         """
 
         check_is_fitted(self)
-        return self.support_
+        X = check_array(X, ...)  # TODO: Fill in `check_array` arguments
+
+        if X.shape[1] != self.n_features_in_:
+            msg = f"X has {X.shape[1]} features but the estimator was fitted on {self.n_features_in_} features."
+            raise ValueError(msg)
+
+        y_pred = ...  # TODO: Implement predict logic
+
+        return y_pred
+
+    @property
+    def n_classes_(self):
+        """Number of classes."""
+        return len(self.classes_)
