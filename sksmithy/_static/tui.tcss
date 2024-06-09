@@ -1,3 +1,15 @@
+.container {
+    height: auto;
+    width: auto;
+    min-height: 10vh;
+}
+
+.label {
+    height: 3;
+    content-align: right middle;
+    width: auto;
+}
+
 Screen {
     align: center middle;
 }
@@ -69,44 +81,40 @@ DestinationFile {
     height: 100%;
 }
 
-
-.container {
+Sidebar {
+    width: 80;
     height: auto;
-    width: auto;
-    min-height: 10vh;
+    background: $panel;
+    transition: offset 200ms in_out_cubic;
+    layer: overlay;
+
 }
 
-.label {
-    height: 3;
-    content-align: right middle;
-    width: auto;
+Sidebar:focus-within {
+    offset: 0 0 !important;
 }
 
+Sidebar.-hidden {
+    offset-x: -100%;
+}
 
+Sidebar Title {
+    background: $boost;
+    color: $secondary;
+    padding: 2 0 1 0;
+    border-right: vkey $background;
+    dock: top;
+    text-align: center;
+    text-style: bold;
+}
 
+OptionGroup {
+    background: $boost;
+    color: $text;
+    height: 1fr;
+    border-right: vkey $background;
+}
 
-# Sidebar {
-#     width: 80;
-#     background: $panel;
-#     transition: offset 200ms in_out_cubic;
-#     layer: overlay;
-
-# }
-
-# Sidebar:focus-within {
-#     offset: 0 0 !important;
-# }
-
-# Sidebar.-hidden {
-#     offset-x: -100%;
-# }
-
-# Sidebar Title {
-#     background: $boost;
-#     color: $secondary;
-#     padding: 2 0 1 0;
-#     border-right: vkey $background;
-#     dock: top;
-#     text-align: center;
-#     text-style: bold;
-# }
+Message {
+    margin: 0 1;
+}

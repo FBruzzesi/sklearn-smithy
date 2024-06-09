@@ -1,6 +1,5 @@
 import sys
-from collections.abc import Callable
-from typing import ClassVar, TypeVar
+from typing import TypeVar
 
 from result import Err, Ok, Result
 from textual.validation import ValidationResult, Validator
@@ -17,7 +16,9 @@ R = TypeVar("R")
 
 
 class _BaseValidator(Validator):
-    parser: ClassVar[Callable[[T], Result[R, str]]]
+    @staticmethod
+    def parser(value: str) -> Result[str | list[str], str]:
+        raise NotImplementedError
 
     def validate(self: Self, value: str) -> ValidationResult:
         match self.parser(value):

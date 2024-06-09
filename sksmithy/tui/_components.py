@@ -1,10 +1,12 @@
 import sys
+from importlib import metadata, resources
 from pathlib import Path
 
 from result import Err, Ok
+from rich.console import RenderableType
 from textual import on
 from textual.app import ComposeResult
-from textual.containers import Container, Grid, Horizontal
+from textual.containers import Container, Grid, Horizontal, ScrollableContainer
 from textual.widgets import Button, Input, Select, Static, Switch
 
 from sksmithy._models import EstimatorType
@@ -29,11 +31,10 @@ else:  # pragma: no cover
     from typing_extensions import Self
 
 
+SIDEBAR_MSG: str = (resources.files("sksmithy") / "_static" / "description.md").read_text()
+
+
 class Prompt(Static):
-    pass
-
-
-class ForgeRow(Grid):
     pass
 
 
@@ -46,15 +47,15 @@ class Name(Container):
 
     @on(Input.Changed, "#name")
     def on_input_change(self: Self, event: Input.Changed) -> None:
-        if not event.validation_result.is_valid:
+        if not event.validation_result.is_valid:  # type: ignore[union-attr]
             self.notify(
-                message=event.validation_result.failure_descriptions[0],
+                message=event.validation_result.failure_descriptions[0],  # type: ignore[union-attr]
                 title="Invalid Name",
                 severity="error",
                 timeout=5,
             )
         else:
-            output_file: Input = self.app.query_one("#output_file")
+            output_file = self.app.query_one("#output_file", Input)
             output_file.value = f"{event.value.lower()}.py"
 
 
@@ -70,9 +71,9 @@ class Estimator(Container):
 
     @on(Select.Changed, "#estimator")
     def on_select_change(self: Self, event: Select.Changed) -> None:
-        linear: Switch = self.app.query_one("#linear")
-        predict_proba: Switch = self.app.query_one("#predict_proba")
-        decision_function: Switch = self.app.query_one("#decision_function")
+        linear = self.app.query_one("#linear", Switch)
+        predict_proba = self.app.query_one("#predict_proba", Switch)
+        decision_function = self.app.query_one("#decision_function", Switch)
 
         linear.disabled = event.value not in {"classifier", "regressor"}
         predict_proba.disabled = event.value not in {"classifier", "outlier"}
@@ -92,15 +93,15 @@ class Required(Container):
 
     @on(Input.Submitted, "#required")
     def on_input_change(self: Self, event: Input.Submitted) -> None:
-        if not event.validation_result.is_valid:
+        if not event.validation_result.is_valid:  # type: ignore[union-attr]
             self.notify(
-                message="\n".join(event.validation_result.failure_descriptions),
+                message="\n".join(event.validation_result.failure_descriptions),  # type: ignore[union-attr]
                 title="Invalid Parameter",
                 severity="error",
                 timeout=5,
             )
 
-        optional: Input = self.app.query_one("#optional").value or ""
+        optional = self.app.query_one("#optional", Input).value or ""
         if (
             optional
             and event.value
@@ -128,15 +129,15 @@ class Optional(Container):
 
     @on(Input.Submitted, "#optional")
     def on_optional_change(self: Self, event: Input.Submitted) -> None:
-        if not event.validation_result.is_valid:
+        if not event.validation_result.is_valid:  # type: ignore[union-attr]
             self.notify(
-                message="\n".join(event.validation_result.failure_descriptions),
+                message="\n".join(event.validation_result.failure_descriptions),  # type: ignore[union-attr]
                 title="Invalid Parameter",
                 severity="error",
                 timeout=5,
             )
 
-        required: Input = self.app.query_one("#required").value or ""
+        required = self.app.query_one("#required", Input).value or ""
         if (
             required
             and event.value
@@ -178,7 +179,7 @@ class Linear(Container):
 
     @on(Switch.Changed, "#linear")
     def on_switch_changed(self: Self, event: Switch.Changed) -> None:
-        decision_function: Switch = self.app.query_one("#decision_function")
+        decision_function = self.app.query_one("#decision_function", Switch)
         decision_function.disabled = event.value
         decision_function.value = decision_function.value and (not decision_function.disabled)
 
@@ -223,20 +224,20 @@ class ForgeButton(Container):
         )
 
     @on(Button.Pressed, "#forge_btn")
-    def on_button_pressed(self: Self, _: Button.Pressed) -> None:
+    def on_forge(self: Self, _: Button.Pressed) -> None:  # noqa: C901
         errors = []
 
-        name_input: str = self.app.query_one("#name").value
-        estimator: str | None = self.app.query_one("#estimator").value
-        required_params: str = self.app.query_one("#required").value
-        optional_params: str = self.app.query_one("#optional").value
+        name_input = self.app.query_one("#name", Input).value
+        estimator = self.app.query_one("#estimator", Select).value
+        required_params = self.app.query_one("#required", Input).value
+        optional_params = self.app.query_one("#optional", Input).value
 
-        sample_weight: bool = self.app.query_one("#linear").value
-        linear: bool = self.app.query_one("#linear").value
-        predict_proba: bool = self.app.query_one("#predict_proba").value
-        decision_function: bool = self.app.query_one("#decision_function").value
+        sample_weight = self.app.query_one("#linear", Switch).value
+        linear = self.app.query_one("#linear", Switch).value
+        predict_proba = self.app.query_one("#predict_proba", Switch).value
+        decision_function = self.app.query_one("#decision_function", Switch).value
 
-        output_file: str = self.app.query_one("#output_file").value
+        output_file = self.app.query_one("#output_file", Input).value
 
         match name_parser(name_input):
             case Ok(name):
@@ -248,7 +249,7 @@ class ForgeButton(Container):
             case str(v):
                 estimator_type = EstimatorType(v)
             case Select.BLANK:
-                errors.append("Estimator cannot be None")
+                errors.append("Estimator cannot be None!")
 
         match params_parser(required_params):
             case Ok(required):
@@ -269,7 +270,7 @@ class ForgeButton(Container):
             errors.append(msg_duplicated_params)
 
         if not output_file:
-            errors.append("Outfile file cannot be empty")
+            errors.append("Outfile file cannot be empty!")
 
         if errors:
             self.notify(
@@ -306,15 +307,33 @@ class ForgeButton(Container):
             )
 
 
+class ForgeRow(Grid):
+    """Row grid for forge."""
+
+
+
 forge_row = ForgeRow(Static(), Static(), ForgeButton(), DestinationFile(), Static(), Static(), id="forge_row")
 
-# class Version(Static):
-#     def render(self: Self) -> RenderableType:
-#         return f"Version: [b]{version('sklearn-smithy')}"
+
+class Title(Static):
+    pass
 
 
-# class Sidebar(Container):
-#     def compose(self: Self) -> ComposeResult:
-#         yield Title("Description")
-#         yield Container(MarkdownViewer(SIDEBAR_MSG))
-#         yield Version()
+class OptionGroup(ScrollableContainer):
+    pass
+
+
+class Message(Static):
+    pass
+
+
+class Version(Static):
+    def render(self: Self) -> RenderableType:
+        return f"Version: [b]{metadata.version('sklearn-smithy')}"
+
+
+class Sidebar(Container):
+    def compose(self: Self) -> ComposeResult:
+        yield Title("Description")
+        yield OptionGroup(Message(SIDEBAR_MSG), Version())
+        yield Version()

@@ -53,9 +53,16 @@ Website = "https://sklearn-smithy.streamlit.app/"
 
 [project.optional-dependencies]
 streamlit = ["streamlit>=1.34.0"]
+textual = ["textual>=0.65.0"]
+
+all = [
+    "streamlit>=1.34.0",
+    "textual>=0.65.0",
+]
 
 [project.scripts]
 smith = "sksmithy.__main__:cli"
+smith-tui = "sksmithy.tui.__main__:forge_tui"
 
 [tool.hatch.build.targets.sdist]
 only-include = ["sksmithy"]
@@ -105,4 +112,6 @@ omit = [
     "sksmithy/_arguments.py",
     "sksmithy/_logger.py",
     "sksmithy/_prompts.py",
-    ]
+    "sksmithy/tui/__init__.py",
+    "sksmithy/tui/__main__.py",
+]
