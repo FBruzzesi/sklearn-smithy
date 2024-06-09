@@ -10,13 +10,13 @@ from textual.widgets import Footer, Header, Rule
 from sksmithy.tui._components import (
     DecisionFunction,
     Estimator,
-    ForgeButton,
     Linear,
     Name,
     Optional,
     PredictProba,
     Required,
     SampleWeight,
+    forge_row,
 )
 
 if sys.version_info >= (3, 11):  # pragma: no cover
@@ -61,7 +61,8 @@ class TUI(App):
             Horizontal(SampleWeight(), Linear()),
             Horizontal(PredictProba(), DecisionFunction()),
             Rule(),
-            ForgeButton(),
+            forge_row,
+            Rule(),
         )
         # yield Sidebar(classes="-hidden")
         yield Footer()

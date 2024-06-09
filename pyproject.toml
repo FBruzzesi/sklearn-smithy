@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sklearn-smithy"
-version = "0.0.10"
+version = "0.1.0"
 description = "Toolkit to forge scikit-learn compatible estimators."
 requires-python = ">=3.10"
 
@@ -19,6 +19,7 @@ keywords = [
     "python",
     "cli",
     "webui",
+    "tui",
     "data-science",
     "machine-learning",
     "scikit-learn"

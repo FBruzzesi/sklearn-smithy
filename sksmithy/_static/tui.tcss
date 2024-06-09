@@ -51,12 +51,30 @@ Input.-valid:focus {
     border: tall $success;
 }
 
+ForgeRow {
+    grid-size: 5 2;
+    grid-gutter: 1;
+    grid-rows: 1fr 1fr 1fr 2fr;
+    grid-columns: 1fr;
+    min-height: 40vh;
+}
+
+ForgeButton {
+    row-span: 2;
+}
+
+DestinationFile {
+    column-span: 2;
+    row-span: 2;
+    height: 100%;
+}
+
+
 .container {
     height: auto;
     width: auto;
     min-height: 10vh;
 }
-
 
 .label {
     height: 3;

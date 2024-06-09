@@ -1,9 +1,10 @@
 import sys
+from pathlib import Path
 
 from result import Err, Ok
 from textual import on
 from textual.app import ComposeResult
-from textual.containers import Container, Horizontal
+from textual.containers import Container, Grid, Horizontal
 from textual.widgets import Button, Input, Select, Static, Switch
 
 from sksmithy._models import EstimatorType
@@ -14,6 +15,7 @@ from sksmithy._prompts import (
     PROMPT_LINEAR,
     PROMPT_NAME,
     PROMPT_OPTIONAL,
+    PROMPT_OUTPUT,
     PROMPT_PREDICT_PROBA,
     PROMPT_REQUIRED,
     PROMPT_SAMPLE_WEIGHT,
@@ -28,6 +30,10 @@ else:  # pragma: no cover
 
 
 class Prompt(Static):
+    pass
+
+
+class ForgeRow(Grid):
     pass
 
 
@@ -48,8 +54,8 @@ class Name(Container):
                 timeout=5,
             )
         else:
-            ...
-            # TODO: Update filename component
+            output_file: Input = self.app.query_one("#output_file")
+            output_file.value = f"{event.value.lower()}.py"
 
 
 class Estimator(Container):
@@ -94,18 +100,23 @@ class Required(Container):
                 timeout=5,
             )
 
-        # optional: Input = self.app.query_one("#optional").value or ""
-        # if optional and event.value (duplicates_result := check_duplicates(
-        #     event.value.split(","),
-        #     optional.split(",")
-        # )):
-
-        #     self.notify(
-        #         message=duplicates_result,
-        #         title="Duplicate Parameter",
-        #         severity="error",
-        #         timeout=5,
-        #     )
+        optional: Input = self.app.query_one("#optional").value or ""
+        if (
+            optional
+            and event.value
+            and (
+                duplicates_result := check_duplicates(
+                    event.value.split(","),
+                    optional.split(","),
+                )
+            )
+        ):
+            self.notify(
+                message=duplicates_result,
+                title="Duplicate Parameter",
+                severity="error",
+                timeout=5,
+            )
 
 
 class Optional(Container):
@@ -125,18 +136,23 @@ class Optional(Container):
                 timeout=5,
             )
 
-        # required: Input = self.app.query_one("#required").value or ""
-        # if required and event.value and (duplicates_result := check_duplicates(
-        #     required.split(","),
-        #     event.value.split(","),
-        # )):
-
-        #     self.notify(
-        #         message=duplicates_result,
-        #         title="Duplicate Parameter",
-        #         severity="error",
-        #         timeout=5,
-        #     )
+        required: Input = self.app.query_one("#required").value or ""
+        if (
+            required
+            and event.value
+            and (
+                duplicates_result := check_duplicates(
+                    required.split(","),
+                    event.value.split(","),
+                )
+            )
+        ):
+            self.notify(
+                message=duplicates_result,
+                title="Duplicate Parameter",
+                severity="error",
+                timeout=5,
+            )
 
 
 class SampleWeight(Container):
@@ -189,7 +205,17 @@ class DecisionFunction(Container):
         )
 
 
+class DestinationFile(Container):
+    """Destination file input component."""
+
+    def compose(self: Self) -> ComposeResult:
+        yield Prompt(PROMPT_OUTPUT, classes="label", id="output_prompt")
+        yield Input(placeholder="mightyestimator.py", id="output_file")
+
+
 class ForgeButton(Container):
+    """forge button component."""
+
     def compose(self: Self) -> ComposeResult:
         yield Button.success(
             label="Forge ⚒️",
@@ -197,7 +223,7 @@ class ForgeButton(Container):
         )
 
     @on(Button.Pressed, "#forge_btn")
-    def on_button_pressed(self, event: Button.Pressed) -> None:
+    def on_button_pressed(self: Self, _: Button.Pressed) -> None:
         errors = []
 
         name_input: str = self.app.query_one("#name").value
@@ -209,6 +235,8 @@ class ForgeButton(Container):
         linear: bool = self.app.query_one("#linear").value
         predict_proba: bool = self.app.query_one("#predict_proba").value
         decision_function: bool = self.app.query_one("#decision_function").value
+
+        output_file: str = self.app.query_one("#output_file").value
 
         match name_parser(name_input):
             case Ok(name):
@@ -240,9 +268,12 @@ class ForgeButton(Container):
         if required_is_valid and optional_is_valid and (msg_duplicated_params := check_duplicates(required, optional)):
             errors.append(msg_duplicated_params)
 
+        if not output_file:
+            errors.append("Outfile file cannot be empty")
+
         if errors:
             self.notify(
-                message="\n".join(errors),
+                message="\n".join([f"- {e}" for e in errors]),
                 title="Invalid inputs",
                 severity="error",
                 timeout=5,
@@ -261,16 +292,21 @@ class ForgeButton(Container):
                 tags=None,
             )
 
-            # destination_file = Path(output_file)
-            # destination_file.parent.mkdir(parents=True, exist_ok=True)
+            destination_file = Path(output_file)
+            destination_file.parent.mkdir(parents=True, exist_ok=True)
 
-            # with destination_file.open(mode="w") as destination:
-            #     destination.write(forged_template)
+            with destination_file.open(mode="w") as destination:
+                destination.write(forged_template)
 
-            # TODO: Validate inputs
-            # TODO: Render
-            self.app.exit()
+            self.notify(
+                message=f"Template forged at {destination_file}",
+                title="Success!",
+                severity="information",
+                timeout=5,
+            )
 
+
+forge_row = ForgeRow(Static(), Static(), ForgeButton(), DestinationFile(), Static(), Static(), id="forge_row")
 
 # class Version(Static):
 #     def render(self: Self) -> RenderableType:
