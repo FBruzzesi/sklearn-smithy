@@ -249,7 +249,7 @@ class ForgeButton(Container):
             case str(v):
                 estimator_type = EstimatorType(v)
             case Select.BLANK:
-                errors.append("Estimator cannot be None!")
+                errors.append("Estimator cannot be empty!")
 
         match params_parser(required_params):
             case Ok(required):
@@ -309,7 +309,6 @@ class ForgeButton(Container):
 
 class ForgeRow(Grid):
     """Row grid for forge."""
-
 
 
 forge_row = ForgeRow(Static(), Static(), ForgeButton(), DestinationFile(), Static(), Static(), id="forge_row")

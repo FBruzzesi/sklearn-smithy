@@ -54,6 +54,7 @@ def tags(request: pytest.FixtureRequest) -> list[str] | None:
 def app() -> AppTest:
     return AppTest.from_file("sksmithy/app.py", default_timeout=10)
 
+
 @pytest.fixture()
 def tui() -> ForgeTUI:
     return ForgeTUI()
