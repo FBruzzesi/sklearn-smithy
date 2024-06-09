@@ -18,6 +18,7 @@ from sksmithy._logger import console
 from sksmithy._utils import render_template
 
 cli = typer.Typer(
+    name="smith",
     help="CLI to generate scikit-learn estimator boilerplate code.",
     rich_markup_mode="rich",
     rich_help_panel="Customization and Utils",

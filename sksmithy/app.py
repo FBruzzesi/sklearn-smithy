@@ -43,7 +43,7 @@ st.set_page_config(
             Forge your own scikit-learn estimator!
 
             For more information, please visit the [sklearn-smithy](https://github.com/FBruzzesi/sklearn-smithy)
-            repository
+            repository.
             """,
     },
 )

@@ -1,0 +1,120 @@
+.container {
+    height: auto;
+    width: auto;
+    min-height: 10vh;
+}
+
+.label {
+    height: 3;
+    content-align: right middle;
+    width: auto;
+}
+
+Screen {
+    align: center middle;
+}
+
+Header {
+    color: $secondary;
+    text-style: bold;
+}
+
+Horizontal {
+    min-height: 10vh;
+    height: auto;
+}
+
+Name, Estimator, Required, Optional {
+    width: 50%;
+    padding: 0 2 0 1;
+    height: auto;
+}
+
+SampleWeight, Linear {
+    width: 50%;
+    padding: 1 0 0 1;
+    height: auto;
+}
+
+PredictProba, DecisionFunction  {
+    width: 50%;
+    padding: 0 0 0 1;
+    height: auto;
+}
+
+Prompt {
+    padding: 0 0 0 2;
+    height: auto;
+}
+
+Switch {
+    height: auto;
+    width: auto;
+}
+
+Switch:disabled {
+    background: darkslategrey;
+}
+
+Input.-valid {
+    border: tall $success 60%;
+}
+Input.-valid:focus {
+    border: tall $success;
+}
+
+ForgeRow {
+    grid-size: 5 2;
+    grid-gutter: 1;
+    grid-rows: 1fr 1fr 1fr 2fr;
+    grid-columns: 1fr;
+    min-height: 40vh;
+}
+
+ForgeButton {
+    row-span: 2;
+}
+
+DestinationFile {
+    column-span: 2;
+    row-span: 2;
+    height: 100%;
+}
+
+Sidebar {
+    width: 80;
+    height: auto;
+    background: $panel;
+    transition: offset 200ms in_out_cubic;
+    layer: overlay;
+
+}
+
+Sidebar:focus-within {
+    offset: 0 0 !important;
+}
+
+Sidebar.-hidden {
+    offset-x: -100%;
+}
+
+Sidebar Title {
+    background: $boost;
+    color: $secondary;
+    padding: 2 0 1 0;
+    border-right: vkey $background;
+    dock: top;
+    text-align: center;
+    text-style: bold;
+}
+
+OptionGroup {
+    background: $boost;
+    color: $text;
+    height: 1fr;
+    border-right: vkey $background;
+}
+
+Message {
+    margin: 0 1;
+}

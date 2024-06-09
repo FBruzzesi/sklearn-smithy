@@ -7,7 +7,7 @@ from jinja2 import Template
 
 from sksmithy._models import EstimatorType
 
-TEMPLATE_PATH: Final[Path] = Path(str(resources.files("sksmithy") / "template.py.jinja"))
+TEMPLATE_PATH: Final[Path] = Path(str(resources.files("sksmithy") / "_static" / "template.py.jinja"))
 
 
 def render_template(
