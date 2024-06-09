@@ -13,6 +13,8 @@ async def test_smoke(tui: ForgeTUI) -> None:
         await pilot.pause()
         assert pilot is not None
 
+        await pilot.exit(0)
+
 
 @pytest.mark.parametrize(
     ("name_", "err_msg"),
@@ -39,6 +41,8 @@ async def test_name(tui: ForgeTUI, name_: str, err_msg: str) -> None:
         if notifications:
             assert notifications[0].message == err_msg
 
+        await pilot.exit(0)
+
 
 async def test_estimator_interaction(tui: ForgeTUI, estimator: EstimatorType) -> None:
     """Test that all toggle components interact correctly with the selected estimator."""
@@ -64,6 +68,8 @@ async def test_estimator_interaction(tui: ForgeTUI, estimator: EstimatorType) ->
 
             await pilot.pause()
             assert tui.query_one("#decision_function", Switch).disabled
+
+        await pilot.exit(0)
 
 
 @pytest.mark.parametrize(
@@ -96,6 +102,8 @@ async def test_params(tui: ForgeTUI, required_: str, optional_: str, err_msg: st
         if notifications:
             assert err_msg in "".join(n.message for n in notifications)
 
+        await pilot.exit(0)
+
 
 @pytest.mark.parametrize(
     ("required_", "optional_", "err_msg"),
@@ -112,34 +120,32 @@ async def test_forge_raise(tui: ForgeTUI, required_: str, optional_: str, err_ms
     async with tui.run_test(size=None) as pilot:
         await pilot.pause()
 
-        required_comp = tui.query_one("#required", Input)
-        optional_comp = tui.query_one("#optional", Input)
+        pilot.app.query_one("#required", Input).value = required_
+        pilot.app.query_one("#optional", Input).value = optional_
 
-        required_comp.value = required_
-        optional_comp.value = optional_
+        await pilot.pause()
 
-        await required_comp.action_submit()
-        await optional_comp.action_submit()
-
-        forge_btn = tui.query_one("#forge_btn", Button)
+        forge_btn = pilot.app.query_one("#forge_btn", Button)
         forge_btn.action_press()
         await pilot.pause()
 
-        notification_msg = next(iter(tui._notifications)).message  # noqa: SLF001
+        notification_msg = list(pilot.app._notifications)[-1].message  # noqa: SLF001
         assert "Name cannot be empty!" in notification_msg
         assert "Estimator cannot be empty!" in notification_msg
         assert "Outfile file cannot be empty!" in notification_msg
         assert err_msg in notification_msg
 
+        await pilot.exit(0)
+
 
 async def test_forge(tmp_path: Path, tui: ForgeTUI, name: str, estimator: EstimatorType) -> None:
     """Test forge button and all of its interactions."""
-    async with tui.run_test() as pilot:
+    async with tui.run_test(headless=True, size=None) as pilot:
         await pilot.pause()
 
-        name_comp = tui.query_one("#name", Input)
-        estimator_comp = tui.query_one("#estimator", Select)
-        output_file_comp = tui.query_one("#output_file", Input)
+        name_comp = pilot.app.query_one("#name", Input)
+        estimator_comp = pilot.app.query_one("#estimator", Select)
+        output_file_comp = pilot.app.query_one("#output_file", Input)
 
         name_comp.value = name
         estimator_comp.value = estimator.value
@@ -151,11 +157,16 @@ async def test_forge(tmp_path: Path, tui: ForgeTUI, name: str, estimator: Estima
         await output_file_comp.action_submit()
         await pilot.pause()
 
-        forge_btn = tui.query_one("#forge_btn", Button)
+        forge_btn = pilot.app.query_one("#forge_btn", Button)
         forge_btn.action_press()
         await pilot.pause()
 
-        notification = next(iter(tui._notifications))  # noqa: SLF001
+        notification = next(iter(pilot.app._notifications))  # noqa: SLF001
 
         assert f"Template forged at {output_file!s}" in notification.message
         assert output_file.exists()
+
+        await pilot.exit(0)
+
+
+def test_bindings() -> None: ...
