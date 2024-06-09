@@ -2,6 +2,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from sksmithy._models import EstimatorType
+from sksmithy.tui import ForgeTUI
 
 
 @pytest.fixture(params=["MightyEstimator"])
@@ -52,3 +53,7 @@ def tags(request: pytest.FixtureRequest) -> list[str] | None:
 @pytest.fixture()
 def app() -> AppTest:
     return AppTest.from_file("sksmithy/app.py", default_timeout=10)
+
+@pytest.fixture()
+def tui() -> ForgeTUI:
+    return ForgeTUI()

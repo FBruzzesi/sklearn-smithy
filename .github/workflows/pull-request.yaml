@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies and run tests
         run: |
           uv pip install -e ".[all]" --system
-          uv pip install pytest pytest-cov pytest-xdist --system
+          uv pip install -r requirements/test.txt --system
           make test-cov
       - name: Install and run mypy
         run: |

@@ -1,0 +1,7 @@
+anyio
+pytest
+pytest-asyncio
+pytest-cov
+pytest-tornasync
+pytest-trio
+pytest-xdist
