@@ -119,4 +119,4 @@ async def test_forge(tui: ForgeTUI, name: str, estimator: EstimatorType) -> None
         await pilot.pause()
 
         notification = next(iter(tui._notifications))  # noqa: SLF001
-        assert f"Template forged at {name.lower()}.py"
+        assert f"Template forged at {name.lower()}.py" in notification.message
