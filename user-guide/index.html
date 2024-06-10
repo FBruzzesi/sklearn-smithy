@@ -381,6 +381,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="CLI ⌨️">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smith-forge-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      smith forge example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -462,6 +477,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="CLI ⌨️">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smith-forge-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      smith forge example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -495,16 +525,33 @@
 <p>As introduced in the <a href="../">home page</a>, <strong>sklearn-smithy</strong> is a tool that helps you to forge scikit-learn compatible estimator with ease, and it comes in three flavours.</p>
 <p>Let's see how to use each one of them.</p>
 <h2 id="web-ui">Web UI 🌐<a class="headerlink" href="#web-ui" title="Permanent link">&para;</a></h2>
-<p>The web UI is available at <a href="https://sklearn-smithy.streamlit.app/" target="_blank">sklearn-smithy.streamlit.app</a> allowing you to interact with the tool directly from your browser.</p>
-<p>This option does not require any installation, and it is the most user-friendly way to use the tool if you have access to a browser or do not want to install anything on your machine.</p>
+<p>TL;DR:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Available at <a href="https://sklearn-smithy.streamlit.app/" target="_blank">sklearn-smithy.streamlit.app</a></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> It requires no installation.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Powered by <a href="https://streamlit.io/" target="_blank">streamlit</a></li>
+</ul>
+<p>The web UI is the most user-friendly, low barrier way, to interact with the tool by accessing it directly from your browser, without any installation required.</p>
+<p>Once the estimator is forged, you can download the script with the code as a <code>.py</code> file, or you can copy the code directly from the browser.</p>
+<details class="example">
+<summary>Screenshot</summary>
+<p><img alt="Web UI" src="../img/webui.png" /></p>
+</details>
 <h2 id="cli">CLI ⌨️<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<p>TL;DR:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Available via the <code>smith forge</code> command.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> It requires <a href="../installation/">installation</a>: <code>python -m pip install sklearn-smithy</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Powered by <a href="https://typer.tiangolo.com/">typer</a>.</li>
+</ul>
 <p>Once the library is installed, the <code>smith</code> CLI (Command Line Interface) will be available and that is the primary way to interact with the <code>smithy</code> package.</p>
 <p>The CLI provides a main command called <code>forge</code>, which will prompt a series of question in the terminal, based on which it will generate the code for the estimator.</p>
 <div class="admonition warning">
 <p class="admonition-title">Non-interactive mode</p>
-<p>As any CLI, in principle it would be possible to run it in a non-interactive way, however this is not <em>fully</em> supported yet and it comes with some risks and limitations.</p>
-<p>The reason for this is that the validation and the parameters interaction happen while prompting the questions one after the other, meaning that the input to one prompt will follow next.</p>
+<p>As for any CLI, in principle it would be possible to run it in a non-interactive way, however this is not <em>fully</em> supported yet and it comes with some risks and limitations.</p>
+<p>The reason for this is that the validation and the parameters interaction happen while prompting the questions <em>one after the other</em>, meaning that the input to one prompt will determine what follows next.</p>
 </div>
+<h3 id="smith-forge-example"><code>smith forge</code> example<a class="headerlink" href="#smith-forge-example" title="Permanent link">&para;</a></h3>
 <p>Let's see an example of how to use <code>smith forge</code> command:</p>
 <div class="termy">
 
@@ -539,7 +586,19 @@
 </div>
 
 <h2 id="tui">TUI 💻<a class="headerlink" href="#tui" title="Permanent link">&para;</a></h2>
-<p>🚧 WIP</p>
+<p>TL;DR:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Available via the <code>smith-tui</code> command.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> It requires installing <a href="../installation/#extra-dependencies">extra dependencies</a>: <code>python -m pip install "sklearn-smithy[textual]"</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Powered by <a href="https://textual.textualize.io/">textual</a>.</li>
+</ul>
+<p>If you like the CLI, but prefer a more interactive and graphical way from the comfort of your terminal, you can use the TUI (Terminal User Interface) provided by the <code>smith-tui</code> command.</p>
+<details class="example">
+<summary>Screenshot</summary>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="gp">$ </span>smith-tui
+</span></code></pre></div>
+<p><img alt="TUI" src="../img/tui.png" /></p>
+</details>
 
 
 

@@ -476,26 +476,26 @@
 <p>Scikit-learn smithy is a tool that helps you to forge scikit-learn compatible estimator with ease.</p>
 <p>How can you use it?</p>
 <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Directly from the web: we have a <a href="https://sklearn-smithy.streamlit.app/" target="_blank">web UI</a> powered by <a href="https://streamlit.io/" target="_blank">streamlit</a>.</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> As a CLI (command line interface) in your terminal (requires <a href="installation/">installation</a>) powered by <a href="https://typer.tiangolo.com/" target="_blank">typer</a>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>smith forge
-</span></code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> As a TUI (terminal user interface): <a href="https://github.com/FBruzzesi/sklearn-smithy/issues/1">Work in progress</a>!</p>
-</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Directly from the browser via our <a href="https://sklearn-smithy.streamlit.app/" target="_blank">web UI</a> (<a href="user-guide/#web-ui">more info</a>).  </li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> As a CLI (command line interface) in your terminal via the <code>smith forge</code> command (<a href="user-guide/#cli">more info</a>)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> As a TUI (terminal user interface) in your terminal via the <code>smith-tui</code> command (<a href="user-guide/#tui">more info</a>)</li>
 </ul>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
 <p>All these tools will prompt a series of questions regarding the estimator you want to create, and then it will generate the boilerplate code for you.</p>
+</div>
 <h2 id="supported-estimators">Supported estimators<a class="headerlink" href="#supported-estimators" title="Permanent link">&para;</a></h2>
 <p>The following types of scikit-learn estimator are supported:</p>
-<ul>
-<li>Classifier</li>
-<li>Regressor</li>
-<li>Transformer</li>
-<li>Feature Selector</li>
-<li>Outlier Detector</li>
-<li>Clusterer</li>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Classifier</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Regressor</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Outlier Detector</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Clusterer</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Transformer<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Feature Selector</li>
+</ul>
+</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Meta Estimator</li>
 </ul>
 <h2 id="origin-story">Origin story<a class="headerlink" href="#origin-story" title="Permanent link">&para;</a></h2>
 <p>The idea for this tool originated from <a href="https://github.com/koaning/scikit-lego/pull/660" target="_blank">scikit-lego #660</a>, which I cannot better explain than quoting the PR description itself:</p>
