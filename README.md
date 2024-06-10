@@ -85,12 +85,13 @@ Scikit-learn documentation on how to
 
 The following types of scikit-learn estimator are supported:
 
-- Classifier
-- Regressor
-- Outlier Detector
-- Clusterer
-- Transformer
-- Feature Selector
+- ✅ Classifier
+- ✅ Regressor
+- ✅ Outlier Detector
+- ✅ Clusterer
+- ✅ Transformer
+  - ✅ Feature Selector
+- 🚧 Meta Estimator
 
 ## Installation
 
@@ -100,7 +101,7 @@ sklearn-smithy is available on [pypi](https://pypi.org/project/sklearn-smithy), 
 python -m pip install sklearn-smithy
 ```
 
-**Remark:** The minimum Python version supported is 3.10.
+**Remark:** The minimum Python version required is 3.10.
 
 This will make the `smith` command available in your terminal, and you should be able to run the following:
 

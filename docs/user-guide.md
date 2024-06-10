@@ -83,7 +83,7 @@ TL;DR:
 - [x] It requires installing [extra dependencies](installation.md#extra-dependencies): `python -m pip install "sklearn-smithy[textual]"`
 - [x] Powered by [textual](https://textual.textualize.io/).
 
-If you like the CLI, but prefer a more interactive and graphical way to interact with the tool, you can use the TUI (Terminal User Interface) provided by the `smith-tui` command.
+If you like the CLI, but prefer a more interactive and graphical way from the comfort of your terminal, you can use the TUI (Terminal User Interface) provided by the `smith-tui` command.
 
 ??? example "Screenshot"
 

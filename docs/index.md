@@ -18,12 +18,13 @@ How can you use it?
 
 The following types of scikit-learn estimator are supported:
 
-- Classifier
-- Regressor
-- Outlier Detector
-- Clusterer
-- Transformer
-- Feature Selector
+- [x] Classifier
+- [x] Regressor
+- [x] Outlier Detector
+- [x] Clusterer
+- [x] Transformer
+    - [x] Feature Selector
+- [ ] Meta Estimator
 
 ## Origin story
 

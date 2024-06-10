@@ -7,7 +7,7 @@ python -m pip install sklearn-smithy
 ```
 
 !!! warning
-    The minimum Python version supported is 3.10.
+    The minimum Python version required is 3.10.
 
 This will make the `smith` command available in your terminal, and you should be able to run the following:
 
