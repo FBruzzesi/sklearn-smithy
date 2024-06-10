@@ -32,5 +32,5 @@ jobs:
 
       - name: Install dependencies and deploy
         run: |
-          uv install mkdocs-material --system
+          uv install mkdocs-material textual --system
           mkdocs gh-deploy --force
