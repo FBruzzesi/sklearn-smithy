@@ -17,7 +17,7 @@ R = TypeVar("R")
 
 class _BaseValidator(Validator):
     @staticmethod
-    def parser(value: str) -> Result[str | list[str], str]:
+    def parser(value: str) -> Result[str | list[str], str]:  # pragma: no cover
         raise NotImplementedError
 
     def validate(self: Self, value: str) -> ValidationResult:

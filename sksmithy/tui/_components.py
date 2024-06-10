@@ -55,8 +55,9 @@ class Name(Container):
                 timeout=5,
             )
         else:
-            output_file = self.app.query_one("#output_file", Input)
-            output_file.value = f"{event.value.lower()}.py"
+            output_file = self.app.query_one("#output-file", Input)
+            if not output_file.value:
+                output_file.value = f"{event.value.lower()}.py"
 
 
 class Estimator(Container):
@@ -210,8 +211,8 @@ class DestinationFile(Container):
     """Destination file input component."""
 
     def compose(self: Self) -> ComposeResult:
-        yield Prompt(PROMPT_OUTPUT, classes="label", id="output_prompt")
-        yield Input(placeholder="mightyestimator.py", id="output_file")
+        yield Prompt(PROMPT_OUTPUT, classes="label")
+        yield Input(placeholder="mightyestimator.py", id="output-file")
 
 
 class ForgeButton(Container):
@@ -220,10 +221,10 @@ class ForgeButton(Container):
     def compose(self: Self) -> ComposeResult:
         yield Button.success(
             label="Forge ⚒️",
-            id="forge_btn",
+            id="forge-btn",
         )
 
-    @on(Button.Pressed, "#forge_btn")
+    @on(Button.Pressed, "#forge-btn")
     def on_forge(self: Self, _: Button.Pressed) -> None:  # noqa: C901
         errors = []
 
@@ -237,7 +238,7 @@ class ForgeButton(Container):
         predict_proba = self.app.query_one("#predict_proba", Switch).value
         decision_function = self.app.query_one("#decision_function", Switch).value
 
-        output_file = self.app.query_one("#output_file", Input).value
+        output_file = self.app.query_one("#output-file", Input).value
 
         match name_parser(name_input):
             case Ok(name):
@@ -249,7 +250,7 @@ class ForgeButton(Container):
             case str(v):
                 estimator_type = EstimatorType(v)
             case Select.BLANK:
-                errors.append("Estimator cannot be None!")
+                errors.append("Estimator cannot be empty!")
 
         match params_parser(required_params):
             case Ok(required):
@@ -309,10 +310,6 @@ class ForgeButton(Container):
 
 class ForgeRow(Grid):
     """Row grid for forge."""
-
-
-
-forge_row = ForgeRow(Static(), Static(), ForgeButton(), DestinationFile(), Static(), Static(), id="forge_row")
 
 
 class Title(Static):
