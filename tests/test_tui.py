@@ -143,11 +143,9 @@ async def test_forge_raise() -> None:
 
 
 @pytest.mark.parametrize("use_binding", [True, False])
-async def test_forge(tmp_path: Path, use_binding: bool) -> None:
+async def test_forge(tmp_path: Path, name: str, estimator: EstimatorType, use_binding: bool) -> None:
     """Test forge button and all of its interactions."""
     app = ForgeTUI()
-    name = "MightyEstimator"
-    estimator = "classifier"
     async with app.run_test(size=None) as pilot:
         name_comp = pilot.app.query_one("#name", Input)
         estimator_comp = pilot.app.query_one("#estimator", Select)
@@ -156,7 +154,7 @@ async def test_forge(tmp_path: Path, use_binding: bool) -> None:
         output_file_comp = pilot.app.query_one("#output-file", Input)
 
         name_comp.value = name
-        estimator_comp.value = estimator
+        estimator_comp.value = estimator.value
 
         await pilot.pause()
 

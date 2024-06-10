@@ -6,16 +6,13 @@ Scikit-learn smithy is a tool that helps you to forge scikit-learn compatible es
 
 How can you use it?
 
-- [x] Directly from the web: we have a [web UI](https://sklearn-smithy.streamlit.app/){:target="_blank"} powered by [streamlit](https://streamlit.io/){:target="_blank"}.
-- [x] As a CLI (command line interface) in your terminal (requires [installation](installation.md)) powered by [typer](https://typer.tiangolo.com/){:target="_blank"}:
+- [x] Directly from the browser via our [web UI](https://sklearn-smithy.streamlit.app/){:target="_blank"} ([more info](user-guide.md/#web-ui)).  
+- [x] As a CLI (command line interface) in your terminal via the `smith forge` command ([more info](user-guide.md/#cli))
+- [x] As a TUI (terminal user interface) in your terminal via the `smith-tui` command ([more info](user-guide.md/#tui))
 
-    ```terminal
-    smith forge
-    ```
-
-- [ ] As a TUI (terminal user interface): [Work in progress](https://github.com/FBruzzesi/sklearn-smithy/issues/1)!
-
-All these tools will prompt a series of questions regarding the estimator you want to create, and then it will generate the boilerplate code for you.
+!!! info
+  
+    All these tools will prompt a series of questions regarding the estimator you want to create, and then it will generate the boilerplate code for you.
 
 ## Supported estimators
 
@@ -23,10 +20,10 @@ The following types of scikit-learn estimator are supported:
 
 - Classifier
 - Regressor
-- Transformer
-  - Feature Selector
 - Outlier Detector
 - Clusterer
+- Transformer
+- Feature Selector
 
 ## Origin story
 

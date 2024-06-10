@@ -6,20 +6,37 @@ Let's see how to use each one of them.
 
 ## Web UI 🌐
 
-The web UI is available at [sklearn-smithy.streamlit.app](https://sklearn-smithy.streamlit.app/){:target="_blank"} allowing you to interact with the tool directly from your browser.
+TL;DR:
 
-This option does not require any installation, and it is the most user-friendly way to use the tool if you have access to a browser or do not want to install anything on your machine.
+- [x] Available at [sklearn-smithy.streamlit.app](https://sklearn-smithy.streamlit.app/){:target="_blank"}
+- [x] It requires no installation.
+- [x] Powered by [streamlit](https://streamlit.io/){:target="_blank"}
+
+The web UI is the most user-friendly, low barrier way, to interact with the tool by accessing it directly from your browser, without any installation required.
+
+Once the estimator is forged, you can download the script with the code as a `.py` file, or you can copy the code directly from the browser.
+
+??? example "Screenshot"
+    ![Web UI](img/webui.png)
 
 ## CLI ⌨️
+
+TL;DR:
+
+- [x] Available via the `smith forge` command.
+- [x] It requires [installation](installation.md): `python -m pip install sklearn-smithy`
+- [x] Powered by [typer](https://typer.tiangolo.com/).
 
 Once the library is installed, the `smith` CLI (Command Line Interface) will be available and that is the primary way to interact with the `smithy` package.
 
 The CLI provides a main command called `forge`, which will prompt a series of question in the terminal, based on which it will generate the code for the estimator.
 
 !!! warning "Non-interactive mode"
-    As any CLI, in principle it would be possible to run it in a non-interactive way, however this is not *fully* supported yet and it comes with some risks and limitations.
+    As for any CLI, in principle it would be possible to run it in a non-interactive way, however this is not *fully* supported yet and it comes with some risks and limitations.
 
-    The reason for this is that the validation and the parameters interaction happen while prompting the questions one after the other, meaning that the input to one prompt will follow next.
+    The reason for this is that the validation and the parameters interaction happen while prompting the questions *one after the other*, meaning that the input to one prompt will determine what follows next.
+
+### `smith forge` example
 
 Let's see an example of how to use `smith forge` command:
 
@@ -60,4 +77,18 @@ from sklearn.utils.validation import check_is_fitted, check_array
 
 ## TUI 💻
 
-🚧 WIP
+TL;DR:
+
+- [x] Available via the `smith-tui` command.
+- [x] It requires installing [extra dependencies](installation.md#extra-dependencies): `python -m pip install "sklearn-smithy[textual]"`
+- [x] Powered by [textual](https://textual.textualize.io/).
+
+If you like the CLI, but prefer a more interactive and graphical way to interact with the tool, you can use the TUI (Terminal User Interface) provided by the `smith-tui` command.
+
+??? example "Screenshot"
+
+    ```console
+    $ smith-tui
+    ```
+    
+    ![TUI](img/tui.png)

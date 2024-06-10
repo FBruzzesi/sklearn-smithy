@@ -17,6 +17,14 @@ smith version
 
 > sklearn-smithy=...
 
+## Extra dependencies
+
+To run the TUI, you need to install the `textual` dependency as well:
+
+```bash
+python -m pip install "sklearn-smithy[textual]"
+```
+
 ## Other installation methods
 
 === "pip + source/git"
