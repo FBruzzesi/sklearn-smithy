@@ -5,7 +5,9 @@ clean-folders:
 		.pytest_cache */.pytest_cache */**/.pytest_cache \
 		.ruff_cache */.ruff_cache */**/.ruff_cache \
 		.mypy_cache */.mypy_cache */**/.mypy_cache \
+		.screenshot_cache \
 		site build dist htmlcov .coverage .tox
+		
 
 lint:
 	ruff version
