@@ -61,5 +61,5 @@ jobs:
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Install dependencies and check docs can build
         run: |
-          uv pip install mkdocs-material --system
+          uv pip install mkdocs-material textual --system
           mkdocs build -v -s
