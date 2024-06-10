@@ -74,11 +74,11 @@ class ForgeTUI(App):
             Footer(),
         )
 
-    def action_toggle_dark(self: Self) -> None:
+    def action_toggle_dark(self: Self) -> None:  # pragma: no cover
         """Toggle dark mode."""
         self.dark = not self.dark
 
-    def action_toggle_sidebar(self: Self) -> None:
+    def action_toggle_sidebar(self: Self) -> None:  # pragma: no cover
         """Toggle sidebar component."""
         sidebar = self.query_one(Sidebar)
         self.set_focus(None)

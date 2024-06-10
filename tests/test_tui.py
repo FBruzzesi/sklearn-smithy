@@ -142,7 +142,8 @@ async def test_forge_raise() -> None:
         assert "The following parameters are invalid python identifiers: ('b b',)" in m3
 
 
-async def test_forge(tmp_path: Path) -> None:
+@pytest.mark.parametrize("use_binding", [True, False])
+async def test_forge(tmp_path: Path, use_binding: bool) -> None:
     """Test forge button and all of its interactions."""
     app = ForgeTUI()
     name = "MightyEstimator"
@@ -164,14 +165,14 @@ async def test_forge(tmp_path: Path) -> None:
         await output_file_comp.action_submit()
         await pilot.pause()
 
-        forge_btn = pilot.app.query_one("#forge-btn", Button)
-        forge_btn.action_press()
+        if use_binding:
+            await pilot.press("F")
+        else:
+            forge_btn = pilot.app.query_one("#forge-btn", Button)
+            forge_btn.action_press()
         await pilot.pause()
 
         notification = next(iter(pilot.app._notifications))  # noqa: SLF001
 
         assert f"Template forged at {output_file!s}" in notification.message
         assert output_file.exists()
-
-
-def test_bindings() -> None: ...
