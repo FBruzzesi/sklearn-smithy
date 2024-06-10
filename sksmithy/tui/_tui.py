@@ -32,7 +32,7 @@ class ForgeTUI(App):
     """Textual app to forge scikit-learn compatible estimators."""
 
     CSS_PATH: ClassVar[str] = str(resources.files("sksmithy") / "_static" / "tui.tcss")
-    TITLE: ClassVar[str] = "Smithy Forge"  # type: ignore[misc]
+    TITLE: ClassVar[str] = "Scikit-learn Smithy ⚒️"  # type: ignore[misc]
 
     BINDINGS: ClassVar = [
         ("ctrl+d", "toggle_sidebar", "Description"),
@@ -46,14 +46,14 @@ class ForgeTUI(App):
     def on_mount(self: Self) -> None:
         """Compose on mount.
 
-        Q: is this needed?
+        Q: is this needed???
         """
         self.compose()
 
     def compose(self: Self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Container(
-            Header(icon="⚒️"),
+            Header(),
             ScrollableContainer(
                 Horizontal(Name(), Estimator()),
                 Horizontal(Required(), Optional()),

@@ -7,7 +7,7 @@ python -m pip install sklearn-smithy
 ```
 
 !!! warning
-    The minimum Python version supported is 3.10.
+    The minimum Python version required is 3.10.
 
 This will make the `smith` command available in your terminal, and you should be able to run the following:
 
@@ -16,6 +16,14 @@ smith version
 ```
 
 > sklearn-smithy=...
+
+## Extra dependencies
+
+To run the TUI, you need to install the `textual` dependency as well:
+
+```bash
+python -m pip install "sklearn-smithy[textual]"
+```
 
 ## Other installation methods
 

@@ -6,21 +6,36 @@ Scikit-learn smithy is a tool that helps you to forge scikit-learn compatible es
 
 ---
 
-[Documentation](https://fbruzzesi.github.io/sklearn-smithy) | [Repository](https://github.com/fbruzzesi/sklearn-smithy) | [Issue Tracker](https://github.com/fbruzzesi/sklearn-smithy/issues)
+[WebUI](https://sklearn-smithy.streamlit.app/) | [Documentation](https://fbruzzesi.github.io/sklearn-smithy) | [Repository](https://github.com/fbruzzesi/sklearn-smithy) | [Issue Tracker](https://github.com/fbruzzesi/sklearn-smithy/issues)
 
 ---
 
 How can you use it?
 
-✅ Directly from the web: we have a [web UI](https://sklearn-smithy.streamlit.app/) powered by [streamlit](https://streamlit.io/).
+<details><summary>✅ Directly from the browser via our [web UI](https://sklearn-smithy.streamlit.app/). </summary>
 
-✅ As a CLI (command line interface) in your terminal (requires [installation](#installation)) powered by [typer](https://typer.tiangolo.com/):
+- It requires no installation.
+- Powered by [streamlit](https://streamlit.io/)
 
-```terminal
-smith forge
-```
+<img src="https://raw.githubusercontent.com/FBruzzesi/sklearn-smithy/main/docs/img/webui.png" align="right">
 
-🚧 As a TUI (terminal user interface): Work in progress!
+</details>
+
+<details><summary>✅ As a CLI (command line interface) in your terminal via the `smith forge` command.</summary>
+
+- It requires [installation](#installation).
+- Powered by [typer](https://typer.tiangolo.com/).
+
+</details>
+
+<details><summary>✅ As a TUI (terminal user interface) in your terminal via the `smith-tui` command.</summary>
+
+- It requires installing [extra dependencies](#extra-dependencies).
+- Powered by [textual](https://textual.textualize.io/), using the `smith-tui` command.
+
+<img src="https://raw.githubusercontent.com/FBruzzesi/sklearn-smithy/main/docs/img/tui.png" align="right">
+
+</details>
 
 All these tools will prompt a series of questions regarding the estimator you want to create, and then it will generate the boilerplate code for you.
 
@@ -70,12 +85,13 @@ Scikit-learn documentation on how to
 
 The following types of scikit-learn estimator are supported:
 
-- Classifier
-- Regressor
-- Transformer
-  - Feature Selector
-- Outlier Detector
-- Clusterer
+- ✅ Classifier
+- ✅ Regressor
+- ✅ Outlier Detector
+- ✅ Clusterer
+- ✅ Transformer
+  - ✅ Feature Selector
+- 🚧 Meta Estimator
 
 ## Installation
 
@@ -85,7 +101,7 @@ sklearn-smithy is available on [pypi](https://pypi.org/project/sklearn-smithy), 
 python -m pip install sklearn-smithy
 ```
 
-**Remark:** The minimum Python version supported is 3.10.
+**Remark:** The minimum Python version required is 3.10.
 
 This will make the `smith` command available in your terminal, and you should be able to run the following:
 
@@ -94,6 +110,14 @@ smith version
 ```
 
 > sklearn-smithy=...
+
+### Extra dependencies
+
+To run the TUI, you need to install the `textual` dependency as well:
+
+```bash
+python -m pip install "sklearn-smithy[textual]"
+```
 
 ## User guide 📚
 
