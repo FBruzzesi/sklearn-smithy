@@ -12,8 +12,9 @@ Scikit-learn smithy is a tool that helps you to forge scikit-learn compatible es
 
 How can you use it?
 
-<details><summary>✅ Directly from the browser via our [web UI](https://sklearn-smithy.streamlit.app/). </summary>
+<details><summary>✅ Directly from the browser via a Web UI. </summary>
 
+- Available at [sklearn-smithy.streamlit.app](https://sklearn-smithy.streamlit.app/)
 - It requires no installation.
 - Powered by [streamlit](https://streamlit.io/)
 
@@ -21,17 +22,19 @@ How can you use it?
 
 </details>
 
-<details><summary>✅ As a CLI (command line interface) in your terminal via the `smith forge` command.</summary>
+<details><summary>✅ As a CLI (command line interface) in the terminal.</summary>
 
-- It requires [installation](#installation).
+- Available via the `smith forge` command.
+- It requires [installation](#installation): `python -m pip install sklearn-smithy`
 - Powered by [typer](https://typer.tiangolo.com/).
 
 </details>
 
-<details><summary>✅ As a TUI (terminal user interface) in your terminal via the `smith-tui` command.</summary>
+<details><summary>✅ As a TUI (terminal user interface) in the terminal.</summary>
 
-- It requires installing [extra dependencies](#extra-dependencies).
-- Powered by [textual](https://textual.textualize.io/), using the `smith-tui` command.
+- Available via the `smith-tui` command.
+- It requires installing [extra dependencies](#extra-dependencies): `python -m pip install "sklearn-smithy[textual]"`
+- Powered by [textual](https://textual.textualize.io/).
 
 <img src="https://raw.githubusercontent.com/FBruzzesi/sklearn-smithy/main/docs/img/tui.png" align="right">
 
