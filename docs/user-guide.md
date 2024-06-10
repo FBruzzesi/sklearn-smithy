@@ -25,7 +25,7 @@ TL;DR:
 
 - [x] Available via the `smith forge` command.
 - [x] It requires [installation](installation.md): `python -m pip install sklearn-smithy`
-- [x] Powered by [typer](https://typer.tiangolo.com/).
+- [x] Powered by [typer](https://typer.tiangolo.com/){:target="_blank"}.
 
 Once the library is installed, the `smith` CLI (Command Line Interface) will be available and that is the primary way to interact with the `smithy` package.
 
@@ -64,13 +64,12 @@ Now the estimator template to be filled will be available at the specified path 
 <div class="termy">
 
 ```console
-$ cat path/to/file.py
+$ cat path/to/file.py | head -n 5
 import numpy as np
 
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils import check_X_y
 from sklearn.utils.validation import check_is_fitted, check_array
-...
 ```
 
 </div>
@@ -81,14 +80,13 @@ TL;DR:
 
 - [x] Available via the `smith-tui` command.
 - [x] It requires installing [extra dependencies](installation.md#extra-dependencies): `python -m pip install "sklearn-smithy[textual]"`
-- [x] Powered by [textual](https://textual.textualize.io/).
+- [x] Powered by [textual](https://textual.textualize.io/){:target="_blank"}.
 
 If you like the CLI, but prefer a more interactive and graphical way from the comfort of your terminal, you can use the TUI (Terminal User Interface) provided by the `smith-tui` command.
 
-??? example "Screenshot"
+```console
+$ smith-tui
+```
 
-    ```console
-    $ smith-tui
-    ```
-    
-    ![TUI](img/tui.png)
+```{.textual path="sksmithy/tui/_tui.py" columns="127" lines="32"}
+```
