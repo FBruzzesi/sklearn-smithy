@@ -312,9 +312,6 @@ class ForgeRow(Grid):
     """Row grid for forge."""
 
 
-forge_row = ForgeRow(Static(), Static(), ForgeButton(), DestinationFile(), Static(), Static(), id="forge_row")
-
-
 class Title(Static):
     pass
 

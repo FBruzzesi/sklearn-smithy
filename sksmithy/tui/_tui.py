@@ -5,11 +5,14 @@ from typing import ClassVar
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal, ScrollableContainer
 from textual.reactive import reactive
-from textual.widgets import Button, Footer, Header, Rule
+from textual.widgets import Button, Footer, Header, Rule, Static
 
 from sksmithy.tui._components import (
     DecisionFunction,
+    DestinationFile,
     Estimator,
+    ForgeButton,
+    ForgeRow,
     Linear,
     Name,
     Optional,
@@ -17,7 +20,6 @@ from sksmithy.tui._components import (
     Required,
     SampleWeight,
     Sidebar,
-    forge_row,
 )
 
 if sys.version_info >= (3, 11):  # pragma: no cover
@@ -41,6 +43,13 @@ class ForgeTUI(App):
 
     show_sidebar = reactive(False)  # noqa: FBT003
 
+    def on_mount(self: Self) -> None:
+        """Compose on mount.
+
+        Q: is this needed?
+        """
+        self.compose()
+
     def compose(self: Self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Container(
@@ -51,7 +60,14 @@ class ForgeTUI(App):
                 Horizontal(SampleWeight(), Linear()),
                 Horizontal(PredictProba(), DecisionFunction()),
                 Rule(),
-                forge_row,
+                ForgeRow(
+                    Static(),
+                    Static(),
+                    ForgeButton(),
+                    DestinationFile(),
+                    Static(),
+                    Static(),
+                ),
                 Rule(),
             ),
             Sidebar(classes="-hidden"),
@@ -80,6 +96,6 @@ class ForgeTUI(App):
         forge_btn.press()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     tui = ForgeTUI()
     tui.run()
