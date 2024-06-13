@@ -34,7 +34,7 @@ coverage:
 types:
 	mypy $(sources)
 
-check: lint test types clean-folders
+check: lint test-cov types clean-folders
 
 docs-serve:
 	mkdocs serve
