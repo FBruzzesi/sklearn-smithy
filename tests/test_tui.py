@@ -137,13 +137,12 @@ async def test_forge_raise() -> None:
 
         assert "Name cannot be empty!" in m3
         assert "Estimator cannot be empty!" in m3
-        assert "Outfile file cannot be empty!" in m3
         assert "Found repeated parameters!" in m3
         assert "The following parameters are invalid python identifiers: ('b b',)" in m3
 
 
 @pytest.mark.parametrize("use_binding", [True, False])
-async def test_forge(tmp_path: Path, name: str, estimator: EstimatorType, use_binding: bool) -> None:
+async def test_forge_and_save(tmp_path: Path, name: str, estimator: EstimatorType, use_binding: bool) -> None:
     """Test forge button and all of its interactions."""
     app = ForgeTUI()
     async with app.run_test(size=None) as pilot:
@@ -168,9 +167,18 @@ async def test_forge(tmp_path: Path, name: str, estimator: EstimatorType, use_bi
         else:
             forge_btn = pilot.app.query_one("#forge-btn", Button)
             forge_btn.action_press()
-        await pilot.pause()
+            await pilot.pause()
 
-        notification = next(iter(pilot.app._notifications))  # noqa: SLF001
+        if use_binding:
+            await pilot.press("ctrl+s")
+        else:
+            save_btn = pilot.app.query_one("#save-btn", Button)
+            save_btn.action_press()
+            await pilot.pause()
 
-        assert f"Template forged at {output_file!s}" in notification.message
+        m1, m2 = (n.message for n in pilot.app._notifications)  # noqa: SLF001
+
+        assert "Template forged!" in m1
+        assert "Saved at" in m2
+
         assert output_file.exists()

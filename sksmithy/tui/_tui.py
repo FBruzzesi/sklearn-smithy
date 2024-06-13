@@ -5,7 +5,7 @@ from typing import ClassVar
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal, ScrollableContainer
 from textual.reactive import reactive
-from textual.widgets import Button, Footer, Header, Rule, Static
+from textual.widgets import Button, Collapsible, Footer, Header, Rule, Static, TextArea
 
 from sksmithy.tui._components import (
     DecisionFunction,
@@ -19,6 +19,7 @@ from sksmithy.tui._components import (
     PredictProba,
     Required,
     SampleWeight,
+    SaveButton,
     Sidebar,
 )
 
@@ -26,6 +27,12 @@ if sys.version_info >= (3, 11):  # pragma: no cover
     from typing import Self
 else:  # pragma: no cover
     from typing_extensions import Self
+
+
+TEXT = """\
+import pandas as pd
+import numpy as np
+"""
 
 
 class ForgeTUI(App):
@@ -38,6 +45,7 @@ class ForgeTUI(App):
         ("ctrl+d", "toggle_sidebar", "Description"),
         ("L", "toggle_dark", "Light/Dark mode"),
         ("F", "forge", "Forge"),
+        ("ctrl+s", "save", "Save"),
         ("E", "app.quit", "Exit"),
     ]
 
@@ -62,13 +70,24 @@ class ForgeTUI(App):
                 Rule(),
                 ForgeRow(
                     Static(),
-                    Static(),
                     ForgeButton(),
+                    SaveButton(),
                     DestinationFile(),
-                    Static(),
-                    Static(),
                 ),
                 Rule(),
+                Collapsible(
+                    TextArea(
+                        text="",
+                        language="python",
+                        theme="vscode_dark",
+                        show_line_numbers=True,
+                        tab_behavior="indent",
+                        id="code-area",
+                    ),
+                    title="Code Editor",
+                    collapsed=True,
+                    id="code-editor",
+                ),
             ),
             Sidebar(classes="-hidden"),
             Footer(),
@@ -94,6 +113,11 @@ class ForgeTUI(App):
         """Press forge button."""
         forge_btn = self.query_one("#forge-btn", Button)
         forge_btn.press()
+
+    def action_save(self: Self) -> None:
+        """Press save button."""
+        save_btn = self.query_one("#save-btn", Button)
+        save_btn.press()
 
 
 if __name__ == "__main__":  # pragma: no cover
