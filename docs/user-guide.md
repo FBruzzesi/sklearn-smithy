@@ -88,5 +88,5 @@ If you like the CLI, but prefer a more interactive and graphical way from the co
 $ smith-tui
 ```
 
-```{.textual path="sksmithy/tui/_tui.py" columns="127" lines="32"}
+```{.textual path="sksmithy/tui/_tui.py" columns="200" lines="35"}
 ```
