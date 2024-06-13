@@ -56,8 +56,7 @@ class Name(Container):
             )
         else:
             output_file = self.app.query_one("#output-file", Input)
-            if not output_file.value:
-                output_file.value = f"{event.value.lower()}.py"
+            output_file.value = f"{event.value.lower()}.py"
 
 
 class Estimator(Container):
@@ -162,8 +161,8 @@ class SampleWeight(Container):
 
     def compose(self: Self) -> ComposeResult:
         yield Horizontal(
-            Prompt(PROMPT_SAMPLE_WEIGHT, classes="label"),
             Switch(id="sample_weight"),
+            Prompt(PROMPT_SAMPLE_WEIGHT, classes="label"),
             classes="container",
         )
 
@@ -173,8 +172,8 @@ class Linear(Container):
 
     def compose(self: Self) -> ComposeResult:
         yield Horizontal(
-            Prompt(PROMPT_LINEAR, classes="label"),
             Switch(id="linear"),
+            Prompt(PROMPT_LINEAR, classes="label"),
             classes="container",
         )
 
@@ -190,8 +189,8 @@ class PredictProba(Container):
 
     def compose(self: Self) -> ComposeResult:
         yield Horizontal(
-            Prompt(PROMPT_PREDICT_PROBA, classes="label"),
             Switch(id="predict_proba"),
+            Prompt(PROMPT_PREDICT_PROBA, classes="label"),
             classes="container",
         )
 
@@ -201,8 +200,8 @@ class DecisionFunction(Container):
 
     def compose(self: Self) -> ComposeResult:
         yield Horizontal(
-            Prompt(PROMPT_DECISION_FUNCTION, classes="label"),
             Switch(id="decision_function"),
+            Prompt(PROMPT_DECISION_FUNCTION, classes="label"),
             classes="container",
         )
 
