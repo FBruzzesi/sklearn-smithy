@@ -7,7 +7,7 @@ from rich.console import RenderableType
 from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container, Grid, Horizontal, ScrollableContainer
-from textual.widgets import Button, Input, Select, Static, Switch
+from textual.widgets import Button, Collapsible, Input, Select, Static, Switch, TextArea
 
 from sksmithy._models import EstimatorType
 from sksmithy._parsers import check_duplicates, name_parser, params_parser
@@ -206,22 +206,11 @@ class DecisionFunction(Container):
         )
 
 
-class DestinationFile(Container):
-    """Destination file input component."""
-
-    def compose(self: Self) -> ComposeResult:
-        yield Prompt(PROMPT_OUTPUT, classes="label")
-        yield Input(placeholder="mightyestimator.py", id="output-file")
-
-
 class ForgeButton(Container):
     """forge button component."""
 
     def compose(self: Self) -> ComposeResult:
-        yield Button.success(
-            label="Forge ⚒️",
-            id="forge-btn",
-        )
+        yield Button(label="Forge ⚒️", id="forge-btn", variant="success")
 
     @on(Button.Pressed, "#forge-btn")
     def on_forge(self: Self, _: Button.Pressed) -> None:  # noqa: C901
@@ -237,7 +226,8 @@ class ForgeButton(Container):
         predict_proba = self.app.query_one("#predict_proba", Switch).value
         decision_function = self.app.query_one("#decision_function", Switch).value
 
-        output_file = self.app.query_one("#output-file", Input).value
+        code_area = self.app.query_one("#code-area", TextArea)
+        code_editor = self.app.query_one("#code-editor", Collapsible)
 
         match name_parser(name_input):
             case Ok(name):
@@ -269,13 +259,10 @@ class ForgeButton(Container):
         if required_is_valid and optional_is_valid and (msg_duplicated_params := check_duplicates(required, optional)):
             errors.append(msg_duplicated_params)
 
-        if not output_file:
-            errors.append("Outfile file cannot be empty!")
-
         if errors:
             self.notify(
                 message="\n".join([f"- {e}" for e in errors]),
-                title="Invalid inputs",
+                title="Invalid inputs!",
                 severity="error",
                 timeout=5,
             )
@@ -293,18 +280,56 @@ class ForgeButton(Container):
                 tags=None,
             )
 
-            destination_file = Path(output_file)
-            destination_file.parent.mkdir(parents=True, exist_ok=True)
-
-            with destination_file.open(mode="w") as destination:
-                destination.write(forged_template)
+            code_area.text = forged_template
+            code_editor.collapsed = False
 
             self.notify(
-                message=f"Template forged at {destination_file}",
+                message="Template forged!",
                 title="Success!",
                 severity="information",
                 timeout=5,
             )
+
+
+class SaveButton(Container):
+    """forge button component."""
+
+    def compose(self: Self) -> ComposeResult:
+        yield Button(label="Save 📂", id="save-btn", variant="primary")
+
+    @on(Button.Pressed, "#save-btn")
+    def on_save(self: Self, _: Button.Pressed) -> None:
+        output_file = self.app.query_one("#output-file", Input).value
+
+        if not output_file:
+            self.notify(
+                message="Outfile filename cannot be empty!",
+                title="Invalid filename!",
+                severity="error",
+                timeout=5,
+            )
+        else:
+            destination_file = Path(output_file)
+            destination_file.parent.mkdir(parents=True, exist_ok=True)
+
+            code = self.app.query_one("#code-area", TextArea).text
+
+            with destination_file.open(mode="w") as destination:
+                destination.write(code)
+
+            self.notify(
+                message=f"Saved at {destination_file}",
+                title="Success!",
+                severity="information",
+                timeout=5,
+            )
+
+
+class DestinationFile(Container):
+    """Destination file input component."""
+
+    def compose(self: Self) -> ComposeResult:
+        yield Input(placeholder=PROMPT_OUTPUT, id="output-file")
 
 
 class ForgeRow(Grid):

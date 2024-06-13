@@ -65,20 +65,20 @@ Input.-valid:focus {
 }
 
 ForgeRow {
-    grid-size: 5 2;
+    grid-size: 4 1;
     grid-gutter: 1;
-    grid-rows: 1fr 1fr 1fr 2fr;
-    grid-columns: 1fr;
-    min-height: 40vh;
+    grid-columns: 45% 10% 10% 25%;
+    min-height: 15vh;
+    max-height: 15vh;
 }
 
-ForgeButton {
-    row-span: 2;
+TextArea {
+    min-height: 15vh;
+    max-height: 100vh;
 }
 
 DestinationFile {
     column-span: 2;
-    row-span: 2;
     height: 100%;
 }
 
