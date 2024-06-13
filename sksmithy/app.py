@@ -239,6 +239,16 @@ with st.container() as forge_row:  # forge button
         )
         if forge_btn:
             st.session_state["forge_counter"] += 1
+            st.session_state["forged_template"] = render_template(
+                name=name,
+                estimator_type=estimator_type,  # type: ignore[arg-type]  # At this point estimator_type is never None.
+                required=required,
+                optional=optional,
+                linear=linear,
+                sample_weight=sample_weight,
+                predict_proba=predict_proba,
+                decision_function=decision_function,
+            )
 
     with c54, st.popover(label="Download", disabled=not st.session_state["forge_counter"]):
         if name:
@@ -252,6 +262,7 @@ with st.container() as forge_row:  # forge button
                 file_name=file_name,
                 key="download_btn",
             )
+
 with st.container():  # code output
     if forge_btn:
         st.toast("Request submitted!")
@@ -264,16 +275,6 @@ with st.container():  # code output
             time.sleep(0.002)
             progress_bar.progress(percent_complete + 1, text=progress_text)
 
-        st.session_state["forged_template"] = render_template(
-            name=name,
-            estimator_type=estimator_type,  # type: ignore[arg-type]  # At this point estimator_type is never None.
-            required=required,
-            optional=optional,
-            linear=linear,
-            sample_weight=sample_weight,
-            predict_proba=predict_proba,
-            decision_function=decision_function,
-        )
         time.sleep(0.2)
         progress_bar.empty()
 
