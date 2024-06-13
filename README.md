@@ -28,6 +28,8 @@ How can you use it?
 - It requires [installation](#installation): `python -m pip install sklearn-smithy`
 - Powered by [typer](https://typer.tiangolo.com/).
 
+<img src="https://raw.githubusercontent.com/FBruzzesi/sklearn-smithy/main/docs/img/cli.png" align="right">
+
 </details>
 
 <details><summary>✅ As a TUI (terminal user interface) in the terminal.</summary>
