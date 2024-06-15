@@ -62,7 +62,6 @@ all = [
 
 [project.scripts]
 smith = "sksmithy.__main__:cli"
-smith-tui = "sksmithy.tui.__main__:forge_tui"
 
 [tool.hatch.build.targets.sdist]
 only-include = ["sksmithy"]
@@ -113,5 +112,4 @@ omit = [
     "sksmithy/_logger.py",
     "sksmithy/_prompts.py",
     "sksmithy/tui/__init__.py",
-    "sksmithy/tui/__main__.py",
 ]

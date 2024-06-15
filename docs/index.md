@@ -8,7 +8,7 @@ How can you use it?
 
 - [x] Directly from the browser via our [web UI](https://sklearn-smithy.streamlit.app/){:target="_blank"} ([more info](user-guide.md/#web-ui))
 - [x] As a CLI (command line interface) in your terminal via the `smith forge` command ([more info](user-guide.md/#cli))
-- [x] As a TUI (terminal user interface) in your terminal via the `smith-tui` command ([more info](user-guide.md/#tui))
+- [x] As a TUI (terminal user interface) in your terminal via the `smith forge-tui` command ([more info](user-guide.md/#tui))
 
 !!! info
   

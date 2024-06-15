@@ -50,7 +50,7 @@ Let's suppose that you already did steps 1-4 from the above list, now you should
 
 ```bash
 cd sklearn-smithy
-pip install -e ".[streamlit]" --no-cache-dir
+pip install -e ".[all]" --no-cache-dir
 pre-commit install
 ```
 
