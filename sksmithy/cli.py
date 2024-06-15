@@ -80,3 +80,20 @@ def forge(
         destination.write(forged_template)
 
     console.print(f"Template forged at {destination_file}", style="good")
+
+
+@cli.command(name="forge-tui")
+def forge_tui() -> None:
+    """Run Terminal User Interface via Textual."""
+    from sksmithy.tui import ForgeTUI
+
+    tui = ForgeTUI()
+    tui.run()
+
+
+@cli.command(name="forge-webui")
+def forge_webui() -> None:
+    """Run Web User Interface via Streamlit."""
+    import subprocess
+
+    subprocess.run(["streamlit", "run", "sksmithy/app.py"], check=True)

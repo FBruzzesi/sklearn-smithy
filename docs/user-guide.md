@@ -78,14 +78,14 @@ from sklearn.utils.validation import check_is_fitted, check_array
 
 TL;DR:
 
-- [x] Available via the `smith-tui` command.
+- [x] Available via the `smith forge-tui` command.
 - [x] It requires installing [extra dependencies](installation.md#extra-dependencies): `python -m pip install "sklearn-smithy[textual]"`
 - [x] Powered by [textual](https://textual.textualize.io/){:target="_blank"}.
 
-If you like the CLI, but prefer a more interactive and graphical way from the comfort of your terminal, you can use the TUI (Terminal User Interface) provided by the `smith-tui` command.
+If you like the CLI, but prefer a more interactive and graphical way from the comfort of your terminal, you can use the TUI (Terminal User Interface) provided by the `smith forge-tui` command.
 
 ```console
-$ smith-tui
+$ smith forge-tui
 ```
 
 ```{.textual path="sksmithy/tui/_tui.py" columns="200" lines="35"}

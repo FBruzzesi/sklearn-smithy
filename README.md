@@ -34,7 +34,7 @@ How can you use it?
 
 <details><summary>✅ As a TUI (terminal user interface) in the terminal.</summary>
 
-- Available via the `smith-tui` command.
+- Available via the `smith forge-tui` command.
 - It requires installing [extra dependencies](#extra-dependencies): `python -m pip install "sklearn-smithy[textual]"`
 - Powered by [textual](https://textual.textualize.io/).
 
