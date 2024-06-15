@@ -1,5 +1,5 @@
 import sys
-from importlib import resources
+from importlib import metadata, resources
 from typing import ClassVar
 
 from textual.app import App, ComposeResult
@@ -29,12 +29,6 @@ else:  # pragma: no cover
     from typing_extensions import Self
 
 
-TEXT = """\
-import pandas as pd
-import numpy as np
-"""
-
-
 class ForgeTUI(App):
     """Textual app to forge scikit-learn compatible estimators."""
 
@@ -61,7 +55,7 @@ class ForgeTUI(App):
     def compose(self: Self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Container(
-            Header(),
+            Header(icon=f"v{metadata.version('sklearn-smithy')}"),
             ScrollableContainer(
                 Horizontal(Name(), Estimator()),
                 Horizontal(Required(), Optional()),

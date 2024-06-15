@@ -1,13 +1,13 @@
 import sys
-from importlib import metadata, resources
+import webbrowser
+from importlib import resources
 from pathlib import Path
 
 from result import Err, Ok
-from rich.console import RenderableType
 from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container, Grid, Horizontal, ScrollableContainer
-from textual.widgets import Button, Collapsible, Input, Select, Static, Switch, TextArea
+from textual.widgets import Button, Collapsible, Input, Markdown, Select, Static, Switch, TextArea
 
 from sksmithy._models import EstimatorType
 from sksmithy._parsers import check_duplicates, name_parser, params_parser
@@ -336,25 +336,14 @@ class ForgeRow(Grid):
     """Row grid for forge."""
 
 
-class Title(Static):
-    pass
-
-
 class OptionGroup(ScrollableContainer):
     pass
 
 
-class Message(Static):
-    pass
-
-
-class Version(Static):
-    def render(self: Self) -> RenderableType:
-        return f"Version: [b]{metadata.version('sklearn-smithy')}"
-
-
 class Sidebar(Container):
     def compose(self: Self) -> ComposeResult:
-        yield Title("Description")
-        yield OptionGroup(Message(SIDEBAR_MSG), Version())
-        yield Version()
+        yield OptionGroup(Markdown(SIDEBAR_MSG))
+
+    def on_markdown_link_clicked(self: Self, event: Markdown.LinkClicked) -> None:
+        # Relevant discussion: https://github.com/Textualize/textual/discussions/3668
+        webbrowser.open_new_tab(event.href)
