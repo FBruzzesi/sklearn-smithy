@@ -115,7 +115,3 @@ OptionGroup {
     height: 1fr;
     border-right: vkey $background;
 }
-
-Message {
-    margin: 0 1;
-}
