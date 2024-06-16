@@ -5,7 +5,7 @@ from importlib.metadata import version
 
 from result import Err, Ok
 
-from sksmithy._models import EstimatorType
+from sksmithy._models import EstimatorType, TagType
 from sksmithy._parsers import check_duplicates, name_parser, params_parser
 from sksmithy._prompts import (
     PROMPT_DECISION_FUNCTION,
@@ -196,7 +196,24 @@ def app() -> None:  # noqa: C901,PLR0912,PLR0915
     st.write("#")  # empty space hack
 
     with st.container():  # forge button
-        _, c52, _, c54 = st.columns([2, 1, 1, 1])
+        c51, c52, _, c54 = st.columns([2, 1, 1, 1])
+
+        with (
+            c51,
+            st.popover(
+                label="Additional tags",
+                help=(
+                    "To know more about tags, check the "
+                    "[scikit-learn documentation](https://scikit-learn.org/dev/developers/develop.html#estimator-tags)"
+                ),
+            ),
+        ):
+            tags = st.multiselect(
+                label="Select tags",
+                options=tuple(e.value for e in TagType),
+                help="These tags are not validated against the selected estimator type!",
+                key="tags",
+            )
 
         with c52:
             forge_btn = st.button(
@@ -224,6 +241,7 @@ def app() -> None:  # noqa: C901,PLR0912,PLR0915
                     sample_weight=sample_weight,
                     predict_proba=predict_proba,
                     decision_function=decision_function,
+                    tags=tags,
                 )
 
         with c54, st.popover(label="Download", disabled=not st.session_state["forge_counter"]):
@@ -238,6 +256,8 @@ def app() -> None:  # noqa: C901,PLR0912,PLR0915
                     file_name=file_name,
                     key="download_btn",
                 )
+
+    st.write("#")  # empty space hack
 
     with st.container():  # code output
         if forge_btn:
