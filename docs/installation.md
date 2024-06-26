@@ -19,10 +19,16 @@ smith version
 
 ## Extra dependencies
 
-To run the TUI, you need to install the `textual` dependency as well:
+To run the TUI (`smith forge-tui`), you need to install the `textual` dependency as well:
 
 ```bash
 python -m pip install "sklearn-smithy[textual]"
+```
+
+To run the WebUI locally (`smith forge-webui`), you need to install the `streamlit` dependency as well:
+
+```bash
+python -m pip install "sklearn-smithy[streamlit]"
 ```
 
 ## Other installation methods

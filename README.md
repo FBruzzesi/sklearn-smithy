@@ -14,6 +14,8 @@ How can you use it?
 
 <details><summary>✅ Directly from the browser via a Web UI. </summary>
 
+<br>
+
 - Available at [sklearn-smithy.streamlit.app](https://sklearn-smithy.streamlit.app/)
 - It requires no installation.
 - Powered by [streamlit](https://streamlit.io/)
@@ -24,6 +26,8 @@ How can you use it?
 
 <details><summary>✅ As a CLI (command line interface) in the terminal.</summary>
 
+<br>
+
 - Available via the `smith forge` command.
 - It requires [installation](#installation): `python -m pip install sklearn-smithy`
 - Powered by [typer](https://typer.tiangolo.com/).
@@ -33,6 +37,8 @@ How can you use it?
 </details>
 
 <details><summary>✅ As a TUI (terminal user interface) in the terminal.</summary>
+
+<br>
 
 - Available via the `smith forge-tui` command.
 - It requires installing [extra dependencies](#extra-dependencies): `python -m pip install "sklearn-smithy[textual]"`
