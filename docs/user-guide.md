@@ -31,11 +31,6 @@ Once the library is installed, the `smith` CLI (Command Line Interface) will be 
 
 The CLI provides a main command called `forge`, which will prompt a series of question in the terminal, based on which it will generate the code for the estimator.
 
-!!! warning "Non-interactive mode"
-    As for any CLI, in principle it would be possible to run it in a non-interactive way, however this is not *fully* supported yet and it comes with some risks and limitations.
-
-    The reason for this is that the validation and the parameters interaction happen while prompting the questions *one after the other*, meaning that the input to one prompt will determine what follows next.
-
 ### `smith forge` example
 
 Let's see an example of how to use `smith forge` command:
@@ -73,6 +68,44 @@ from sklearn.utils.validation import check_is_fitted, check_array
 ```
 
 </div>
+
+### Non-interactive mode
+
+As for any CLI, in principle it would be possible to run it in a non-interactive way, however this is not *fully* supported (yet) and it comes with some risks and limitations.
+
+The reason for this is that the **validation** and the parameters **interaction** happen while prompting the questions *one after the other*, meaning that the input to one prompt will determine what follows next.
+
+It is still possible to run the CLI in a non-interactive way, but it is not recommended, as it may lead to unexpected results.
+
+Let's see an example of how to run the `smith forge` command in a non-interactive way:
+
+!!! example "Non-interactive mode"
+
+    ```terminal
+    smith forge \
+    --name MyEstimator \
+    --estimator-type classifier \
+    --required-params "a,b" \
+    --optional-params "" \
+    --no-sample-weight \
+    --no-predict-proba \
+    --linear \
+    --no-decision-function \
+    --tags "binary_only" \
+    --output-file path/to/file.py
+    ```
+
+Notice how all arguments must be specified, otherwise they will prompt anyway, which means that the command would be interactive.
+
+Secondly, there is nothing preventing us to run the command with contradictory arguments at the same time. Operating in such a way can lead to two scenarios:
+
+1. The result will be correct, however unexpected from a user point of view.
+    For instance, calling `--estimator-type classifier` with `--linear` and `--decision-function` flags, will not create a `decision_function` method, as `LinearClassifierMixin` already takes care of it.
+2. The result will be incorrect, as the arguments are contradictory.
+
+The first case is not a problematic from a functional point of view, while the second will lead to a broken estimator.
+
+Our suggestion is to use the CLI always in an interactive way, as it will take care of the proprer arguments interaction.
 
 ## TUI 💻
 
