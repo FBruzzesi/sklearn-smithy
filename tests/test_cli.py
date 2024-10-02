@@ -99,7 +99,7 @@ def test_forge_estimator(tmp_path: Path, name: str, estimator: EstimatorType, li
     ],
 )
 @pytest.mark.parametrize(
-    ("invalid_optional", "dupliclated_err_msg"),
+    ("invalid_optional", "duplicated_err_msg"),
     [("a", "Error: The following parameters are duplicated between required and optional: {'a'}")],
 )
 @pytest.mark.parametrize(
@@ -114,7 +114,7 @@ def test_forge_invalid_args(
     invalid_required: str,
     required_err_msg: str,
     invalid_optional: str,
-    dupliclated_err_msg: str,
+    duplicated_err_msg: str,
     invalid_tags: str,
     tags_err_msg: str,
 ) -> None:
@@ -150,5 +150,5 @@ def test_forge_invalid_args(
     assert output_file.exists()
 
     assert all(
-        err_msg in result.stdout for err_msg in (name_err_msg, required_err_msg, dupliclated_err_msg, tags_err_msg)
+        err_msg in result.stdout for err_msg in (name_err_msg, required_err_msg, duplicated_err_msg, tags_err_msg)
     )
